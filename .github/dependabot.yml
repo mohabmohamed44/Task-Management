@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Update npm packages (React, Vite, TanStack Query, shadcn/ui, etc.)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"      # daily, weekly, monthly
+      time: "09:00"
+      timezone: "Africa/Cairo"
+    commit-message:
+      prefix: "deps"
+      include: "scope"
+    groups:
+      minor-and-patch:
+        applies-to: version-updates
+        update-types: ["minor", "patch"]   # combine updates
+      major:
+        applies-to: version-updates
+        update-types: ["major"]
+    allow:
+      - dependency-type: "direct"
+      - dependency-type: "production"
+      - dependency-type: "development"
+
+  # Update GitHub Actions versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "ci"

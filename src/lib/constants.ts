@@ -1,0 +1,1 @@
+export const API_URL = "https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1";
