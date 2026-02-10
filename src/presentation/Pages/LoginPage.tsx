@@ -26,10 +26,8 @@ import { Loader2, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { Link, useNavigate } from "react-router";
 import { useLoginMutation } from "@/app/Queries/auth.query";
 import { useRateLimitState } from "@/app/hooks/useRateLimitState";
-import { useDebounce } from "@/app/hooks/useDebounce";
 import toast from "react-hot-toast";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
-
 // Validation schema
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -57,10 +55,7 @@ export const LoginPage: React.FC = () => {
   });
 
 
-  const [email, setEmail] = useState("");
-  const debouncedEmail = useDebounce(email, 500);
-  
-  const {isBlocked, remainingAttempts, timeRemaining} = useRateLimitState(debouncedEmail, 'login');
+  const {isBlocked, remainingAttempts, timeRemaining} = useRateLimitState('login');
   const formatTimeRemaining = (ms: number) : string => {
     const minutes = Math.floor(ms / 6000);
     const seconds = Math.floor((ms % 6000) / 1000);
@@ -215,7 +210,7 @@ export const LoginPage: React.FC = () => {
                           disabled={isBlocked}
                           onChange={(e) => {
                             field.onChange(e);
-                            setEmail(e.target.value);
+                            sanitizeValues({ email: e.target.value });
                           }}
                         />
                       </div>
