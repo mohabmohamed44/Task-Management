@@ -2,7 +2,7 @@ export interface User {
     id: number | string;
     name: string;
     email: string;
-    avatar?: string;
+    profile_image_url?: string;
     role?: string;
     created_at ? : string;
     updated_at?: string;

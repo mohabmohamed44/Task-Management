@@ -63,6 +63,20 @@ export class AuthAPI {
                 Authorization: `Bearer ${token}`,
             }
         })
+        // If backend wraps user in { data: { ...user } }, unwrap it
+        return res.data.data || res.data;
+    }
+
+    async updateProfilePicture(token: string, file: File): Promise<{ message: string; data: { imageUrl: string } }> {
+        const formData = new FormData();
+        formData.append('profilePicture', file);
+
+        const res = await axios.put(`${API_URL}/auth/profile-picture`, formData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data',
+            }
+        });
         return res.data;
     }
 }

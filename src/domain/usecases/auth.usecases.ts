@@ -32,3 +32,11 @@ export class GetCurrentUser {
         return this.repo.getCurrentUser(token);
     }
 }
+
+export class UpdateProfilePicture {
+    constructor(private repo: AuthAPI) {}
+
+    async execute(token: string, file: File): Promise<{ message: string; data: { imageUrl: string } }> {
+        return await this.repo.updateProfilePicture(token, file);
+    }
+}

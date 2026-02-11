@@ -5,6 +5,7 @@ import HomePage from "../presentation/Pages/HomePage";
 import TaskPage from "../presentation/Pages/TaskPage";
 import RegisterPage from "@/presentation/Pages/RegisterPage";
 import ProfilePage from "@/presentation/Pages/ProfilePage";
+import EditProfilePage from "@/presentation/Pages/EditProfilePage";
 import { LoginPage } from "../presentation/Pages/LoginPage";
 import NotFoundPage from "@/presentation/Pages/NotFoundPage";
 import StatisticsPage from "@/presentation/Pages/StatisticsPage";
@@ -25,6 +26,7 @@ export const appRouter = createBrowserRouter([
             { path: "/tasks", element: <TaskPage /> },
             { path: "/statistics", element: <StatisticsPage /> },
             { path: "/profile", element: <ProfilePage /> },
+            { path: "/profile/edit", element: <EditProfilePage /> },
             { path: "/create-task", element: <CreateTask /> },
             { path: "/tasks/:id", element: <TaskDetails /> },
         ],
