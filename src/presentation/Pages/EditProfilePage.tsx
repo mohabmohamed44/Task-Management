@@ -9,11 +9,27 @@ import {
 } from "@/presentation/components/ui/card";
 import { Button } from "@/presentation/components/Button";
 import { useUpdateProfilePictureMutation } from "@/app/Queries/auth.query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { CloudUpload } from "lucide-react";
 
 export default function EditProfilePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const updateProfilePictureMutation = useUpdateProfilePictureMutation();
+
+  // Derive the preview URL from selectedFile
+  const imagePreview = selectedFile ? URL.createObjectURL(selectedFile) : null;
+
+  // Clean up object URL when component unmounts or file changes
+  useEffect(() => {
+    if (imagePreview) {
+      return;
+    }
+    return () => {
+      if (imagePreview) {
+        URL.revokeObjectURL(imagePreview);
+      }
+    };
+  }, [imagePreview]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -38,7 +54,6 @@ export default function EditProfilePage() {
             Update your profile picture
           </CardDescription>
         </CardHeader>
-
         <CardContent className="space-y-4">
           <div className="flex flex-col items-center space-y-2">
             <label htmlFor="profile-picture" className="text-sm text-muted-foreground">
@@ -56,9 +71,25 @@ export default function EditProfilePage() {
                 Selected: {selectedFile.name}
               </p>
             )}
+            {imagePreview ? (
+              <img
+                src={imagePreview}
+                alt="Profile Preview"
+                className="w-32 h-32 rounded-full object-cover"
+              />
+            ) : (
+              <label
+                htmlFor="profile-picture"
+                className="flex flex-col items-center cursor-pointer"
+              >
+                <CloudUpload className="h-12 w-12 text-gray-400" />
+                <span className="mt-2 text-sm text-gray-500">
+                  Upload Image
+                </span>
+              </label>
+            )}
           </div>
         </CardContent>
-
         <CardFooter className="flex gap-2">
           <Button
             className="w-full"
@@ -67,7 +98,7 @@ export default function EditProfilePage() {
           >
             {updateProfilePictureMutation.isPending ? "Uploading..." : "Upload Picture"}
           </Button>
-          <Button className="w-full" variant="outline">
+          <Button className="w-full" variant="outline" asChild>
             <Link to="/profile">Back to Profile</Link>
           </Button>
         </CardFooter>
