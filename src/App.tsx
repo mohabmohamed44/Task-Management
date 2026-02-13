@@ -2,13 +2,13 @@ import { RouterProvider } from 'react-router'
 import { appRouter } from "./app/router.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
-import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, HydrationBoundary, type DehydratedState } from '@tanstack/react-query'
 import { ModalProvider } from './app/Providers/ModalProvider'
 import './App.css'
 
 const queryClient = new QueryClient();
 
-function App({ dehydratedState }: { dehydratedState: any }) {
+function App({ dehydratedState }: { dehydratedState: DehydratedState }) {
   return (
     <QueryClientProvider client={queryClient}> 
       <HydrationBoundary state={dehydratedState}>
