@@ -8,9 +8,9 @@ import './App.css'
 
 const queryClient = new QueryClient();
 
-function App({ hydratedState }: { hydratedState: any}) {
-  if (hydratedState) {
-    hydrate(queryClient, hydratedState);
+function App({ dehydratedState }: { dehydratedState: any }) {
+  if (dehydratedState) {
+    hydrate(queryClient, dehydratedState);
   }
   return (
     <QueryClientProvider client={queryClient}> 
