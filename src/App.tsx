@@ -1,7 +1,7 @@
 import { RouterProvider } from 'react-router'
 import { appRouter } from "./app/router.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/react-query'
 import { ModalProvider } from './app/Providers/ModalProvider'
 import './App.css'
@@ -10,8 +10,8 @@ const queryClient = new QueryClient();
 
 function App({ dehydratedState }: { dehydratedState: any }) {
   return (
-    <HydrationBoundary state={dehydratedState}>
-      <QueryClientProvider client={queryClient}> 
+    <QueryClientProvider client={queryClient}> 
+      <HydrationBoundary state={dehydratedState}>
         <ModalProvider>
           <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
           <RouterProvider router={appRouter} />
@@ -20,8 +20,8 @@ function App({ dehydratedState }: { dehydratedState: any }) {
             reverseOrder={false}
           />
         </ModalProvider>
-      </QueryClientProvider>
-    </HydrationBoundary>
+      </HydrationBoundary>
+    </QueryClientProvider>
   )
 }
 
