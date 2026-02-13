@@ -2,27 +2,26 @@ import { RouterProvider } from 'react-router'
 import { appRouter } from "./app/router.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {Toaster} from "react-hot-toast";
-import { QueryClient, QueryClientProvider, hydrate } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider, HydrationBoundary } from '@tanstack/react-query'
 import { ModalProvider } from './app/Providers/ModalProvider'
 import './App.css'
 
 const queryClient = new QueryClient();
 
 function App({ dehydratedState }: { dehydratedState: any }) {
-  if (dehydratedState) {
-    hydrate(queryClient, dehydratedState);
-  }
   return (
-    <QueryClientProvider client={queryClient}> 
-      <ModalProvider>
-        <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
-        <RouterProvider router={appRouter} />
-        <Toaster 
-          position='top-center'
-          reverseOrder={false}
-        />
-      </ModalProvider>
-    </QueryClientProvider>
+    <HydrationBoundary state={dehydratedState}>
+      <QueryClientProvider client={queryClient}> 
+        <ModalProvider>
+          <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
+          <RouterProvider router={appRouter} />
+          <Toaster 
+            position='top-center'
+            reverseOrder={false}
+          />
+        </ModalProvider>
+      </QueryClientProvider>
+    </HydrationBoundary>
   )
 }
 
