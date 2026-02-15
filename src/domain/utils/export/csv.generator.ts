@@ -10,7 +10,7 @@ export class CSVGenerator {
     
     data.forEach(task => {
       const row = headers.map(header => {
-        let value = '';
+        let value;
         switch(String(header).toLowerCase()) {
           case 'title': value = task.title || ''; break;
           case 'description': value = task.description || ''; break;

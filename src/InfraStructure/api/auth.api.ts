@@ -39,7 +39,7 @@ export class AuthAPI {
             if (axiosError.response?.data) {
                 throw error;
             }
-            throw new Error('Network error. Please check your connection.');
+            throw new Error('Network error. Please check your connection.', { cause: error });
         }
     }
 
@@ -53,7 +53,7 @@ export class AuthAPI {
             if (axiosError.response?.data) {
                 throw error;
             }
-            throw new Error('Network error. Please check your connection.');
+            throw new Error('Network error. Please check your connection.', { cause: error });
         }
     }
 

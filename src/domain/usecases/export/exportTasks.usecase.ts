@@ -53,7 +53,7 @@ export class ExportTasksUseCase {
       
       return response;
     } catch (error) {
-      throw new Error(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`, { cause: error });
     }
   }
 }
