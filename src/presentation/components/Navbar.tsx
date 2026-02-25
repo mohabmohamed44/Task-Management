@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import { Button } from "@/presentation/components/Button";
-import { Avatar, AvatarFallback } from "@/presentation/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -11,6 +11,7 @@ import SearchInput from "@/presentation/components/SearchInput";
 import { Menu, X, User, LogOut, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
+import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 import ThemeToggle from "./ThemeToggle";
 
 export interface NavLink {
@@ -36,6 +37,8 @@ export default function Navbar({
   const [mobileOpen, setMobileOpen] = useState(false);
   // Destructing some Props from useAuth hook
   const { isAuthenticated, logout } = useAuth();
+  const { data: currentUser } = useCurrentUserQuery();
+  const userImage = currentUser?.profile_image_url || (currentUser as any)?.profilePicture;
 
   return (
     <header
@@ -96,7 +99,8 @@ export default function Navbar({
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <Avatar>
-                      <AvatarFallback>M</AvatarFallback>
+                      <AvatarImage src={userImage} />
+                      <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "M"}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
 
@@ -134,7 +138,8 @@ export default function Navbar({
                 </Button>
               ) : (
                 <Avatar>
-                  <AvatarFallback>M</AvatarFallback>
+                  <AvatarImage src={userImage} />
+                  <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "M"}</AvatarFallback>
                 </Avatar>
               )}
             </div>

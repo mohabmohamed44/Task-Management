@@ -8,7 +8,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { MoreVertical, Pencil, Trash2, Send, X } from "lucide-react";
 import { useCommentsQuery, useCreateCommentMutation, useDeleteCommentMutation, useUpdateCommentMutation } from "@/app/Queries/comments.query";
 import { formatDate } from "@/domain/utils/date";
-
+import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 interface CommentsListProps {
     taskId: string;
 }
@@ -17,11 +17,13 @@ export default function CommentsList({ taskId }: CommentsListProps) {
     const [newCommentText, setNewCommentText] = useState("");
     const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
     const [editingText, setEditingText] = useState("");
-
+    const { data: currentUser } = useCurrentUserQuery();
     const { data: comments, isLoading } = useCommentsQuery({ task_id: Number(taskId) });
     const createCommentMutation = useCreateCommentMutation();
     const updateCommentMutation = useUpdateCommentMutation();
     const deleteCommentMutation = useDeleteCommentMutation();
+
+    const userImage = currentUser?.profile_image_url || (currentUser as any)?.profilePicture;
 
     const handleCreateComment = () => {
         if (!newCommentText.trim()) return;
@@ -84,8 +86,8 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                         comments.map((comment: any) => (
                             <div key={comment.id} className="flex gap-3 group">
                                 <Avatar className="w-8 h-8">
-                                    <AvatarImage src={comment.userName} />
-                                    <AvatarFallback>{comment.userName?.charAt(0).toUpperCase() || "U"}</AvatarFallback>
+                                    <AvatarImage src={userImage} />
+                                    <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "ME"}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
@@ -147,7 +149,8 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                 <div className="pt-4 border-t mt-auto">
                     <div className="flex gap-3">
                         <Avatar className="w-8 h-8">
-                            <AvatarFallback>ME</AvatarFallback>
+                            <AvatarImage src={userImage} />
+                            <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "ME"}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 space-y-2">
                             <Textarea

@@ -39,7 +39,7 @@ export default function ProfilePage() {
     <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md shadow-lg overflow-hidden">
         <Avatar className="h-full w-full rounded-none">
-          <AvatarImage className="object-cover h-full w-full aspect-auto" src={User?.profile_image_url} alt={User?.name} />
+          <AvatarImage className="object-cover h-full w-full aspect-auto" src={User?.profile_image_url || (User as any)?.profilePicture} alt={User?.name} />
           <AvatarFallback className="rounded-none text-4xl">{User?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
         </Avatar>
         <CardHeader className="text-center space-y-2">
