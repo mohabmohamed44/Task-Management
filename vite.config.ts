@@ -1,4 +1,5 @@
-import { defineConfig } from 'vite'
+/// <reference types="vitest" />
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite' // keep your style
 import path from 'path'
@@ -17,5 +18,9 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'), 
     },
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
   },
 })
