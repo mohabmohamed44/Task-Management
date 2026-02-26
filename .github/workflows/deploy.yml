@@ -1,12 +1,15 @@
 name: Deploy Frontend to Netlify
 
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
     branches: [master]
+    types: [completed]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout code
@@ -19,7 +22,7 @@ jobs:
           cache: npm
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Build Vite app
         run: npm run build
