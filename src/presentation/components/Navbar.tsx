@@ -31,6 +31,7 @@ export default function Navbar({
     { href: "/", label: "Home" },
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
+    { href: "/goals", label: "Weekly Goals"}
   ],
   className = "",
 }: NavbarProps) {
