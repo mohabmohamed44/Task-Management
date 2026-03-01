@@ -77,7 +77,9 @@ export default function Navbar({
           </div>
 
           {/* Center Search */}
-          <SearchInput />
+          <div className="hidden md:block">
+            <SearchInput />
+          </div>
           {/* Theme Toggle */}
           <div className="mr-2">
             <ThemeToggle />
@@ -159,6 +161,10 @@ export default function Navbar({
                 {l.label}
               </Link>
             ))}
+
+            <div className="px-3">
+              <SearchInput />
+            </div>
 
             {!isAuthenticated && (
               <div className="px-3 flex gap-2">
