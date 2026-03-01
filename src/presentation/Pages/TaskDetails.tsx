@@ -13,6 +13,7 @@ import { Suspense, lazy } from "react";
 import CommentsList from "../components/commentsList";
 import { ExportModal } from "@/presentation/components/export/ExportModal";
 import { useExportHandlers } from "@/presentation/hooks/useExportHandlers";
+import { Attachments } from "@/presentation/components/attachments/Attachments";
 
 const SubTaskList = lazy(() => import("@/presentation/components/SubTaskList"));
 
@@ -169,6 +170,8 @@ export default function TaskDetails() {
             >
               <CommentsList taskId={task.id.toString()} />
             </Suspense>
+            
+            <Attachments taskId={task.id.toString()} />
             
             <Button 
               variant={task.completed ? "secondary" : "default"}
