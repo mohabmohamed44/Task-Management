@@ -8,8 +8,8 @@ export default function NotFoundPage() {
             <img src={NotFound} alt="" className="w-120"/>
         </div>
         <h1 className="text-8xl font-bold text-primary">Ooops! 404</h1>
-        <h2 className="text-3xl font-semibold mt-4 mb-2">Page Not Found</h2>
-        <p className="text-3xl text-muted-foreground mb-6">
+        <h2 className="text-2xl font-semibold mt-4 mb-2">Page Not Found</h2>
+        <p className="text-lg md:text-xl text-muted-foreground mb-6">
             the Page you are looking for doesn't exist or has been moved
         </p> 
         <Link to="/">

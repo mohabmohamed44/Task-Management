@@ -55,7 +55,7 @@ export default function SearchInput() {
             className="hidden md:flex flex-1 justify-center px-2"
             ref={searchRef}
         >
-            <div className="w-full max-w-lg relative">
+            <div className="w-full max-w-2xl relative">
                 <div className="relative">
                     <Input
                         placeholder="Search tasks..."
