@@ -31,7 +31,8 @@ export default function Navbar({
     { href: "/", label: "Home" },
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
-    { href: "/goals", label: "Weekly Goals"}
+    { href: "/goals", label: "Weekly Goals"},
+    { href: "/kanban", label: "Kanban"}
   ],
   className = "",
 }: NavbarProps) {
@@ -77,7 +78,7 @@ export default function Navbar({
           </div>
 
           {/* Center Search */}
-          <div className="hidden md:block">
+          <div className="flex-1 flex justify-center px-4">
             <SearchInput />
           </div>
           {/* Theme Toggle */}
@@ -162,7 +163,7 @@ export default function Navbar({
               </Link>
             ))}
 
-            <div className="px-3">
+            <div className="px-4">
               <SearchInput />
             </div>
 
