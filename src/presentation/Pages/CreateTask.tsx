@@ -26,6 +26,7 @@ import type { CreateTaskDTO } from "@/domain/entities/task.dto";
 import { TaskPriority } from "@/domain/enums/task-priority.enum";
 import { useNavigate } from "react-router";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
+import MetaData from "../components/MetaData";
 
 const taskSchema = z.object({
   title: z.string().min(3, "Title must be at least 3 characters"),
@@ -118,6 +119,13 @@ export default function CreateTask() {
   };
 
   return (
+    <>
+    <MetaData 
+      title="Create Task"
+      description="Create your first new task"
+      path="/create-task"
+      type="website"
+    />
     <div className="flex flex-col items-center justify-center min-h-screen p-4 selection:text-white selection:bg-black dark:selection:bg-gray-700 dark:selection:text-gray-300">
       <div className="w-full max-w-xl space-y-6">
         <div className="text-center space-y-2">
@@ -276,5 +284,6 @@ export default function CreateTask() {
         </Form>
       </div>
     </div>
+    </>
   );
 }

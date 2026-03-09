@@ -11,6 +11,7 @@ import { Button } from "@/presentation/components/Button";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/components/ui/avatar";
 import { useAuth } from "@/presentation/hooks/useAuth";
+import MetaData from "../components/MetaData";
 
 export default function ProfilePage() {
   const {data: User, isLoading, isError, refetch } = useCurrentUserQuery();
@@ -36,47 +37,56 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
-      <Card className="w-full max-w-md shadow-lg overflow-hidden">
-        <Avatar className="h-full w-full rounded-none">
-          <AvatarImage className="object-cover h-full w-full aspect-auto" src={User?.profile_image_url || (User as any)?.profilePicture} alt={User?.name} />
-          <AvatarFallback className="rounded-none text-4xl">{User?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <CardHeader className="text-center space-y-2">
-          <CardTitle className="text-2xl font-semibold">
-            Profile Info.
-          </CardTitle>
-          <CardDescription className="text-md text-muted-foreground">
-            Manage your personal information
-          </CardDescription>
-        </CardHeader>
+    <>
+      <MetaData 
+        title="Profile"
+        description="Profile Page where you can see your Account Info."
+        path="/profile"
+        type="website"
+        noIndex
+      />
+      <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
+        <Card className="w-full max-w-md shadow-lg overflow-hidden">
+          <Avatar className="h-full w-full rounded-none">
+            <AvatarImage className="object-cover h-full w-full aspect-auto" src={User?.profile_image_url || (User as any)?.profilePicture} alt={User?.name} />
+            <AvatarFallback className="rounded-none text-4xl">{User?.name?.charAt(0)?.toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-2xl font-semibold">
+              Profile Info.
+            </CardTitle>
+            <CardDescription className="text-md text-muted-foreground">
+              Manage your personal information
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Name</span>
-            <span className="font-medium">{User?.name}</span>
-          </div>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Name</span>
+              <span className="font-medium">{User?.name}</span>
+            </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Email</span>
-            <span className="font-medium">{User?.email}</span>
-          </div>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Email</span>
+              <span className="font-medium">{User?.email}</span>
+            </div>
 
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-muted-foreground">Role</span>
-            <span className="font-medium">{User?.role}</span>
-          </div>
-        </CardContent>
+            <div className="flex items-center justify-between">
+              <span className="text-sm text-muted-foreground">Role</span>
+              <span className="font-medium">{User?.role}</span>
+            </div>
+          </CardContent>
 
-        <CardFooter className="flex gap-2">
-          <Button className="w-full">
-            <Link to="/profile/edit">Edit Profile</Link>
-          </Button>
-          <Button className="w-full" variant="outline" onClick={logout}>
-            Log Out
-          </Button>
-        </CardFooter>
-      </Card>
-    </div>
+          <CardFooter className="flex gap-2">
+            <Button className="w-full">
+              <Link to="/profile/edit">Edit Profile</Link>
+            </Button>
+            <Button className="w-full" variant="outline" onClick={logout}>
+              Log Out
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    </>
   );
 }

@@ -11,6 +11,7 @@ import {Button} from "@/presentation/components/Button";
 import {AlertCircle, Calendar, CircleArrowRight, Clock } from "lucide-react"
 import { formatDate } from "@/domain/utils/date";
 import { ListTodo } from "lucide-react";
+import MetaData from "../components/MetaData";
 
 const TaskPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -70,6 +71,13 @@ const TaskPage = () => {
   const tasks = data?.tasks || [];
 
   return (
+    <>
+    <MetaData
+      title="Tasks"
+      description="the Tasks Page where you see all of the tasks you created"
+      path="/tasks"
+      type="website"
+    />
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
@@ -188,6 +196,7 @@ const TaskPage = () => {
         )}
       </div>
     </div>
+    </>
   );
 };
 

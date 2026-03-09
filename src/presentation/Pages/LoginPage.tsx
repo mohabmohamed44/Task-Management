@@ -28,6 +28,7 @@ import { useLoginMutation } from "@/app/Queries/auth.query";
 import { useRateLimitState } from "@/app/hooks/useRateLimitState";
 import toast from "react-hot-toast";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
+import MetaData from "../components/MetaData";
 // Validation schema
 const formSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -114,6 +115,13 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
+    <>
+    <MetaData
+      title="Login"
+      description="Enter Your Credentials here to continue"
+      path="/auth/login"
+      noIndex
+    />
     <div className="min-h-screen flex items-center justify-center p-4 selection:text-white selection:bg-black">
       <Card className="w-full max-w-md shadow-sm border-border/40 bg-background">
         <CardHeader className="space-y-1 text-center">
@@ -334,6 +342,7 @@ export const LoginPage: React.FC = () => {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 };
 

@@ -25,6 +25,7 @@ import { Loader2, Eye, EyeOff, Mail, Lock, User, Shield } from 'lucide-react';
 import { Link, useNavigate } from "react-router";
 import { useRegisterMutation } from "@/app/Queries/auth.query";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
+import MetaData from "../components/MetaData";
 // Validation schema for signup
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -117,6 +118,13 @@ export const SignUpPage: React.FC = () => {
   const passwordStrength = getPasswordStrength(password);
 
   return (
+    <>
+    <MetaData 
+      title="Register"
+      description="Create a new Account to have full access into our System"
+      path="/auth/register"
+      type="website"
+    />
     <div className="min-h-screen flex items-center justify-center p-4 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md xl:max-w-xl  border-border/50 bg-background">
         <CardHeader className="space-y-1 text-center">
@@ -372,6 +380,7 @@ export const SignUpPage: React.FC = () => {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 };
 
