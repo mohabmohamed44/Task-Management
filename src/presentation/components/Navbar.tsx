@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import { Button } from "@/presentation/components/Button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/components/ui/avatar";
 import {
@@ -37,16 +37,18 @@ export default function Navbar({
   className = "",
 }: NavbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   // Destructing some Props from useAuth hook
   const { isAuthenticated, logout } = useAuth();
   const { data: currentUser } = useCurrentUserQuery();
   const userImage = currentUser?.profile_image_url || (currentUser as any)?.profilePicture;
+  const location = useLocation();
 
   return (
     <header
       className={`w-full bg-background/80 backdrop-blur sticky border-b shadow-sm top-0 z-40 ${className}`}
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Left */}
           <div className="flex items-center gap-4">
@@ -54,6 +56,9 @@ export default function Navbar({
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Toggle navigation menu"
+                aria-expanded={mobileOpen}
+                aria-controls="mobile-menu"
                 onClick={() => setMobileOpen(!mobileOpen)}
               >
                 {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -70,6 +75,7 @@ export default function Navbar({
                   key={l.href}
                   to={l.href}
                   className="px-3 py-2 rounded-md text-md font-medium hover:bg-muted/60"
+                  aria-current={location.pathname === l.href ? "page" : undefined}
                 >
                   {l.label}
                 </Link>
@@ -101,9 +107,9 @@ export default function Navbar({
                 </>
               ) : (
                 <DropdownMenu>
-                  <DropdownMenuTrigger>
+                  <DropdownMenuTrigger aria-label="User menu" onClick={() => setIsOpen(!isOpen)} aria-haspopup="true" aria-expanded={isOpen}>
                     <Avatar>
-                      <AvatarImage src={userImage} />
+                      <AvatarImage src={userImage} alt={currentUser?.name ? `${currentUser.name}'s avatar` : "User avatar"} />
                       <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "M"}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
@@ -152,12 +158,13 @@ export default function Navbar({
 
         {/* Mobile Menu */}
         {mobileOpen && (
-          <div className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2">
+          <div id="mobile-menu" className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2">
             {links.map((l) => (
               <Link
                 key={l.href}
                 to={l.href}
                 className="block px-3 py-2 rounded-md hover:bg-muted/60"
+                aria-current={location.pathname === l.href ? "page" : undefined}
               >
                 {l.label}
               </Link>

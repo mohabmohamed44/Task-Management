@@ -11,6 +11,7 @@ import { Button } from "@/presentation/components/Button";
 import { useUpdateProfilePictureMutation } from "@/app/Queries/auth.query";
 import { useState, useEffect } from "react";
 import { CloudUpload } from "lucide-react";
+import MetaData from "../components/MetaData";
 
 export default function EditProfilePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -44,6 +45,14 @@ export default function EditProfilePage() {
   };
 
   return (
+    <>
+    <MetaData
+      title="Edit Profile Page"
+      description="change and edit your Profile Data"
+      type="website"
+      path="profile/edit"
+      noIndex
+    />
     <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-2">
@@ -104,5 +113,6 @@ export default function EditProfilePage() {
         </CardFooter>
       </Card>
     </div>
+    </>
   );
 }

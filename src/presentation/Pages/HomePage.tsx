@@ -25,6 +25,8 @@ import { Input } from "@/presentation/components/ui/input";
 import { Label } from "@/presentation/components/ui/label";
 import { Link } from "react-router";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
+import { useTasksQuery } from "@/app/Queries/task.query";
+import MetaData from "../components/MetaData";
 
 export default function HomePage() {
   const steps = [
@@ -33,6 +35,13 @@ export default function HomePage() {
     { id: 3, title: "Invite Team", description: "Collaborate with others", icon: <Users className="h-4 w-4" /> },
     { id: 4, title: "First Task", description: "Create your initial task", icon: <ListTodo className="h-4 w-4" /> },
   ];
+  const { data } = useTasksQuery({});
+  const tasks = data?.tasks || [];
+  const completedCount = tasks.filter((t) => t.completed).length;
+  const pendingCount = tasks.filter((t) => !t.completed).length;
+  const totalCount = tasks.length;
+  const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
 
   const { data: currentUser } = useCurrentUserQuery();
 
@@ -102,6 +111,13 @@ export default function HomePage() {
   // Show improved onboarding for new users after login/register
   if (isLoggedIn && isNewUser && progress < 100) {
     return (
+      <>
+        <MetaData
+          title="Welcome"
+          description="Get started with Prioritize - Your minimalist task manager"
+          path="/"
+          type="website"
+        />
       <div className="min-h-screen p-4 md:p-8 selection:text-white selection:bg-gray-900">
         <div className="max-w-7xl mx-auto">
           {/* Header with greeting and progress */}
@@ -450,11 +466,19 @@ export default function HomePage() {
           </footer>
         </div>
       </div>
+      </>
     );
   }
 
   // Normal homepage for users who completed onboarding or aren't logged in
   return (
+    <>
+      <MetaData
+        title="Home"
+        description="Prioritize - Your minimalist task manager to help you focus on what matters"
+        path="/"
+        type="website"
+      />
     <div className="min-h-screen selection:text-white selection:bg-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
@@ -470,12 +494,12 @@ export default function HomePage() {
           </p>
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button size="lg" className="gap-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900" asChild>
+            <Button size="lg" className="gap-2 bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900" role="button" name="Tasks button" asChild>
               <Link to="/tasks">
                 See Your Tasks
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800" asChild>
+            <Button size="lg" variant="outline" className="gap-2 border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800" role="button" name="Create a Task"  asChild>
               <Link to="/create-task">
                 Add a Task
                 <Calendar className="h-4 w-4" />
@@ -498,31 +522,31 @@ export default function HomePage() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="border border-gray-200 dark:border-gray-800">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed Tasks</CardTitle>
+                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Completed Tasks</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">128</div>
-                    <Progress value={75} className="mt-2 bg-gray-200 dark:bg-gray-700" />
+                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{completedCount}</div>
+                    <Progress value={completionRate} className="mt-2 bg-gray-200 dark:bg-gray-700" />
                   </CardContent>
                 </Card>
                 
                 <Card className="border border-gray-200 dark:border-gray-800">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Projects</CardTitle>
+                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Pending Tasks</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">12</div>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">3 due this week</p>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{pendingCount}</div>
+                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Tasks to complete</p>
                   </CardContent>
                 </Card>
                 
                 <Card className="border border-gray-200 dark:border-gray-800">
                   <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">Team Productivity</CardTitle>
+                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Total Tasks</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">94%</div>
-                    <Badge variant="outline" className="mt-1 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">+12% this month</Badge>
+                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCount}</div>
+                    <Badge variant="outline" className="mt-1 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">Completion: {completionRate}%</Badge>
                   </CardContent>
                 </Card>
               </div>
@@ -531,5 +555,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

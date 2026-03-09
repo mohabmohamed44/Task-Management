@@ -6,6 +6,7 @@ import TaskChart from "@/presentation/components/TaskChart";
 import { Button } from "@/presentation/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
+import MetaData from "../components/MetaData";
 
 export default function StatisticsPage() {
     const navigate = useNavigate();
@@ -60,6 +61,14 @@ export default function StatisticsPage() {
     }
 
     return (
+        <>
+         <MetaData
+            title="Statistics"
+            description="Manage and track your Statistics and Productivity here"
+            type = "website"
+            path="/statistics"
+            noIndex
+         />
         <div className="min-h-screen bg-background p-6 dark:selection:bg-gray-600 dark:selection:text-gray-300 selection:bg-black selection:text-white">
             <div className="max-w-7xl mx-auto space-y-6">
                 {/* Header Navigation */}
@@ -84,5 +93,6 @@ export default function StatisticsPage() {
                 {/* Summary Statistics Cards */}
             </div>
         </div>
+        </>
     );
 }

@@ -1,5 +1,5 @@
 import { RouterProvider } from 'react-router'
-import { appRouter } from "./app/router.tsx";
+import { appRouter } from "./app/routes/router.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Toaster } from "react-hot-toast";
 import { hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query'
