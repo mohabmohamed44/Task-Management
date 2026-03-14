@@ -37,7 +37,9 @@ import { Textarea } from "@/presentation/components/ui/textarea";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/presentation/components/ui/select";
@@ -91,7 +93,7 @@ const getPriorityColor = (priority: string) => {
 export default function WeeklyGoals() {
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>();
   const [searchQuery, setSearchQuery] = useState("");
   const [weeklyGoals, setWeeklyGoals] = useState<WeeklyGoal[]>(SAMPLE_WEEKLY_GOALS);
 
@@ -398,9 +400,12 @@ export default function WeeklyGoals() {
                       <SelectValue placeholder="Filter" />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-gray-900">
-                      <SelectItem value="all">All Goals</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectGroup>
+                        <SelectLabel>Filter</SelectLabel>
+                        <SelectItem value="all">All Goals</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="pending">Pending</SelectItem>
+                      </SelectGroup>  
                     </SelectContent>
                   </Select>
 

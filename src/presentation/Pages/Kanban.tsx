@@ -1,13 +1,9 @@
+import { useState } from "react";
 import {
   Target,
   Plus,
   MoreHorizontal,
-  Calendar,
-  Flag,
-  Tag,
-  GripVertical,
   CheckCircle,
-  Circle,
   Search,
   Filter,
   LayoutGrid,
@@ -20,68 +16,201 @@ import { Badge } from "@/presentation/components/ui/badge";
 import { Separator } from "@/presentation/components/ui/separator";
 import { Input } from "@/presentation/components/ui/input";
 import MetaData from "../components/MetaData";
+import { DraggableContainer } from '@/presentation/components/DragAndDrop/DraggableContainer';
+import { SortableItem } from '@/presentation/components/DragAndDrop/SortableItem';
+import { useKanbanTasks } from '@/app/hooks/useKanbanTasks';
+import type { Task } from "@/domain/entities/task.entity";
+import { TaskCard } from '@/presentation/components/TaskCard';
+import { AddCardDialog } from "@/presentation/components/Kanban/AddCardDialog";
+import { AddColumnDialog } from "@/presentation/components/Kanban/AddColumnDialog";
+import { EditBoardDialog } from "@/presentation/components/Kanban/EditBoardDialog";
+import { EditColumnDialog } from "@/presentation/components/Kanban/EditColumnDialog";
+import { AddBoardDialog } from "@/presentation/components/Kanban/AddBoardDialog";
+import { useKanbanBoardsQuery, useCreateBoardMutation, useDeleteColumnMutation } from "@/app/Queries/kanban.query";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/presentation/components/ui/dropdown-menu";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core';
 
-// Kanban column interface
-interface KanbanColumn {
-  id: string;
-  title: string;
-  color: string;
-  taskCount: number;
-}
-
-// Sample columns
-const COLUMNS: KanbanColumn[] = [
-  { id: "todo", title: "To Do", color: "bg-gray-500", taskCount: 4 },
-  { id: "in-progress", title: "In Progress", color: "bg-gray-600", taskCount: 2 },
-  { id: "review", title: "In Review", color: "bg-gray-700", taskCount: 1 },
-  { id: "done", title: "Done", color: "bg-gray-800", taskCount: 5 },
-];
-
-// Sample tasks for display
-const SAMPLE_TASKS = {
-  todo: [
-    { id: 1, title: "Design new landing page mockups", priority: "high", category: "Design", dueDate: "Mar 10", tags: ["UI/UX"], completed: false },
-    { id: 2, title: "Set up CI/CD pipeline", priority: "medium", category: "Development", dueDate: "Mar 12", tags: ["DevOps"], completed: false },
-    { id: 3, title: "Write API documentation", priority: "low", category: "Documentation", dueDate: "Mar 15", tags: ["Docs"], completed: false },
-    { id: 4, title: "Review competitor analysis", priority: "medium", category: "Research", dueDate: "Mar 14", tags: ["Research"], completed: false },
-  ],
-  "in-progress": [
-    { id: 5, title: "Implement user authentication", priority: "high", category: "Development", dueDate: "Mar 9", tags: ["Backend"], completed: false },
-    { id: 6, title: "Create dashboard components", priority: "medium", category: "Development", dueDate: "Mar 11", tags: ["Frontend"], completed: false },
-  ],
-  review: [
-    { id: 7, title: "Fix navigation bug on mobile", priority: "high", category: "Bug", dueDate: "Mar 8", tags: ["Bug"], completed: false },
-  ],
-  done: [
-    { id: 8, title: "Set up project repository", priority: "high", category: "Setup", dueDate: "Mar 1", tags: ["DevOps"], completed: true },
-    { id: 9, title: "Create design system tokens", priority: "medium", category: "Design", dueDate: "Mar 3", tags: ["UI/UX"], completed: true },
-    { id: 10, title: "Write unit tests for auth module", priority: "medium", category: "Testing", dueDate: "Mar 5", tags: ["Tests"], completed: true },
-    { id: 11, title: "Configure environment variables", priority: "low", category: "Setup", dueDate: "Mar 2", tags: ["DevOps"], completed: true },
-    { id: 12, title: "Update README documentation", priority: "low", category: "Documentation", dueDate: "Mar 4", tags: ["Docs"], completed: true },
-  ],
-};
-
-// Priority badge colors
-const getPriorityColor = (priority: string) => {
-  switch (priority) {
-    case "high":
-      return "bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900";
-    case "medium":
-      return "bg-gray-600 dark:bg-gray-400 text-white dark:text-gray-900";
-    case "low":
-      return "bg-gray-400 dark:bg-gray-600 text-white dark:text-gray-100";
-    default:
-      return "bg-gray-500 text-white";
-  }
-};
 
 export default function Kanban() {
-  // Calculate total tasks
-  const totalTasks = Object.values(SAMPLE_TASKS).flat().length;
-  const completedTasks = Object.values(SAMPLE_TASKS)
-    .flat()
-    .filter((task) => task.completed).length;
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  const { data: boards, isLoading: boardsLoading, error: boardsError } = useKanbanBoardsQuery();
+  const createBoardMutation = useCreateBoardMutation();
+  const [addBoardOpen, setAddBoardOpen] = useState(false);
+
+  
+  if (boardsLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading your boards...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error loading boards
+  if (boardsError) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <p className="text-red-600 font-medium">Failed to load boards</p>
+          <p className="text-muted-foreground mt-2">{boardsError.message || 'Please try again later'}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // No boards yet — prompt user to create one
+  if (!boards || boards.length === 0) {
+    return (
+      <>
+        <MetaData title="Kanban" description="Track your Essential Goals in dynamic Kanban Boards" path="/kanban" type="website" />
+        <div className="min-h-screen p-4 md:p-6 lg:p-8 flex items-center justify-center">
+          <Card className="max-w-md w-full border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900">
+            <CardContent className="py-12 text-center">
+              <div className="inline-flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
+                <LayoutGrid className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                No boards yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Create your first Kanban board to start organizing tasks.
+              </p>
+              <Button
+                loading={createBoardMutation.isPending}
+                className="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900"
+                onClick={() => setAddBoardOpen(true)}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Create Board
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+        <AddBoardDialog
+          open={addBoardOpen}
+          onOpenChange={setAddBoardOpen}
+        />
+      </>
+    );
+  }
+
+  // Auto-select the first board
+  const boardId = boards[0].id;
+
+  return (
+    <>
+      <KanbanBoard boardId={boardId} setAddBoardOpen={setAddBoardOpen} />
+
+      {/* Dialog for creating new boards */}
+      <AddBoardDialog
+        open={addBoardOpen}
+        onOpenChange={setAddBoardOpen}
+      />
+    </>
+  );
+}
+
+
+function KanbanBoard({ 
+  boardId
+}: { 
+  boardId: string;
+  setAddBoardOpen: (open: boolean) => void;
+}) {
+  const {
+    tasks,
+    columns,
+    activeTask,
+    dropIndicator,
+    totalTasks,
+    completedTasks,
+    completionRate,
+    isLoading,
+    error,
+    boardName,
+    boardDescription,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    deleteBoard,
+    isDeletingBoard,
+  } = useKanbanTasks(boardId);
+
+  // Dialog state
+  const [addColumnOpen, setAddColumnOpen] = useState(false);
+  const [editBoardOpen, setEditBoardOpen] = useState(false);
+  const [editColumnTarget, setEditColumnTarget] = useState<{
+    id: string;
+    name: string;
+    color: string;
+  } | null>(null);
+  const [addCardTarget, setAddCardTarget] = useState<{
+    columnId: string;
+    columnName: string;
+  } | null>(null);
+
+
+  const deleteColumnMutation = useDeleteColumnMutation();
+
+  // Setup sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor)
+  );
+
+  // Open the add-card dialog for a specific column
+  const openAddCardDialog = (columnId: string, columnName: string) => {
+    setAddCardTarget({ columnId, columnName });
+  };
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading Kanban board...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-96">
+        <div className="text-center">
+          <div className="text-red-500 mb-4">
+            <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <p className="text-red-600 font-medium">Failed to load Kanban board</p>
+          <p className="text-muted-foreground mt-2">{error.message || 'Please try again later'}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -107,12 +236,46 @@ export default function Kanban() {
               >
                 <LayoutGrid className="h-7 w-7 text-gray-700 dark:text-gray-300" />
               </div>
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
-                  Kanban Board
-                </h1>
+              <div className="group relative">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
+                    {boardName || 'Kanban Board'}
+                  </h1>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
+                        aria-label="Board options"
+                      >
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+                      <DropdownMenuItem
+                        onClick={() => setEditBoardOpen(true)}
+                        className="cursor-pointer"
+                      >
+                        Edit Board
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-800" />
+                      <DropdownMenuItem
+                        className="text-red-600 dark:text-red-400 cursor-pointer"
+                        disabled={isDeletingBoard}
+                        onClick={() => {
+                          if (confirm('Are you sure you want to delete this board? All columns and tasks will be permanently lost.')) {
+                            deleteBoard();
+                          }
+                        }}
+                      >
+                        {isDeletingBoard ? 'Deleting...' : 'Delete Board'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
                 <p className="text-gray-600 dark:text-gray-400 mt-1 text-lg">
-                  Organize tasks with drag-and-drop columns
+                  {boardDescription || 'Organize tasks with drag-and-drop columns'}
                 </p>
               </div>
             </div>
@@ -135,13 +298,14 @@ export default function Kanban() {
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
-              <Button
+              {/* <Button
                 className="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900"
-                aria-label="Add new task"
+                aria-label="Add new column"
+                onClick={() => setAddColumnOpen(true)}
               >
                 <Plus className="h-4 w-4 mr-2" />
-                Add Task
-              </Button>
+                Add Column
+              </Button> */}
             </div>
           </div>
 
@@ -184,192 +348,220 @@ export default function Kanban() {
         </header>
 
         {/* Kanban Board */}
-        <div
-          className="overflow-x-auto pb-4"
-          role="region"
-          aria-label="Kanban board columns"
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-4 min-w-max">
-            {COLUMNS.map((column) => (
-              <div
-                key={column.id}
-                className="w-80 shrink-0"
-                role="list"
-                aria-label={`${column.title} column`}
-              >
-                {/* Column Header */}
-                <Card className="border border-gray-200 dark:border-gray-800 shadow-sm bg-gray-50 dark:bg-gray-800/50">
-                  <CardHeader className="pb-3 pt-4 px-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div
-                          className={`w-3 h-3 rounded-full ${column.color}`}
-                          aria-hidden="true"
-                        />
-                        <CardTitle className="text-base font-semibold text-gray-900 dark:text-gray-100">
-                          {column.title}
-                        </CardTitle>
-                        <Badge
-                          variant="secondary"
-                          className="ml-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
-                          aria-label={`${column.taskCount} tasks`}
-                        >
-                          {column.taskCount}
-                        </Badge>
-                      </div>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-gray-500 dark:text-gray-400"
-                        aria-label="More options"
-                      >
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardHeader>
-                </Card>
-
-                {/* Tasks Container */}
+          <div
+            className="overflow-x-auto pb-4"
+            role="region"
+            aria-label="Kanban board columns"
+          >
+            <div className="flex gap-4 min-w-max">
+              {columns.map((column) => (
                 <div
-                  className="space-y-3 mt-3 min-h-50"
+                  key={column.id}
+                  className="w-80 shrink-0"
                   role="list"
-                  aria-label={`Tasks in ${column.title}`}
+                  aria-label={`${column.title} column`}
                 >
-                  {SAMPLE_TASKS[column.id as keyof typeof SAMPLE_TASKS]?.map((task) => (
-                    <Card
-                      key={task.id}
-                      className="border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing"
-                      role="listitem"
-                      aria-label={`Task: ${task.title}`}
-                    >
-                      <CardContent className="p-4">
-                        {/* Task Header */}
-                        <div className="flex items-start justify-between gap-2 mb-2">
-                          <div className="flex items-center gap-2 flex-1">
+                  {/* Column Header */}
+                  <Card className="border border-gray-200 dark:border-gray-800 shadow-sm bg-gray-50 dark:bg-gray-800/50">
+                    <CardHeader className="pb-3 pt-4 px-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className={`w-3 h-3 rounded-full ${!column.color?.startsWith('#') ? column.color : ''}`}
+                            style={column.color?.startsWith('#') ? { backgroundColor: column.color } : undefined}
+                            aria-hidden="true"
+                          />
+                          <CardTitle className="text-base font-semibold text-gray-900 dark:text-gray-100">
+                            {column.title}
+                          </CardTitle>
+                          <Badge
+                            variant="secondary"
+                            className="ml-1 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                            aria-label={`${tasks[column.id]?.length || 0} tasks`}
+                          >
+                            {tasks[column.id]?.length || 0}
+                          </Badge>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                              aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
+                              className="h-8 w-8 text-gray-500 dark:text-gray-400"
+                              aria-label="More options"
                             >
-                              {task.completed ? (
-                                <CheckCircle className="h-5 w-5" />
-                              ) : (
-                                <Circle className="h-5 w-5" />
-                              )}
+                              <MoreHorizontal className="h-4 w-4" />
                             </Button>
-                            <span
-                              className={`text-sm font-medium text-gray-800 dark:text-gray-200 ${
-                                task.completed ? "line-through text-gray-500 dark:text-gray-500" : ""
-                              }`}
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+                            <DropdownMenuItem 
+                              onClick={() => setEditColumnTarget({ id: column.id, name: column.title, color: column.color })}
+                              className="cursor-pointer"
                             >
-                              {task.title}
-                            </span>
-                          </div>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                            aria-label="Drag task"
-                          >
-                            <GripVertical className="h-4 w-4" />
-                          </Button>
-                        </div>
+                              Rename Column
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator className="bg-gray-200 dark:bg-gray-800" />
+                            <DropdownMenuItem 
+                              className="text-red-600 dark:text-red-400 cursor-pointer"
+                              onClick={() => {
+                                if (confirm('Are you sure you want to delete this column? All tasks inside will be lost.')) {
+                                  deleteColumnMutation.mutate({ boardId, columnId: column.id });
+                                }
+                              }}
+                            >
+                              Delete Column
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </CardHeader>
+                  </Card>
 
-                        {/* Task Meta */}
-                        <div className="flex flex-wrap items-center gap-2 mt-3">
-                          {/* Priority Badge */}
-                          <Badge
-                            className={`text-xs ${getPriorityColor(task.priority)}`}
-                            aria-label={`Priority: ${task.priority}`}
-                          >
-                            <Flag className="h-3 w-3 mr-1" />
-                            {task.priority}
-                          </Badge>
-
-                          {/* Category */}
-                          <Badge
-                            variant="outline"
-                            className="text-xs border-gray-300 dark:border-gray-700 text-gray-600 dark:text-gray-400"
-                            aria-label={`Category: ${task.category}`}
-                          >
-                            <Tag className="h-3 w-3 mr-1" />
-                            {task.category}
-                          </Badge>
-
-                          {/* Due Date */}
-                          <div
-                            className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-500"
-                            aria-label={`Due date: ${task.dueDate}`}
-                          >
-                            <Calendar className="h-3 w-3" />
-                            {task.dueDate}
-                          </div>
-                        </div>
-
-                        {/* Tags */}
-                        {task.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {task.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
+                  {/* Tasks Container */}
+                  <DraggableContainer
+                    items={tasks[column.id] || []}
+                    id={column.id}
+                    getItemId={(task: Task) => task.id.toString()}
+                    renderItem={(task: Task, index: number) => (
+                      <>
+                        {/* Drop indicator line before task */}
+                        {dropIndicator &&
+                         dropIndicator.overId === task.id.toString() &&
+                         dropIndicator.position === 'before' && (
+                          <div className="h-0.5 bg-blue-500 rounded-full my-1 mx-2" />
                         )}
-                      </CardContent>
-                    </Card>
-                  ))}
 
-                  {/* Add Task Button */}
+                        <SortableItem id={task.id.toString()}>
+                          <TaskCard 
+                            task={task}
+                          />
+                        </SortableItem>
+
+                        {/* Drop indicator line after task */}
+                        {dropIndicator &&
+                         dropIndicator.overId === task.id.toString() &&
+                         dropIndicator.position === 'after' && (
+                          <div className="h-0.5 bg-blue-500 rounded-full my-1 mx-2" />
+                        )}
+
+                        {/* Drop indicator for column bottom */}
+                        {dropIndicator &&
+                         dropIndicator.overId === column.id &&
+                         dropIndicator.position === 'column' &&
+                         index === (tasks[column.id]?.length || 0) - 1 && (
+                          <div className="h-0.5 bg-blue-500 rounded-full my-1 mx-2" />
+                        )}
+                      </>
+                    )}
+                    className="space-y-3 min-h-50 py-2"
+                  />
+
+                  {/* Add Card Button */}
                   <Button
                     variant="ghost"
                     className="w-full justify-start text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700"
-                    aria-label="Add task to this column"
+                    aria-label="Add card to this column"
+                    onClick={() => openAddCardDialog(column.id, column.title)}
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Add task
+                    Add card
                   </Button>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {/* Add Column Button */}
-            <div className="w-80 shrink-0">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 h-14"
-                aria-label="Add new column"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Column
-              </Button>
+              {/* Add Column Button */}
+              <div className="w-80 shrink-0">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 h-14"
+                  aria-label="Add new column"
+                  onClick={() => setAddColumnOpen(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Column
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Empty State (for reference) */}
-        <Card className="mt-8 border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900">
-          <CardContent className="py-12 text-center">
-            <div className="inline-flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
-              <Target className="h-8 w-8 text-gray-600 dark:text-gray-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              No tasks yet
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
-              Start by creating your first task and organize it into columns.
-            </p>
-            <Button className="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900">
-              Create Your First Task
-            </Button>
-          </CardContent>
-        </Card>
+          {/* Drag Overlay - Shows the card being dragged */}
+          <DragOverlay>
+            {activeTask ? (
+              <TaskCard task={activeTask} isOverlay />
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+
+        {/* Empty State — only shown when there are no columns at all */}
+        {columns.length === 0 && (
+          <Card className="mt-8 border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900">
+            <CardContent className="py-12 text-center">
+              <div className="inline-flex items-center justify-center p-4 bg-gray-100 dark:bg-gray-800 rounded-full mb-4">
+                <Target className="h-8 w-8 text-gray-600 dark:text-gray-400" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                No columns yet
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 max-w-md mx-auto mb-6">
+                Start by creating your first column to organize tasks on your board.
+              </p>
+              <Button
+                className="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900"
+                onClick={() => setAddColumnOpen(true)}
+              >
+                Create Your First Column
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
     </div>
+
+    {/* Dialogs */}
+    <AddColumnDialog
+      open={addColumnOpen}
+      onOpenChange={setAddColumnOpen}
+      boardId={boardId}
+      nextPosition={columns.length}
+    />
+
+    <AddCardDialog
+      open={!!addCardTarget}
+      onOpenChange={(open) => {
+        if (!open) setAddCardTarget(null);
+      }}
+      boardId={boardId}
+      columnId={addCardTarget?.columnId ?? ""}
+      columnName={addCardTarget?.columnName ?? ""}
+    />
+
+    <EditBoardDialog
+      open={editBoardOpen}
+      onOpenChange={setEditBoardOpen}
+      boardId={boardId}
+      currentName={boardName}
+      currentDescription={boardDescription}
+    />
+
+    <EditColumnDialog
+      open={!!editColumnTarget}
+      onOpenChange={(open) => {
+        if (!open) setEditColumnTarget(null);
+      }}
+      boardId={boardId}
+      columnId={editColumnTarget?.id ?? ""}
+      currentName={editColumnTarget?.name ?? ""}
+      currentColor={editColumnTarget?.color ?? ""}
+    />
+
+
     </>
   );
 }
