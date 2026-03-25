@@ -31,7 +31,7 @@ import {
 
 import { format, isSameDay } from "date-fns";
 import MetaData from "../components/MetaData";
-import { useWeeklyGoals, useFilteredGoals } from "./WeeklyGoals/hooks/useWeeklyGoals";
+import { useWeeklyGoals, useFilteredGoals } from "../../app/hooks/useWeeklyGoals";
 import { GoalList, AddGoalModal } from "./WeeklyGoals/components";
 import { type FilterStatus } from "./WeeklyGoals/utils/goalFilters";
 import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
