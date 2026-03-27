@@ -5,9 +5,11 @@ interface GoalListProps {
   goals: any[];
   onToggle: (goalId: string, currentStatus: string) => void;
   onDelete: (goalId: string) => void;
+  onView: (goal: any) => void;
+  onEdit: (goal: any) => void;
 }
 
-export const GoalList = ({ goals, onToggle, onDelete }: GoalListProps) => {
+export const GoalList = ({ goals, onToggle, onDelete, onView, onEdit }: GoalListProps) => {
   if (goals.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500 dark:text-gray-500">
@@ -26,6 +28,8 @@ export const GoalList = ({ goals, onToggle, onDelete }: GoalListProps) => {
           goal={goal}
           onToggle={onToggle}
           onDelete={onDelete}
+          onView={onView}
+          onEdit={onEdit}
         />
       ))}
     </div>

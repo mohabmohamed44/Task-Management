@@ -28,7 +28,6 @@ export interface NavbarProps {
 export default function Navbar({
   brand = <span className="font-extrabold text-lg">Prioritize</span>,
   links = [
-    { href: "/", label: "Home" },
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
     { href: "/goals", label: "Weekly Goals"},

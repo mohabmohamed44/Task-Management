@@ -7,9 +7,11 @@ interface GoalItemProps {
   goal: any;
   onToggle: (goalId: string, currentStatus: string) => void;
   onDelete: (goalId: string) => void;
+  onView: (goal: any) => void;
+  onEdit: (goal: any) => void;
 }
 
-export const GoalItem = ({ goal, onToggle, onDelete }: GoalItemProps) => {
+export const GoalItem = ({ goal, onToggle, onDelete, onView, onEdit }: GoalItemProps) => {
   const isCompleted = goal.status === "completed" || goal.status === "Completed";
 
   return (
@@ -38,7 +40,8 @@ export const GoalItem = ({ goal, onToggle, onDelete }: GoalItemProps) => {
         <div className="flex items-start justify-between gap-2">
           <div className="flex-1">
             <h4
-              className={`font-medium ${
+              onClick={() => onView(goal)}
+              className={`font-medium cursor-pointer ${
                 isCompleted
                   ? "text-gray-500 dark:text-gray-500 line-through"
                   : "text-gray-900 dark:text-gray-100"
@@ -56,6 +59,7 @@ export const GoalItem = ({ goal, onToggle, onDelete }: GoalItemProps) => {
               size="icon"
               className="h-8 w-8 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
               aria-label="Edit goal"
+              onClick={() => onEdit(goal)}
             >
               <Edit className="h-4 w-4" />
             </Button>
