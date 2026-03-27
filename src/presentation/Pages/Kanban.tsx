@@ -4,7 +4,6 @@ import {
   Plus,
   MoreHorizontal,
   CheckCircle,
-  Search,
   Filter,
   LayoutGrid,
   List,
@@ -14,7 +13,7 @@ import { Progress } from "@/presentation/components/ui/progress";
 import { Button } from "@/presentation/components/Button";
 import { Badge } from "@/presentation/components/ui/badge";
 import { Separator } from "@/presentation/components/ui/separator";
-import { Input } from "@/presentation/components/ui/input";
+// import { Input } from "@/presentation/components/ui/input";
 import MetaData from "../components/MetaData";
 import { DraggableContainer } from '@/presentation/components/DragAndDrop/DraggableContainer';
 import { SortableItem } from '@/presentation/components/DragAndDrop/SortableItem';
@@ -331,7 +330,7 @@ function KanbanBoard({
           </div>
 
           {/* Search Bar */}
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <div className="relative max-w-md">
               <Search
                 className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
@@ -344,7 +343,7 @@ function KanbanBoard({
                 aria-label="Search tasks"
               />
             </div>
-          </div>
+          </div> */}
         </header>
 
         {/* Kanban Board */}

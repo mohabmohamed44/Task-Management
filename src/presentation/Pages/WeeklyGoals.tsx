@@ -12,6 +12,7 @@ import {
   Search,
   CheckCircle,
   Circle,
+  AlertCircle,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/presentation/components/ui/card";
 import { Progress } from "@/presentation/components/ui/progress";
@@ -32,7 +33,7 @@ import {
 import { format, isSameDay } from "date-fns";
 import MetaData from "../components/MetaData";
 import { useWeeklyGoals, useFilteredGoals } from "@/app/hooks/useWeeklyGoals";
-import { GoalList, AddGoalModal } from "./WeeklyGoals/components";
+import { GoalList, AddGoalModal, GoalDetailsModal, EditGoalModal } from "./WeeklyGoals/components";
 import { type FilterStatus } from "./WeeklyGoals/utils/goalFilters";
 import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
 
@@ -42,19 +43,26 @@ export default function WeeklyGoals() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedGoal, setSelectedGoal] = useState<any | null>(null);
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   // Data and business logic via custom hook
   const {
     goals,
     isLoading,
+    isError,
     weeklyGoalsByDay,
     goalsStats,
     weeklyStats,
     weekDays,
     toggleGoalCompletion,
+    refetch,
     deleteGoal,
     createGoal,
     isCreating,
+    updateGoal,
+    isUpdating,
   } = useWeeklyGoals(currentWeekOffset);
 
   // Filter goals based on UI state
@@ -67,6 +75,48 @@ export default function WeeklyGoals() {
 
   // Check if date is today
   const isToday = (date: Date) => isSameDay(date, new Date());
+
+  const handleViewGoal = (goal: any) => {
+    setSelectedGoal(goal);
+    setIsDetailsOpen(true);
+  };
+
+  const handleEditGoal = (goal: any) => {
+    setSelectedGoal(goal);
+    setIsEditOpen(true);
+  };
+
+
+  if(isLoading) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-border"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-primary absolute top-0"></div>
+          </div>
+          <p className="text-muted-foreground font-medium">Loading Weekly Goals...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if(isError) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="bg-destructive/10 p-6 rounded-full w-fit mx-auto">
+              <AlertCircle className="h-16 w-16 text-destructive" />
+          </div>
+            <h3 className="text-xl font-semibold text-foreground">Error loading statistics</h3>
+            <p className="text-muted-foreground">Unable to load task statistics. Please try again.</p>
+            <Button variant="outline" onClick={() => refetch()}>
+                Retry
+            </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <>
@@ -106,6 +156,8 @@ export default function WeeklyGoals() {
             filteredGoals={filteredGoals}
             onToggleGoal={toggleGoalCompletion}
             onDeleteGoal={deleteGoal}
+            onViewGoal={handleViewGoal}
+            onEditGoal={handleEditGoal}
             onCreateGoal={createGoal}
             isCreating={isCreating}
           />
@@ -125,6 +177,26 @@ export default function WeeklyGoals() {
           </div>
         </div>
       </div>
+
+      <GoalDetailsModal
+        open={isDetailsOpen}
+        onOpenChange={(open) => {
+          setIsDetailsOpen(open);
+          if (!open) setSelectedGoal(null);
+        }}
+        goal={selectedGoal}
+      />
+
+      <EditGoalModal
+        open={isEditOpen}
+        onOpenChange={(open) => {
+          setIsEditOpen(open);
+          if (!open) setSelectedGoal(null);
+        }}
+        goal={selectedGoal}
+        onSubmit={(goalId, data) => updateGoal(goalId, data)}
+        isPending={isUpdating}
+      />
     </>
   );
 }
@@ -280,6 +352,8 @@ interface GoalsSectionProps {
   filteredGoals: any[];
   onToggleGoal: (goalId: string, currentStatus: string) => void;
   onDeleteGoal: (goalId: string) => void;
+  onViewGoal: (goal: any) => void;
+  onEditGoal: (goal: any) => void;
   onCreateGoal: (data: any) => void;
   isCreating: boolean;
 }
@@ -295,6 +369,8 @@ function GoalsSection({
   filteredGoals,
   onToggleGoal,
   onDeleteGoal,
+  onViewGoal,
+  onEditGoal,
   onCreateGoal,
   isCreating,
 }: GoalsSectionProps) {
@@ -324,7 +400,13 @@ function GoalsSection({
 
         <CardContent>
           <GoalsStatsBar goalsStats={goalsStats} />
-          <GoalList goals={filteredGoals} onToggle={onToggleGoal} onDelete={onDeleteGoal} />
+          <GoalList
+            goals={filteredGoals}
+            onToggle={onToggleGoal}
+            onDelete={onDeleteGoal}
+            onView={onViewGoal}
+            onEdit={onEditGoal}
+          />
         </CardContent>
       </Card>
     </section>

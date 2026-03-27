@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import {
+  useGoalsBySpecificWeekQuery,
   useCurrentWeekGoalsQuery,
   useUpdateGoalMutation,
   useDeleteGoalMutation,
@@ -19,7 +20,13 @@ export interface UseWeeklyGoalsReturn {
   // Data
   goals: any[];
   isLoading: boolean;
+  isError: boolean;
+  refetch: () => void;
   weeklyGoalsByDay: ReturnType<typeof organizeGoalsByDay>;
+  
+  // Current week data (always available)
+  currentWeekGoals: any[];
+  isCurrentWeekLoading: boolean;
   
   // Stats
   goalsStats: ReturnType<typeof calculateGoalsStats>;
@@ -33,6 +40,7 @@ export interface UseWeeklyGoalsReturn {
   // Mutations
   toggleGoalCompletion: (goalId: string, currentStatus: string) => void;
   deleteGoal: (goalId: string) => void;
+  updateGoal: (goalId: string, data: any) => void;
   createGoal: (data: {
     title: string;
     description: string;
@@ -53,8 +61,15 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
     [weekOffset]
   );
 
-  // Fetch data
-  const { data: currentWeekGoals, isLoading } = useCurrentWeekGoalsQuery();
+  // Fetch data for selected week
+  const { data: currentWeekGoals, isLoading, isError, refetch } = useGoalsBySpecificWeekQuery({
+    week_start: currentWeekStart,
+    week_end: currentWeekEnd,
+  });
+  
+  // Always fetch current week data
+  const { data: actualCurrentWeekGoals, isLoading: isCurrentWeekLoading } = useCurrentWeekGoalsQuery();
+  
   useWeeklyStatisticsQuery({
     week_start: currentWeekStart,
     week_end: currentWeekEnd,
@@ -70,8 +85,13 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
     [currentWeekStart]
   );
 
-  // Goals data
-  const goals = useMemo(() => currentWeekGoals || [], [currentWeekGoals]);
+  // Goals data - use current week if offset is 0, otherwise use selected week
+  const goals = useMemo(() => {
+    if(weekOffset === 0) {
+      return actualCurrentWeekGoals || [];
+    }
+    return currentWeekGoals || [];
+  }, [currentWeekGoals, actualCurrentWeekGoals, weekOffset])
 
   // Organize goals by day
   const weeklyGoalsByDay = useMemo(
@@ -108,6 +128,14 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
     deleteGoalMutation.mutate({ goalId });
   };
 
+  // Business logic: update goal
+  const updateGoal = (goalId: string, data: any) => {
+    updateGoalMutation.mutate({
+      goalId,
+      data,
+    });
+  };
+
   // Business logic: create goal
   const createGoal = (data: {
     title: string;
@@ -125,14 +153,19 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
   return {
     goals,
     isLoading,
+    isError,
+    refetch,
     weeklyGoalsByDay,
     goalsStats,
     weeklyStats,
     currentWeekStart,
     currentWeekEnd,
     weekDays,
+    currentWeekGoals: actualCurrentWeekGoals || [],
+    isCurrentWeekLoading,
     toggleGoalCompletion,
     deleteGoal,
+    updateGoal,
     createGoal,
     isCreating: createGoalMutation.isPending,
     isUpdating: updateGoalMutation.isPending,
