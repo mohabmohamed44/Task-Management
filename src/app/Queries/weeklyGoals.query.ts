@@ -32,6 +32,7 @@ import type {
     UnlinkTaskFromGoal,
     GetWeeklyStatistics
 } from "@/domain/entities/WeeklyGoals";
+import { getCurrentWeekRange } from "@/presentation/Pages/WeeklyGoals/utils/dateHelpers";
 import toast from "react-hot-toast";
 
 // Query Keys
@@ -45,8 +46,12 @@ export const weeklyGoalsQueryKeys = {
 
 // Queries
 export const useCurrentWeekGoalsQuery = () => {
+    // Compute on render so when the UI re-renders after midnight/week change,
+    // the query key changes and a new week is fetched.
+    const { start: currentWeekStart, end: currentWeekEnd } = getCurrentWeekRange(0);
+
     return useQuery({
-        queryKey: weeklyGoalsQueryKeys.currentWeek(),
+        queryKey: [...weeklyGoalsQueryKeys.currentWeek(), currentWeekStart.toISOString(), currentWeekEnd.toISOString()],
         queryFn: async () => {
             const useCase = new GetCurrentWeekGoalsUseCase();
             return useCase.execute();
@@ -98,7 +103,9 @@ export const useCreateGoalMutation = () => {
             return result.data;
         },
         onSuccess: () => {
+            // Invalidate all weekly goals queries to ensure fresh data
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Goal created successfully");
         },
         onError: (error: any) => {
@@ -121,6 +128,7 @@ export const useUpdateGoalMutation = () => {
         onSuccess: (_, { goalId }) => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goal(goalId) });
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Goal updated successfully");
         },
         onError: (error: any) => {
@@ -143,6 +151,7 @@ export const useDeleteGoalMutation = () => {
         onSuccess: (_, { goalId }) => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goal(goalId) });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Goal deleted successfully");
         },
         onError: (error: any) => {
@@ -164,6 +173,7 @@ export const useReOrderGoalPositionMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Goal reordered successfully");
         },
         onError: (error: any) => {
@@ -185,6 +195,7 @@ export const useDuplicateGoalToNextWeekMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Goal duplicated successfully");
         },
         onError: (error: any) => {
@@ -249,6 +260,7 @@ export const useUpdateMilestoneMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Milestone updated successfully");
         },
         onError: (error: any) => {
@@ -270,6 +282,7 @@ export const useDeleteMilestoneMutation = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
+            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
             toast.success("Milestone deleted successfully");
         },
         onError: (error: any) => {

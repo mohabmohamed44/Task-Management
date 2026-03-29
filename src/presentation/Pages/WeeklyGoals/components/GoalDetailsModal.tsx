@@ -17,7 +17,7 @@ export function GoalDetailsModal({ open, onOpenChange, goal }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+      <DialogContent className="bg-white dark:bg-gray-900 selection:text-white selection:bg-black dark:selection:text-gray-200 dark:selection:bg-gray-400 border-gray-200 dark:border-gray-800">
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-gray-100">
             Goal Details
@@ -30,7 +30,7 @@ export function GoalDetailsModal({ open, onOpenChange, goal }: Props) {
         <div className="space-y-4">
           <div>
             <div className="text-sm text-gray-500 dark:text-gray-400">Title</div>
-            <div className="text-base font-medium text-gray-900 dark:text-gray-100">
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {goal.title}
             </div>
           </div>
@@ -44,17 +44,29 @@ export function GoalDetailsModal({ open, onOpenChange, goal }: Props) {
             </div>
           ) : null}
 
+          {goal.category ?
+            <div>
+              <h3 className="text-sm text-gray-500 dark:text-gray-400">Category</h3>
+              <Badge aria-label="Goal Category" variant="outline" className="text-sm mt-1">{goal.category}</Badge> 
+            </div>
+            : null}
+          
+          {goal.priority ?
+            <div>
+              <h3 className="text-sm text-gray-500 dark:text-gray-400">Priority</h3>
+              <Badge aria-label="Priority badge" className={`text-sm mt-1 ${getPriorityColor(goal.priority)}`}>{goal.priority}</Badge> 
+            </div>
+          : null}
+
           <div className="flex flex-wrap gap-2">
-            {goal.priority ? <Badge aria-label="Priority badge" className={`text-xs ${getPriorityColor(goal.priority)}`}>{goal.priority}</Badge> : null}
-            {goal.category ? <Badge aria-label="Goal Category" variant="outline" className="text-xs">{goal.category}</Badge> : null}
-            {goal.status ? <Badge variant="outline" className="text-xs">{goal.status}</Badge> : null}
+            {goal.status ? <Badge variant="outline" className="text-xs md:text-md">{goal.status}</Badge> : null}
             {typeof goal.progress === "number" ? (
-              <Badge variant="outline" className="text-xs">{goal.progress}%</Badge>
+              <Badge variant="outline" className="text-xs md:text-md">{goal.progress}%</Badge>
             ) : null}
           </div>
 
           {createdAt ? (
-            <div className="text-xs text-gray-500 dark:text-gray-400">
+            <div className="text-xs md:text-md text-gray-500 dark:text-gray-400">
               Created: {format(createdAt, "PPP p")}
             </div>
           ) : null}

@@ -1,5 +1,7 @@
 "use client";
 
+import { isSameDay } from "date-fns";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/presentation/components/ui/card"
 import { ChartContainer, ChartTooltipContent } from "@/presentation/components/ui/chart"
 import {
@@ -55,11 +57,9 @@ export default function TaskChart({ tasks }: TaskChartProps) {
     return days.map((day, index) => {
       const date = new Date(today);
       date.setDate(date.getDate() - (6 - index));
-      const dateStr = date.toISOString().split('T')[0];
       
       const createdTasks = tasks.filter(task => {
-        const taskDate = new Date(task.createdAt).toISOString().split('T')[0];
-        return taskDate === dateStr;
+        return isSameDay(new Date(task.createdAt), date);
       });
 
       return {
@@ -67,8 +67,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
         created: createdTasks.length,
         completed: tasks.filter(task => {
           if (!task.completed) return false;
-          const completedDate = new Date(task.updatedAt).toISOString().split('T')[0];
-          return completedDate === dateStr;
+          return isSameDay(new Date(task.updatedAt), date);
         }).length
       };
     });
@@ -92,8 +91,8 @@ export default function TaskChart({ tasks }: TaskChartProps) {
       // Filter tasks completed in this month
       const completedInMonth = tasks.filter(task => {
         if (!task.completed) return false;
-        const completedDate = new Date(task.updatedAt);
-        return completedDate.getFullYear() === currentYear && completedDate.getMonth() === monthNum - 1;
+        const taskUpdatedDate = new Date(task.updatedAt);
+        return taskUpdatedDate.getFullYear() === currentYear && taskUpdatedDate.getMonth() === monthNum - 1;
       });
       
       return {

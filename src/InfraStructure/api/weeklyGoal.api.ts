@@ -1,4 +1,5 @@
 import { api } from "@/InfraStructure/api/http";
+import { format } from "date-fns";
 import type {
     CreateGoal,
     addMilestoneToGoal,
@@ -23,8 +24,8 @@ export const WeeklyGoalAPI = {
             description: data.description,
             priority: data.priority,
             category: data.category,
-            weekStart: data.week_start.toISOString().split('T')[0],
-            weekEnd: data.week_end.toISOString().split('T')[0]
+            weekStart: format(data.week_start, "yyyy-MM-dd"),
+            weekEnd: format(data.week_end, "yyyy-MM-dd")
         }),
 
     getCurrentWeekGoals: () =>
@@ -33,7 +34,7 @@ export const WeeklyGoalAPI = {
     getGoalsBySpecificWeek: (params: GetGoalsBySpecificWeek) =>
         api.get("/weekly-goals/by-week", {
             params: {
-                weekStart: params.week_start.toISOString().split('T')[0]
+                weekStart: format(params.week_start, "yyyy-MM-dd")
             }
         }),
 
@@ -51,8 +52,8 @@ export const WeeklyGoalAPI = {
 
     duplicateGoalToNextWeek: (params: DuplicateGoalToNextWeek) =>
         api.post(`/weekly-goals/${params.goalId}/duplicate`, {
-            newWeekStart: params.newWeekStart.toISOString().split('T')[0],
-            newWeekEnd: params.newWeekEnd.toISOString().split('T')[0]
+            newWeekStart: format(params.newWeekStart, "yyyy-MM-dd"),
+            newWeekEnd: format(params.newWeekEnd, "yyyy-MM-dd")
         }),
 
     // Add Milestone

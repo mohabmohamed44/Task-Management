@@ -16,8 +16,8 @@ export const getWeekDays = (weekStart: Date): WeekDay[] => {
 
 export const getCurrentWeekRange = (weekOffset: number) => {
   const now = addWeeks(new Date(), weekOffset);
-  const start = startOfWeek(now, { weekStartsOn: 0 });
-  const end = endOfWeek(now, { weekStartsOn: 0 });
+  const start = startOfWeek(now, { weekStartsOn: 1 }); // Monday start to match database
+  const end = endOfWeek(now, { weekStartsOn: 1 });
   return { start, end };
 };
 
@@ -36,11 +36,14 @@ export interface DayGoal {
 export const organizeGoalsByDay = (goals: any[], weekDays: Date[]): DayGoal[] => {
   return weekDays.map((day) => {
     const dayGoals = goals.filter((goal: any) => {
+      // Goals are already filtered by week in useWeeklyGoals
+      // Now distribute them by created_at date within the week
       const goalCreatedDate = goal.created_at
         ? goal.created_at instanceof Date
           ? goal.created_at
           : parseISO(String(goal.created_at))
         : null;
+      
       if (!goalCreatedDate) return false;
       return isSameDay(goalCreatedDate, day);
     });

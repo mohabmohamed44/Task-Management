@@ -13,7 +13,7 @@ export const ChartContainer = forwardRef<HTMLDivElement, ChartContainerProps>(
     return (
       <div
         ref={ref}
-        className={`aspect-video w-full ${className || ""}`}
+        className={`w-full ${className || "aspect-video"}`}
         {...restProps}
       >
         {children}
