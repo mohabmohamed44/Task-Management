@@ -6,12 +6,10 @@ import {
   Calendar,
   Zap,
   ArrowRight,
-  Trophy,
   Sparkles,
   ListTodo,
   ChartNoAxesColumn,
   Rocket,
-  UserPlus,
   Briefcase,
   Star,
 } from "lucide-react";
@@ -20,27 +18,30 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/pre
 import { Progress } from "@/presentation/components/ui/progress";
 import { Badge } from "@/presentation/components/ui/badge";
 import { Separator } from "@/presentation/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/presentation/components/ui/tabs";
 import { Input } from "@/presentation/components/ui/input";
 import { Label } from "@/presentation/components/ui/label";
 import { Link } from "react-router";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
-import { useTasksQuery } from "@/app/Queries/task.query";
 import MetaData from "../components/MetaData";
+import { StatsBarChart } from "../components/StatsBarChart";
+import { useHomeAnalytics } from "@/app/hooks/useHomeAnalytics";
 
 export default function HomePage() {
   const steps = [
     { id: 1, title: "Welcome", description: "Get started with Prioritize", icon: <Rocket className="h-4 w-4" />},
-    { id: 2, title: "Set Goals", description: "Define your objectives", icon: <Target className="h-4 w-4" />, Link: <Link to="/create-task"></Link> },
-    { id: 3, title: "Invite Team", description: "Collaborate with others", icon: <Users className="h-4 w-4" /> },
-    { id: 4, title: "First Task", description: "Create your initial task", icon: <ListTodo className="h-4 w-4" /> },
+    { id: 2, title: "Set Milestones", description: "Define your objectives", icon: <Target className="h-4 w-4" />},
+    { id: 3, title: "First Task", description: "Create your initial task", icon: <ListTodo className="h-4 w-4" /> },
+    { id: 4, title: "Weekly Goals", description: "Set your weekly priorities", icon: <Calendar className="h-4 w-4" />},
   ];
-  const { data } = useTasksQuery({});
-  const tasks = data?.tasks || [];
-  const completedCount = tasks.filter((t) => t.completed).length;
-  const pendingCount = tasks.filter((t) => !t.completed).length;
-  const totalCount = tasks.length;
-  const completionRate = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  const {
+    completedCount,
+    pendingCount,
+    totalCount,
+    completionRate,
+    weeklyChartData,
+  } = useHomeAnalytics();
 
 
   const { data: currentUser } = useCurrentUserQuery();
@@ -194,8 +195,8 @@ export default function HomePage() {
                     <span className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
                       {currentStep === 1 && <Rocket className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
                       {currentStep === 2 && <Target className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
-                      {currentStep === 3 && <Users className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
-                      {currentStep === 4 && <ListTodo className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
+                      {currentStep === 3 && <ListTodo className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
+                      {currentStep === 4 && <Calendar className="h-6 w-6 text-gray-700 dark:text-gray-300" />}
                     </span>
                     {steps[currentStep - 1].title}
                   </CardTitle>
@@ -238,16 +239,16 @@ export default function HomePage() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-lg transition-all cursor-pointer group">
                           <Target className="h-8 w-8 text-gray-700 dark:text-gray-300 mb-3 group-hover:scale-110 transition" />
-                          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Personal Goals</h4>
+                          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Personal Milestones</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Set individual objectives and track personal progress
+                            Track key achievements and personal breakthroughs
                           </p>
                         </div>
                         <div className="p-5 border-2 border-gray-200 dark:border-gray-700 rounded-xl hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-lg transition-all cursor-pointer group">
                           <Briefcase className="h-8 w-8 text-gray-700 dark:text-gray-300 mb-3 group-hover:scale-110 transition" />
-                          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Team Objectives</h4>
+                          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Team Milestones</h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                            Define team goals and align with company vision
+                            Define team achievements and project checkpoints
                           </p>
                         </div>
                       </div>
@@ -261,87 +262,133 @@ export default function HomePage() {
                     </div>
                   )}
 
-                  {/* Step 3: Invite Team */}
+                  {/* Step 3: Create First Task */}
                   {currentStep === 3 && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                      <div className="bg-gray-100 dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
-                        <h4 className="font-semibold flex items-center gap-2 text-lg mb-2 text-gray-800 dark:text-gray-200">
-                          <UserPlus className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                          Invite your teammates
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                          Collaboration is key. Add team members to start working together.
-                        </p>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <Input
-                            type="email"
-                            placeholder="colleague@company.com"
-                            className="flex-1 border-gray-300 dark:border-gray-700"
-                          />
-                          <Button variant="outline" className="sm:w-auto border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200">
-                            Send Invite
-                          </Button>
+                      {/* Hero Card */}
+                      <div className="relative overflow-hidden bg-linear-to-br from-blue-600 via-indigo-600 to-purple-700 dark:from-blue-700 dark:via-indigo-700 dark:to-purple-800 p-8 rounded-2xl shadow-xl">
+                        {/* Background Pattern */}
+                        <div className="absolute inset-0 opacity-10">
+                          <div className="absolute top-0 right-0 w-32 h-32 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
+                          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
                         </div>
-                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-3">
-                          You can invite more people later from the team settings.
-                        </p>
+                        
+                        <div className="relative z-10 text-center">
+                          <div className="inline-flex items-center justify-center w-20 h-20 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 shadow-inner">
+                            <CheckCircle className="h-10 w-10 text-white" />
+                          </div>
+                          <h4 className="text-2xl font-bold text-white mb-2">
+                            Create Your First Task
+                          </h4>
+                          <p className="text-blue-100 max-w-md mx-auto">
+                            Turn your ideas into action. Start by adding a task and experience the satisfaction of getting things done.
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                        <Users className="h-4 w-4" />
-                        <span>Your team: You are the first member</span>
+
+                      {/* Quick Benefits */}
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-100 dark:border-green-800">
+                          <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center shadow-sm">
+                            <Zap className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <span className="font-semibold text-sm text-green-800 dark:text-green-300 block">Stay Organized</span>
+                            <span className="text-xs text-green-600 dark:text-green-400">Never forget a task</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-100 dark:border-purple-800">
+                          <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center shadow-sm">
+                            <Target className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <span className="font-semibold text-sm text-purple-800 dark:text-purple-300 block">Track Progress</span>
+                            <span className="text-xs text-purple-600 dark:text-purple-400">See your achievements</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-3 p-4 bg-orange-50 dark:bg-orange-900/20 rounded-xl border border-orange-100 dark:border-orange-800">
+                          <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center shadow-sm">
+                            <Calendar className="h-5 w-5 text-white" />
+                          </div>
+                          <div>
+                            <span className="font-semibold text-sm text-orange-800 dark:text-orange-300 block">Plan Ahead</span>
+                            <span className="text-xs text-orange-600 dark:text-orange-400">Set due dates</span>
+                          </div>
+                        </div>
                       </div>
+
+                      {/* CTA Button */}
+                      <Button 
+                        size="lg" 
+                        className="w-full bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900 h-14 text-lg shadow-lg hover:shadow-xl transition-all duration-300 group"
+                        asChild
+                      >
+                        <Link to="/create-task" className="flex items-center justify-center gap-3">
+                          <Sparkles className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                          Create Your First Task
+                          <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                      </Button>
                     </div>
                   )}
 
-                  {/* Step 4: First Task */}
+                  {/* Step 4: Weekly Goals */}
                   {currentStep === 4 && (
                     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                       <div className="bg-gray-100 dark:bg-gray-800 p-5 rounded-xl border border-gray-200 dark:border-gray-700">
                         <div className="flex items-center gap-3 mb-4">
-                          <Trophy className="h-8 w-8 text-gray-700 dark:text-gray-300" />
+                          <Calendar className="h-8 w-8 text-gray-700 dark:text-gray-300" />
                           <div>
-                            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">You're almost there!</h4>
+                            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Plan Your Week</h4>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                              Create your first task and experience the power of Prioritize.
+                              Set 3-5 key goals to focus on this week
                             </p>
                           </div>
                         </div>
                         <div className="space-y-3">
                           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                             <CheckCircle className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                            Track progress in real-time
+                            Stay focused on priorities
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                             <CheckCircle className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                            Set deadlines and reminders
+                            Track weekly progress
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300">
                             <CheckCircle className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                            Collaborate with team members
+                            Review and adjust goals
                           </div>
                         </div>
                       </div>
                       <div className="bg-gray-100 dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                        <Label htmlFor="task-title" className="text-sm font-medium text-gray-700 dark:text-gray-300">Task title</Label>
-                        <Input id="task-title" placeholder="e.g., Design homepage mockup" className="mt-1 border-gray-300 dark:border-gray-700" />
-                        <div className="grid grid-cols-2 gap-3 mt-3">
-                          <div>
-                            <Label htmlFor="due-date" className="text-sm text-gray-700 dark:text-gray-300">Due date</Label>
-                            <Input id="due-date" type="date" className="mt-1 border-gray-300 dark:border-gray-700" />
+                        <Label htmlFor="weekly-goal" className="text-sm font-medium text-gray-700 dark:text-gray-300">This week's priority</Label>
+                        <Input id="weekly-goal" placeholder="e.g., Complete project proposal" className="mt-1 border-gray-300 dark:border-gray-700" />
+                        <div className="flex gap-3 mt-3">
+                          <div className="flex-1">
+                            <Label htmlFor="category" className="text-sm text-gray-700 dark:text-gray-300">Category</Label>
+                            <select id="category" className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+                              <option>Work</option>
+                              <option>Personal</option>
+                              <option>Learning</option>
+                            </select>
                           </div>
-                          <div>
-                            <Label htmlFor="priority" className="text-sm text-gray-700 dark:text-gray-300">Priority</Label>
-                            <select id="priority" className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
-                              <option>High</option>
-                              <option>Medium</option>
-                              <option>Low</option>
+                          <div className="flex-1">
+                            <Label htmlFor="week-day" className="text-sm text-gray-700 dark:text-gray-300">Target Day</Label>
+                            <select id="week-day" className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-700 rounded-md bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-200">
+                              <option>Monday</option>
+                              <option>Tuesday</option>
+                              <option>Wednesday</option>
+                              <option>Thursday</option>
+                              <option>Friday</option>
                             </select>
                           </div>
                         </div>
                       </div>
-                      <Button className="w-full bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900" size="lg">
-                        Create My First Task
-                        <ArrowRight className="ml-2 h-4 w-4" />
+                      <Button className="w-full bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900" size="lg" asChild>
+                        <Link to="/weekly-goals">
+                          Go to Weekly Goals
+                          <ArrowRight className="ml-2 h-4 w-4" />
+                        </Link>
                       </Button>
                     </div>
                   )}
@@ -487,7 +534,7 @@ export default function HomePage() {
             <Sparkles className="h-8 w-8 text-gray-700 dark:text-gray-300" />
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6 text-gray-900 dark:text-gray-100">
-            Task <span className="text-gray-600 dark:text-gray-400">Management</span> Reimagined
+            Task <span className="text-blue-600 dark:text-blue-400">Management</span> Reimagined
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-10">
             Organize, prioritize, and conquer your tasks with our intuitive platform designed for individuals and teams.
@@ -516,41 +563,105 @@ export default function HomePage() {
                   <TabsTrigger value="projects" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900">Projects</TabsTrigger>
                   <TabsTrigger value="analytics" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900">Analytics</TabsTrigger>
                 </TabsList>
+
+                <TabsContent value="overview" className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <Card className="border border-gray-200 dark:border-gray-800">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Completed Tasks</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{completedCount}</div>
+                        <Progress value={completionRate} className="mt-2 bg-gray-200 dark:bg-gray-700" />
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 dark:border-gray-800">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Pending Tasks</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{pendingCount}</div>
+                        <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Tasks to complete</p>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 dark:border-gray-800">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Total Tasks</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCount}</div>
+                        <Badge variant="outline" className="mt-1 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">Completion: {completionRate}%</Badge>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="projects" className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="border border-gray-200 dark:border-gray-800">
+                      <CardHeader>
+                        <CardTitle className="text-lg text-gray-900 dark:text-gray-100">Active Projects</CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-gray-400">Your current project workflow</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-700 dark:text-gray-300">Personal Tasks</span>
+                            <Badge variant="outline" className="border-gray-300 dark:border-gray-700">{totalCount} tasks</Badge>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-700 dark:text-gray-300">Weekly Goals</span>
+                            <Badge variant="outline" className="border-gray-300 dark:border-gray-700">Active</Badge>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-700 dark:text-gray-300">Milestones</span>
+                            <Badge variant="outline" className="border-gray-300 dark:border-gray-700">{completedCount} done</Badge>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="border border-gray-200 dark:border-gray-800">
+                      <CardHeader>
+                        <CardTitle className="text-lg text-gray-900 dark:text-gray-100">Quick Stats</CardTitle>
+                        <CardDescription className="text-gray-600 dark:text-gray-400">Project performance metrics</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{completionRate}%</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Completion Rate</div>
+                          </div>
+                          <div className="text-center p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+                            <div className="text-2xl font-bold text-green-600 dark:text-green-400">{completedCount}</div>
+                            <div className="text-sm text-gray-600 dark:text-gray-400">Done This Week</div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="analytics" className="mt-6">
+                  <StatsBarChart
+                    title="Tasks & Goals Overview"
+                    description="Track your task creation and completion"
+                    data={weeklyChartData}
+                    series={[
+                      { key: "created", label: "Tasks Created", color: "#3b82f6" },
+                      { key: "completed", label: "Tasks Completed", color: "#8b5cf6" }, // Changed to purple to distinguish from goals
+                      { key: "goals", label: "Goals Completed", color: "#10b981" },
+                    ]}
+                    footerText="Weekly activity based on your real task data"
+                    trendText={`${completionRate > 50 ? "Trending up" : "Getting started"} this week`}
+                    showTrend={true}
+                    className="border-0 shadow-none"
+                  />
+                </TabsContent>
               </Tabs>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="border border-gray-200 dark:border-gray-800">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Completed Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{completedCount}</div>
-                    <Progress value={completionRate} className="mt-2 bg-gray-200 dark:bg-gray-700" />
-                  </CardContent>
-                </Card>
-                
-                <Card className="border border-gray-200 dark:border-gray-800">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Pending Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{pendingCount}</div>
-                    <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">Tasks to complete</p>
-                  </CardContent>
-                </Card>
-                
-                <Card className="border border-gray-200 dark:border-gray-800">
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-md font-medium text-gray-600 dark:text-gray-400">Total Tasks</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{totalCount}</div>
-                    <Badge variant="outline" className="mt-1 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300">Completion: {completionRate}%</Badge>
-                  </CardContent>
-                </Card>
-              </div>
-            </CardContent>
           </Card>
         </div>
       </div>

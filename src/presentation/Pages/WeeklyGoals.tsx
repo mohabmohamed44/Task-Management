@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Target,
   ChevronLeft,
@@ -9,7 +9,6 @@ import {
   BarChart3,
   Sparkles,
   Filter,
-  Search,
   CheckCircle,
   Circle,
   AlertCircle,
@@ -19,7 +18,6 @@ import { Progress } from "@/presentation/components/ui/progress";
 import { Button } from "@/presentation/components/Button";
 import { Badge } from "@/presentation/components/ui/badge";
 import { Separator } from "@/presentation/components/ui/separator";
-import { Input } from "@/presentation/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -32,6 +30,7 @@ import {
 
 import { format, isSameDay } from "date-fns";
 import MetaData from "../components/MetaData";
+import { SanitizedSearchInput } from "@/presentation/components/SanitizedSearchInput";
 import { useWeeklyGoals, useFilteredGoals } from "@/app/hooks/useWeeklyGoals";
 import { GoalList, AddGoalModal, GoalDetailsModal, EditGoalModal } from "./WeeklyGoals/components";
 import { type FilterStatus } from "./WeeklyGoals/utils/goalFilters";
@@ -40,12 +39,23 @@ import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
 export default function WeeklyGoals() {
   // UI state
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+  const [, forceTick] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [filterStatus, setFilterStatus] = useState<FilterStatus>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGoal, setSelectedGoal] = useState<any | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  // Re-render periodically so if the app stays open across midnight/week rollover,
+  // week ranges and React Query keys can update.
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      forceTick((t) => t + 1);
+    }, 60_000);
+
+    return () => window.clearInterval(id);
+  }, []);
 
   // Data and business logic via custom hook
   const {
@@ -392,10 +402,17 @@ function GoalsSection({
             <div className="flex items-center gap-2">
               <FilterSelect value={filterStatus} onChange={onFilterChange} />
               <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
+              <Button variant="default">Add Milestone</Button>
             </div>
           </div>
 
-          <SearchBar value={searchQuery} onChange={onSearchChange} />
+          <SanitizedSearchInput
+            value={searchQuery}
+            onChange={onSearchChange}
+            placeholder="Search goals..."
+            className="mt-4"
+            ariaLabel="Search goals"
+          />
         </CardHeader>
 
         <CardContent>
@@ -434,29 +451,6 @@ function FilterSelect({ value, onChange }: FilterSelectProps) {
         </SelectGroup>
       </SelectContent>
     </Select>
-  );
-}
-
-interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-}
-
-function SearchBar({ value, onChange }: SearchBarProps) {
-  return (
-    <div className="mt-4">
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
-        <Input
-          type="search"
-          placeholder="Search goals..."
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          className="pl-10 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
-          aria-label="Search goals"
-        />
-      </div>
-    </div>
   );
 }
 

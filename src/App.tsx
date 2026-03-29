@@ -6,7 +6,15 @@ import { hydrate, QueryClient, QueryClientProvider } from '@tanstack/react-query
 import { ModalProvider } from './app/Providers/ModalProvider'
 import './App.css'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000, // 5 minutes - data considered fresh
+      gcTime: 5 * 60 * 1000,    // 5 minutes - keep cache for 5 min after unmount
+    },
+  },
+});
 
 function App({ hydratedState }: { hydratedState?: any}) {
   if (hydratedState) {

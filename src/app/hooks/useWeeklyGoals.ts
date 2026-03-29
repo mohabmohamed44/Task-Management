@@ -55,26 +55,28 @@ export interface UseWeeklyGoalsReturn {
 }
 
 export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
-  // Week calculations (must be before data fetching that depends on them)
-  const { start: currentWeekStart, end: currentWeekEnd } = useMemo(
-    () => getCurrentWeekRange(weekOffset),
-    [weekOffset]
-  );
+  // Week calculations
+  // Compute on render so if the app stays open across midnight/week rollover,
+  // the computed range updates on the next re-render.
+  const { start: currentWeekStart, end: currentWeekEnd } = getCurrentWeekRange(weekOffset);
+
+  // Always compute the real current week range (today's week)
+  const { start: realCurrentWeekStart, end: realCurrentWeekEnd } = getCurrentWeekRange(0);
 
   // Fetch data for selected week
   const { data: currentWeekGoals, isLoading, isError, refetch } = useGoalsBySpecificWeekQuery({
     week_start: currentWeekStart,
     week_end: currentWeekEnd,
   });
-  
-  // Always fetch current week data
+
+  // Always fetch current week data using dedicated endpoint
   const { data: actualCurrentWeekGoals, isLoading: isCurrentWeekLoading } = useCurrentWeekGoalsQuery();
-  
+
   useWeeklyStatisticsQuery({
     week_start: currentWeekStart,
     week_end: currentWeekEnd,
   });
-  
+
   // Mutations
   const updateGoalMutation = useUpdateGoalMutation();
   const deleteGoalMutation = useDeleteGoalMutation();
@@ -87,11 +89,11 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
 
   // Goals data - use current week if offset is 0, otherwise use selected week
   const goals = useMemo(() => {
-    if(weekOffset === 0) {
+    if (weekOffset === 0) {
       return actualCurrentWeekGoals || [];
     }
     return currentWeekGoals || [];
-  }, [currentWeekGoals, actualCurrentWeekGoals, weekOffset])
+  }, [currentWeekGoals, actualCurrentWeekGoals, weekOffset]);
 
   // Organize goals by day
   const weeklyGoalsByDay = useMemo(
@@ -143,15 +145,20 @@ export const useWeeklyGoals = (weekOffset: number): UseWeeklyGoalsReturn => {
     priority: TaskPriority;
     category: string;
   }) => {
+    // If you're browsing a past/future week, still create goals into the real current week
+    // so goals created after midnight go to the new week (today's week).
+    const weekStartToUse = weekOffset === 0 ? currentWeekStart : realCurrentWeekStart;
+    const weekEndToUse = weekOffset === 0 ? currentWeekEnd : realCurrentWeekEnd;
+
     createGoalMutation.mutate({
       ...data,
-      week_start: currentWeekStart,
-      week_end: currentWeekEnd,
+      week_start: weekStartToUse,
+      week_end: weekEndToUse,
     });
   };
 
   return {
-    goals,
+    goals: goals || [],
     isLoading,
     isError,
     refetch,
