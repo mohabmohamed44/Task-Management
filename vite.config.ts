@@ -1,7 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite' // keep your style
+import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
 // https://vite.dev/config/
@@ -18,6 +18,15 @@ export default defineConfig({
     alias: {
       '@': path.resolve(__dirname, './src'), 
     },
+  },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      } as any,
+    } as any,
   },
   test: {
     globals: true,

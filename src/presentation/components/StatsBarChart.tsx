@@ -59,21 +59,21 @@ export function StatsBarChart({
 
   return (
     <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-gray-900 dark:text-gray-100">{title}</CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-400">
+      <CardHeader className="p-4 sm:p-6">
+        <CardTitle className="text-gray-900 dark:text-gray-100 text-base sm:text-lg">{title}</CardTitle>
+        <CardDescription className="text-gray-600 dark:text-gray-400 text-xs sm:text-sm">
           {description}
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <ChartContainer config={chartConfig} className="h-56">
+      <CardContent className="p-4 sm:p-6 pt-0">
+        <ChartContainer config={chartConfig} className="h-48 sm:h-56 md:h-64 lg:h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} accessibilityLayer>
+            <BarChart data={data} accessibilityLayer margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
               <CartesianGrid vertical={false} stroke="var(--color-border)" />
               <XAxis
                 dataKey="label"
                 tickLine={false}
-                tickMargin={10}
+                tickMargin={8}
                 axisLine={false}
                 tickFormatter={(value) =>
                   typeof value === "string" && value.length > 3
@@ -81,6 +81,7 @@ export function StatsBarChart({
                     : value
                 }
                 stroke="var(--color-muted-foreground)"
+                fontSize={12}
               />
               <Tooltip content={<ChartTooltipContent />} />
               {series.map((s) => (
@@ -88,18 +89,19 @@ export function StatsBarChart({
                   key={s.key}
                   dataKey={s.key}
                   fill={s.color}
-                  radius={4}
+                  radius={[4, 4, 0, 0]}
                   name={s.label}
+                  maxBarSize={50}
                 />
               ))}
             </BarChart>
           </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
-      <CardFooter className="flex-col items-start gap-2 text-sm">
+      <CardFooter className="flex-col items-start gap-2 text-xs sm:text-sm p-4 sm:p-6">
         {showTrend && trendText && (
           <div className="flex gap-2 leading-none font-medium text-gray-700 dark:text-gray-300">
-            {trendText} <TrendingUp className="h-4 w-4" />
+            {trendText} <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4" />
           </div>
         )}
         <div className="leading-none text-gray-500 dark:text-gray-500">

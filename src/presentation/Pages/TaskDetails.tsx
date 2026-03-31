@@ -73,59 +73,59 @@ export default function TaskDetails() {
         type="website"
         path="/task/:id"
       />
-      <div className="min-h-screen bg-background p-6 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">
+      <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Header Navigation */}
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <Button 
               variant="ghost" 
               size="icon" 
               onClick={goBackToTasks}
-              className="hover:bg-secondary"
+              className="hover:bg-secondary self-start"
             >
-              <ArrowLeft className="h-6 w-6" />
+              <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Task Details</h1>
-              <p className="text-sm text-muted-foreground">View full information about this task</p>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Task Details</h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">View full information about this task</p>
             </div>
           </div>
 
-          <Card className="border shadow-lg">
+          <Card className="border">
             <CardHeader className="space-y-4">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <Badge variant={task.completed ? "secondary" : "default"} className={task.completed ? "" : "bg-primary"}>
+                <div className="space-y-2 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={task.completed ? "secondary" : "default"} className={`${task.completed ? "" : "bg-primary"} text-xs sm:text-sm`}>
                       {task.completed ? "Completed" : "In Progress"}
                     </Badge>
                     <Badge 
                       variant="outline" 
-                      className={`text-xs font-medium ${getPriorityColor(task.priority)} flex items-center gap-1.5 px-3 py-1`}
+                      className={`text-xs font-medium ${getPriorityColor(task.priority)} flex items-center gap-1.5 px-2 sm:px-3 py-1`}
                     >
                       {getPriorityIconName(task.priority)}
                       {task.priority} Priority
                     </Badge>
                   </div>
-                  <CardTitle className="text-3xl font-bold leading-tight">
+                  <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
                     {task.title}
                   </CardTitle>
                 </div>
                 
-                <div className="flex flex-col md:flex-row md:items-center gap-3">
-                  <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg border">
-                    <Layers className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm font-medium">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
+                  <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg border text-sm">
+                    <Layers className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <span className="font-medium truncate">
                       {typeof task.category === 'object' && task.category !== null 
                         ? (task.category as any).name 
                         : task.category}
                     </span>
                   </div>
-                  <Button variant="outline" onClick={openExportModal}>
+                  <Button variant="outline" onClick={openExportModal} className="w-full sm:w-auto">
                     <Download className="h-4 w-4 mr-2" />
                     Export
                   </Button>
-                  <Button variant={"default"} onClick={openUpdateModal}>
+                  <Button variant={"default"} onClick={openUpdateModal} className="w-full sm:w-auto">
                     Update Task
                   </Button>
                 </div>
@@ -134,31 +134,31 @@ export default function TaskDetails() {
             
             <Separator />
             
-            <CardContent className="pt-6 space-y-8">
+            <CardContent className="pt-4 sm:pt-6 space-y-6 sm:space-y-8">
               {/* Description */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
+              <div className="space-y-2 sm:space-y-3">
+                <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
                   Description
                 </h3>
-                <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-lg border text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                <div className="bg-slate-50 dark:bg-slate-900/50 p-3 sm:p-4 rounded-lg border text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm sm:text-base">
                   {task.description || "No description provided."}
                 </div>
               </div>
 
               {/* Tags */}
               {task.tags && task.tags.length > 0 && (
-                <div className="space-y-3">
-                  <h3 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                    <Tag className="h-4 w-4" />
+                <div className="space-y-2 sm:space-y-3">
+                  <h3 className="text-xs sm:text-sm font-medium text-muted-foreground flex items-center gap-2">
+                    <Tag className="h-3 w-3 sm:h-4 sm:w-4" />
                     Tags
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {task.tags.map((tag, index) => {
                       const tagText = typeof tag === 'object' && tag !== null 
                         ? (tag as any).name || (tag as any).id || JSON.stringify(tag)
                         : tag;
                       return (
-                        <Badge key={index} variant="secondary" className="px-3 py-1 text-sm font-medium">
+                        <Badge key={index} variant="secondary" className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">
                           # {tagText}
                         </Badge>
                       );
@@ -185,7 +185,7 @@ export default function TaskDetails() {
                 variant={task.completed ? "secondary" : "default"}
                 onClick={() => toggleComplete()}
                 disabled={isUpdating}
-                className="pointer-cursor"
+                className="pointer-cursor w-full sm:w-auto"
               >
                 <CheckCircle2 className="mr-2 h-4 w-4" />
                 {task.completed ? "Mark as Incomplete" : "Mark as Complete"}
@@ -194,7 +194,7 @@ export default function TaskDetails() {
 
             <Separator />
 
-            <CardFooter className="bg-slate-50 dark:bg-slate-900/30 p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <CardFooter className="bg-slate-50 dark:bg-slate-900/30 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Due Date</p>
                 <div className="flex items-center gap-2 text-sm font-medium">

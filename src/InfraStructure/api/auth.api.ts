@@ -19,10 +19,14 @@ const apiClient: AxiosInstance = axios.create({
 apiClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        // Check if response is HTML instead of JSON
+        // Check if response is HTML instead of JSON (usually server errors)
         if (error.response?.headers['content-type']?.includes('text/html')) {
             console.error('Received HTML response instead of JSON:', error.response.data);
-            throw new Error('Server returned an invalid response. Please check if the API is running correctly.');
+            // For rate limiting (429), show a clear message
+            if (error.response.status === 429) {
+                throw new Error('Too many attempts. Please wait a few minutes before trying again.');
+            }
+            throw new Error('Server error. Please try again later.');
         }
         throw error;
     }
@@ -36,8 +40,12 @@ export class AuthAPI {
         } catch (error: unknown) {
             // Re-throw with better error message
             const axiosError = error as any;
-            if (axiosError.response?.data) {
+            // If it's already an Error with a message, throw it as-is
+            if (error instanceof Error) {
                 throw error;
+            }
+            if (axiosError.response?.data?.message) {
+                throw new Error(axiosError.response.data.message, { cause: error });
             }
             throw new Error('Network error. Please check your connection.', { cause: error });
         }

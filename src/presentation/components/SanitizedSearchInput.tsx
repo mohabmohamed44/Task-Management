@@ -27,8 +27,8 @@ export function SanitizedSearchInput({
   };
 
   return (
-    <div className={className}>
-      <div className="relative max-w-md">
+    <div className={`w-full ${className}`}>
+      <div className="relative w-full max-w-full sm:max-w-md lg:max-w-lg">
         <Search
           className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
           aria-hidden="true"
@@ -38,7 +38,7 @@ export function SanitizedSearchInput({
           placeholder={placeholder}
           value={value}
           onChange={handleChange}
-          className="pl-10 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+          className="w-full pl-10 pr-4 py-2 text-sm sm:text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 rounded-lg"
           aria-label={ariaLabel}
         />
       </div>

@@ -128,15 +128,15 @@ export default function HomePage() {
                 <Sparkles className="h-7 w-7 text-gray-700 dark:text-gray-300" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
+                <h1 className="text-xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
                   Welcome to Prioritize, {currentUser?.name}!
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 mt-1 text-lg">
+                <p className="text-gray-600 dark:text-gray-400 mt-1 text-md">
                   Let's set up your workspace in a few simple steps
                 </p>
               </div>
             </div>
-            <Badge variant="outline" className="px-4 py-2 text-base border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
+            <Badge variant="outline" className="px-3 py-2 md:px-4 md:py-2 text-sm md:text-base border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200">
               Step {currentStep} of {steps.length}
             </Badge>
           </header>
@@ -555,13 +555,13 @@ export default function HomePage() {
           </div>
 
           {/* Dashboard Preview */}
-          <Card className="max-w-6xl mx-auto shadow-xl border border-gray-200 dark:border-gray-800">
-            <CardHeader>
+          <Card className="max-w-6xl mx-auto shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
+            <CardHeader className="p-4 sm:p-6">
               <Tabs defaultValue="overview" className="w-full">
-                <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800">
-                  <TabsTrigger value="overview" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900">Overview</TabsTrigger>
-                  <TabsTrigger value="projects" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900">Projects</TabsTrigger>
-                  <TabsTrigger value="analytics" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900">Analytics</TabsTrigger>
+                <TabsList className="grid w-full grid-cols-3 bg-gray-100 dark:bg-gray-800 text-xs sm:text-sm">
+                  <TabsTrigger value="overview" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 px-2 sm:px-3">Overview</TabsTrigger>
+                  <TabsTrigger value="projects" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 px-2 sm:px-3">Projects</TabsTrigger>
+                  <TabsTrigger value="analytics" className="data-[state=active]:bg-white dark:data-[state=active]:bg-gray-900 px-2 sm:px-3">Analytics</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="overview" className="mt-6">
@@ -644,21 +644,23 @@ export default function HomePage() {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="analytics" className="mt-6">
-                  <StatsBarChart
-                    title="Tasks & Goals Overview"
-                    description="Track your task creation and completion"
-                    data={weeklyChartData}
-                    series={[
-                      { key: "created", label: "Tasks Created", color: "#3b82f6" },
-                      { key: "completed", label: "Tasks Completed", color: "#8b5cf6" }, // Changed to purple to distinguish from goals
-                      { key: "goals", label: "Goals Completed", color: "#10b981" },
-                    ]}
-                    footerText="Weekly activity based on your real task data"
-                    trendText={`${completionRate > 50 ? "Trending up" : "Getting started"} this week`}
-                    showTrend={true}
-                    className="border-0 shadow-none"
-                  />
+                <TabsContent value="analytics" className="mt-4 sm:mt-6">
+                  <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+                    <StatsBarChart
+                      title="Tasks & Goals Overview"
+                      description="Track your task creation and completion"
+                      data={weeklyChartData}
+                      series={[
+                        { key: "created", label: "Tasks Created", color: "#3b82f6" },
+                        { key: "completed", label: "Tasks Completed", color: "#8b5cf6" },
+                        { key: "goals", label: "Goals Completed", color: "#10b981" },
+                      ]}
+                      footerText="Weekly activity based on your real task data"
+                      trendText={`${completionRate > 50 ? "Trending up" : "Getting started"} this week`}
+                      showTrend={true}
+                      className="border-0 shadow-none min-w-75"
+                    />
+                  </div>
                 </TabsContent>
               </Tabs>
             </CardHeader>

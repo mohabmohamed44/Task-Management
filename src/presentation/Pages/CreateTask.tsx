@@ -129,8 +129,8 @@ export default function CreateTask() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 selection:text-white selection:bg-black dark:selection:bg-gray-700 dark:selection:text-gray-300">
       <div className="w-full max-w-xl space-y-6">
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-semibold">Create A Task</h1>
-          <p className="text-muted-foreground text-xl text-center mt-2">
+          <h1 className="md:text-3xl text-xl font-semibold">Create A Task</h1>
+          <p className="text-muted-foreground text-md md:text-xl text-center mt-2">
             Enter your task details below
           </p>
         </div>

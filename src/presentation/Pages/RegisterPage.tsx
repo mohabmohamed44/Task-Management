@@ -125,23 +125,23 @@ export const SignUpPage: React.FC = () => {
       path="/auth/register"
       type="website"
     />
-    <div className="min-h-screen flex items-center justify-center p-4 selection:bg-black selection:text-white">
-      <Card className="w-full max-w-md xl:max-w-xl  border-border/50 bg-background">
-        <CardHeader className="space-y-1 text-center">
+    <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white">
+      <Card className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl border-border/50 bg-background">
+        <CardHeader className="space-y-1 text-center px-4 sm:px-6 md:px-8">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="h-6 w-6 text-primary" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
+          <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">
             Create an Account
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription className="text-sm sm:text-base text-muted-foreground">
             Fill in your details to get started
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-4 sm:px-6 md:px-8">
           {/* Social Sign Up Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button 
@@ -216,6 +216,11 @@ export const SignUpPage: React.FC = () => {
                           placeholder="name@example.com"
                           className="pl-10"
                           type="email"
+                          spellCheck={false}
+                          onCopy={(e) => e.preventDefault()}
+                          onCut={(e) => e.preventDefault()}
+                          onPaste={(e) => e.preventDefault()}
+                          autoComplete="email"
                           {...field}
                         />
                       </div>
@@ -238,6 +243,10 @@ export const SignUpPage: React.FC = () => {
                           type={showPassword ? "text" : "password"}
                           placeholder="Create a strong password"
                           className="pl-10 pr-10"
+                          onCopy={(e) => e.preventDefault()}
+                          onPaste={(e) => e.preventDefault()}
+                          onCut={(e) => e.preventDefault()}
+                          autoComplete="new-password"
                           {...field}
                         />
                         <Button
@@ -353,7 +362,7 @@ export const SignUpPage: React.FC = () => {
           </Form>
         </CardContent>
 
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex flex-col space-y-4 px-4 sm:px-6 md:px-8">
           <Separator />
           <div className="text-center text-md text-muted-foreground">
             Already have an account?{" "}

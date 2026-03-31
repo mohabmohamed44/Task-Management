@@ -35,13 +35,21 @@ export default function Navbar({
   ],
   className = "",
 }: NavbarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   // Destructing some Props from useAuth hook
   const { isAuthenticated, logout } = useAuth();
   const { data: currentUser } = useCurrentUserQuery();
   const userImage = currentUser?.profile_image_url || (currentUser as any)?.profilePicture;
   const location = useLocation();
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  }
+
+  // Auto-close Function
+  const closeMenu = () => {
+    setIsOpen(false);
+  }
 
   return (
     <header
@@ -56,11 +64,11 @@ export default function Navbar({
                 variant="ghost"
                 size="icon"
                 aria-label="Toggle navigation menu"
-                aria-expanded={mobileOpen}
+                aria-expanded={isOpen}
                 aria-controls="mobile-menu"
-                onClick={() => setMobileOpen(!mobileOpen)}
+                onClick={toggleMenu}
               >
-                {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
 
@@ -156,14 +164,15 @@ export default function Navbar({
         </div>
 
         {/* Mobile Menu */}
-        {mobileOpen && (
-          <div id="mobile-menu" className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2">
+        {isOpen && (
+          <div id="mobile-menu" className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
             {links.map((l) => (
               <Link
                 key={l.href}
                 to={l.href}
                 className="block px-3 py-2 rounded-md hover:bg-muted/60"
                 aria-current={location.pathname === l.href ? "page" : undefined}
+                onClick={closeMenu}
               >
                 {l.label}
               </Link>
@@ -175,11 +184,11 @@ export default function Navbar({
 
             {!isAuthenticated && (
               <div className="px-3 flex gap-2">
-                <Button variant="outline" className="flex-1">
-                  <Link to="/auth/login">Sign in</Link>
+                <Button variant="outline" className="flex-1" onClick={closeMenu}>
+                  <Link to="/auth/login" className="w-full">Sign in</Link>
                 </Button>
-                <Button className="flex-1">
-                  <Link to="/auth/register">Sign up</Link>
+                <Button className="flex-1" onClick={closeMenu}>
+                  <Link to="/auth/register" className="w-full">Sign up</Link>
                 </Button>
               </div>
             )}

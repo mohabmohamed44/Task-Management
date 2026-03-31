@@ -120,25 +120,26 @@ export const LoginPage: React.FC = () => {
       title="Login"
       description="Enter Your Credentials here to continue"
       path="/auth/login"
-      noIndex
+      noIndex={true}
+      type="website"
     />
-    <div className="min-h-screen flex items-center justify-center p-4 selection:text-white selection:bg-black">
-      <Card className="w-full max-w-md shadow-sm border-border/40 bg-background">
-        <CardHeader className="space-y-1 text-center">
+    <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 selection:text-white selection:bg-black">
+      <Card className="w-full sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl bg-background border-0 shadow-none">
+        <CardHeader className="space-y-1 text-center px-4 sm:px-6 md:px-8">
           <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Mail className="h-6 w-6 text-primary" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">
+          <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">
             Welcome back
           </CardTitle>
-          <CardDescription className="text-muted-foreground">
+          <CardDescription className="text-sm sm:text-base text-muted-foreground">
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
         
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 px-4 sm:px-6 md:px-8">
           {/* Social Login Buttons */}
           <div className="grid grid-cols-2 gap-3">
             <Button 
@@ -178,7 +179,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
 
               {isBlocked && (
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 dark:bg-yellow-900 dark:border-yellow-800">
@@ -220,6 +221,11 @@ export const LoginPage: React.FC = () => {
                             field.onChange(e);
                             sanitizeValues({ email: e.target.value });
                           }}
+                          onCopy={(e) => e.preventDefault()}
+                          onPaste={(e) => e.preventDefault()}
+                          onCut={(e) => e.preventDefault()}
+                          autoComplete="email"
+                          spellCheck={false}
                         />
                       </div>
                     </FormControl>
@@ -255,6 +261,10 @@ export const LoginPage: React.FC = () => {
                           className="pl-10 pr-10"
                           {...field}
                           disabled={isBlocked}
+                          onCopy={(e) => e.preventDefault()}
+                          onCut={(e) => e.preventDefault()}
+                          onPaste={(e) => e.preventDefault()}
+                          autoComplete="off"
                         />
                         <Button
                           type="button"
@@ -317,7 +327,7 @@ export const LoginPage: React.FC = () => {
           </Form>
         </CardContent>
 
-        <CardFooter className="flex flex-col space-y-4">
+        <CardFooter className="flex flex-col space-y-4 px-4 sm:px-6 md:px-8">
           <Separator />
           <div className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}

@@ -1,4 +1,4 @@
-import { Flag, Edit, Trash2, CheckCircle, Circle } from "lucide-react";
+import { Flag, Edit, Trash2, CheckCircle, Circle, Layers } from "lucide-react";
 import { Button } from "@/presentation/components/Button";
 import { Badge } from "@/presentation/components/ui/badge";
 import { getPriorityColor } from "@/domain/utils/task-ui";
@@ -91,6 +91,13 @@ export const GoalItem = ({ goal, onToggle, onDelete, onView, onEdit }: GoalItemP
               Completed
             </Badge>
           )}
+          <Badge 
+            className="text-xs md:text-md"
+            aria-label={`Goal Category ${goal.category}`}
+          >
+            {goal.category}
+            <Layers className="h-3 w-3"/>
+          </Badge>
         </div>
       </div>
     </div>

@@ -259,22 +259,22 @@ interface WeekNavigationProps {
 function WeekNavigation({ onPrevious, onNext, onCurrent }: WeekNavigationProps) {
   return (
     <div
-      className="flex items-center gap-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-1"
+      className="flex flex-row sm:flex-row items-stretch sm:items-center gap-2 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-1"
       role="navigation"
       aria-label="Week navigation"
     >
-      <Button variant="ghost" size="icon" onClick={onPrevious} aria-label="Go to previous week" className="h-9 w-9">
+      <Button variant="ghost" size="icon" onClick={onPrevious} aria-label="Go to previous week" className="h-9 w-full sm:w-9">
         <ChevronLeft className="h-4 w-4" />
       </Button>
       <Button
         variant="ghost"
         onClick={onCurrent}
         aria-label="Go to current week"
-        className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3"
+        className="text-sm font-medium text-gray-700 dark:text-gray-300 px-3 w-full sm:w-auto"
       >
         This Week
       </Button>
-      <Button variant="ghost" size="icon" onClick={onNext} aria-label="Go to next week" className="h-9 w-9">
+      <Button variant="ghost" size="icon" onClick={onNext} aria-label="Go to next week" className="h-9 w-full sm:w-9">
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>
@@ -399,10 +399,10 @@ function GoalsSection({
               </CardDescription>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
               <FilterSelect value={filterStatus} onChange={onFilterChange} />
               <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
-              <Button variant="default">Add Milestone</Button>
+              <Button variant="default" className="w-full sm:w-auto">Add Milestone</Button>
             </div>
           </div>
 
@@ -438,7 +438,7 @@ interface FilterSelectProps {
 function FilterSelect({ value, onChange }: FilterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-32.5 border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900" aria-label="Filter goals">
+      <SelectTrigger className="w-32.5 border-gray-300 mb-3 md:mb-0 dark:border-gray-700 bg-white dark:bg-gray-900" aria-label="Filter goals">
         <Filter className="h-4 w-4 mr-2" />
         <SelectValue placeholder="Filter" />
       </SelectTrigger>

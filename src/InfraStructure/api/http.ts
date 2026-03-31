@@ -31,7 +31,11 @@ api.interceptors.response.use(
     (error) => {
         if(error.response?.status === 401) {
             TokenStorage.remove();
-            window.location.href = "/auth/login";
+            const safeRedirect = (path: string) => {
+              const allowedPaths = ['/auth/login', '/auth/register', '/'];
+              if (allowedPaths.includes(path)) window.location.href = path;
+            };
+            safeRedirect("/auth/login");
         }
         return Promise.reject(error);
     }

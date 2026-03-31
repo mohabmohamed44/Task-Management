@@ -297,14 +297,14 @@ function KanbanBoard({
                 <Filter className="h-4 w-4 mr-2" />
                 Filter
               </Button>
-              {/* <Button
+              <Button
                 className="bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-300 text-white dark:text-gray-900"
                 aria-label="Add new column"
                 onClick={() => setAddColumnOpen(true)}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Column
-              </Button> */}
+              </Button>
             </div>
           </div>
 
@@ -465,7 +465,7 @@ function KanbanBoard({
                   {/* Add Card Button */}
                   <Button
                     variant="ghost"
-                    className="w-full justify-start text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700"
+                    className="w-full justify-start text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 border border-dashed border-gray-300 dark:border-gray-700 mt-2"
                     aria-label="Add card to this column"
                     onClick={() => openAddCardDialog(column.id, column.title)}
                   >

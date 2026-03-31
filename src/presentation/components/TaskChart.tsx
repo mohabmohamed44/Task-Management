@@ -104,77 +104,77 @@ export default function TaskChart({ tasks }: TaskChartProps) {
   }, [tasks]);
 
   return (
-    <div className="min-h-screen bg-background p-6 dark:selection:bg-gray-600 dark:selection:text-gray-300">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 dark:selection:bg-gray-600 dark:selection:text-gray-300">
+      <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-7">
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <CardContent className="p-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+          <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
                     Total Tasks
                   </p>
-                  <p className="text-3xl font-bold text-blue-600 dark:text-blue-400">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">
                     {totalTasks}
                   </p>
                 </div>
-                <div className="bg-blue-500/10 p-4 rounded-xl">
-                  <ListTodo className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                <div className="bg-blue-500/10 p-2 sm:p-3 md:p-4 rounded-xl">
+                  <ListTodo className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-blue-600 dark:text-blue-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <CardContent className="p-6">
+          <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
                     Completed
                   </p>
-                  <p className="text-3xl font-bold text-green-600 dark:text-green-400">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-green-600 dark:text-green-400">
                     {completedTasks}
                   </p>
                 </div>
-                <div className="bg-green-500/10 p-4 rounded-xl">
-                  <CheckCircle2 className="h-7 w-7 text-green-600 dark:text-green-400" />
+                <div className="bg-green-500/10 p-2 sm:p-3 md:p-4 rounded-xl">
+                  <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-green-600 dark:text-green-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <CardContent className="p-6">
+          <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
                     Pending
                   </p>
-                  <p className="text-3xl font-bold text-orange-600 dark:text-orange-400">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 dark:text-orange-400">
                     {pendingTasks}
                   </p>
                 </div>
-                <div className="bg-orange-500/10 p-4 rounded-xl">
-                  <TrendingUp className="h-7 w-7 text-orange-600 dark:text-orange-400" />
+                <div className="bg-orange-500/10 p-2 sm:p-3 md:p-4 rounded-xl">
+                  <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-orange-600 dark:text-orange-400" />
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-            <CardContent className="p-6">
+          <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+            <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                <div className="space-y-0.5 sm:space-y-1">
+                  <p className="text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-400">
                     Urgent
                   </p>
-                  <p className="text-3xl font-bold text-red-600 dark:text-red-400">
+                  <p className="text-xl sm:text-2xl md:text-3xl font-bold text-red-600 dark:text-red-400">
                     {urgentTasks}
                   </p>
                 </div>
-                <div className="bg-red-500/10 p-4 rounded-xl">
-                  <AlertCircle className="h-7 w-7 text-red-600 dark:text-red-400" />
+                <div className="bg-red-500/10 p-2 sm:p-3 md:p-4 rounded-xl">
+                  <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 md:h-7 md:w-7 text-red-600 dark:text-red-400" />
                 </div>
               </div>
             </CardContent>
@@ -182,14 +182,14 @@ export default function TaskChart({ tasks }: TaskChartProps) {
         </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Priority Distribution Pie Chart */}
-        <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="text-foreground">Priority Distribution</CardTitle>
-            <CardDescription className="text-muted-foreground">Tasks breakdown by priority level</CardDescription>
+        <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-foreground text-base sm:text-lg">Priority Distribution</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs sm:text-sm">Tasks breakdown by priority level</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <ChartContainer
               config={{
                 urgent: {
@@ -209,7 +209,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                   color: "#16a34a",
                 },
               }}
-              className="h-75"
+              className="h-64 sm:h-72 md:h-80"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -233,12 +233,12 @@ export default function TaskChart({ tasks }: TaskChartProps) {
         </Card>
 
         {/* Status Count Bar Chart */}
-        <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="text-foreground">Task Status</CardTitle>
-            <CardDescription className="text-muted-foreground">Number of tasks by completion status</CardDescription>
+        <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-foreground text-base sm:text-lg">Task Status</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs sm:text-sm">Number of tasks by completion status</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <ChartContainer
               config={{
                 count: {
@@ -246,7 +246,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                   color: "#3b82f6",
                 },
               }}
-              className="h-75"
+              className="h-64 sm:h-72 md:h-80"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={statusData}>
@@ -263,14 +263,14 @@ export default function TaskChart({ tasks }: TaskChartProps) {
       </div>
 
       {/* Task Trends */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Weekly Activity Bar Chart */}
-        <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="text-foreground">Weekly Activity</CardTitle>
-            <CardDescription className="text-muted-foreground">Tasks created vs completed this week</CardDescription>
+        <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-foreground text-base sm:text-lg">Weekly Activity</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs sm:text-sm">Tasks created vs completed this week</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <ChartContainer
               config={{
                 created: {
@@ -282,7 +282,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                   color: "#16a34a",
                 },
               }}
-              className="h-75"
+              className="h-64 sm:h-72 md:h-80"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={weeklyData}>
@@ -299,12 +299,12 @@ export default function TaskChart({ tasks }: TaskChartProps) {
         </Card>
 
         {/* Monthly Task Trend */}
-        <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-          <CardHeader>
-            <CardTitle className="text-foreground">Monthly Trends</CardTitle>
-            <CardDescription className="text-muted-foreground">Task creation trends over time</CardDescription>
+        <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-foreground text-base sm:text-lg">Monthly Trends</CardTitle>
+            <CardDescription className="text-muted-foreground text-xs sm:text-sm">Task creation trends over time</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 sm:p-6 pt-0">
             <ChartContainer
               config={{
                 created: {
@@ -312,7 +312,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                   color: "#8b5cf6",
                 },
               }}
-              className="h-75"
+              className="h-64 sm:h-72 md:h-80"
             >
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={monthlyData}>
@@ -335,21 +335,21 @@ export default function TaskChart({ tasks }: TaskChartProps) {
       </div>
 
       {/* Priority Summary Table */}
-      <Card className="border shadow-lg hover:shadow-xl transition-all hover:-translate-y-1">
-        <CardHeader>
-          <CardTitle className="text-foreground">Priority Summary</CardTitle>
-          <CardDescription className="text-muted-foreground">Detailed breakdown of task priorities</CardDescription>
+      <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
+        <CardHeader className="p-4 sm:p-6">
+          <CardTitle className="text-foreground text-base sm:text-lg">Priority Summary</CardTitle>
+          <CardDescription className="text-muted-foreground text-xs sm:text-sm">Detailed breakdown of task priorities</CardDescription>
         </CardHeader>
-        <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
+        <CardContent className="p-4 sm:p-6 pt-0">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table className="w-full min-w-125 sm:min-w-0">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left p-2 text-muted-foreground">Priority Level</th>
-                  <th className="text-right p-2 text-muted-foreground">Task Count</th>
-                  <th className="text-right p-2 text-muted-foreground">Percentage</th>
-                  <th className="text-right p-2 text-muted-foreground">Completed</th>
-                  <th className="text-right p-2 text-muted-foreground">Completion Rate</th>
+                  <th className="text-left p-2 text-muted-foreground text-xs sm:text-sm font-medium">Priority</th>
+                  <th className="text-right p-2 text-muted-foreground text-xs sm:text-sm font-medium">Count</th>
+                  <th className="text-right p-2 text-muted-foreground text-xs sm:text-sm font-medium hidden sm:table-cell">%</th>
+                  <th className="text-right p-2 text-muted-foreground text-xs sm:text-sm font-medium hidden md:table-cell">Done</th>
+                  <th className="text-right p-2 text-muted-foreground text-xs sm:text-sm font-medium">Rate</th>
                 </tr>
               </thead>
               <tbody>
@@ -368,11 +368,11 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                   
                   return (
                     <tr key={index} className="border-b border-border/50">
-                      <td className="p-2 text-foreground">{item.priority}</td>
-                      <td className="text-right p-2 text-foreground">{item.count}</td>
-                      <td className="text-right p-2 text-foreground">{Math.round((item.count / totalTasks) * 100)}%</td>
-                      <td className="text-right p-2 text-foreground">{completedInPriority}</td>
-                      <td className="text-right p-2 text-foreground">{completionRate}%</td>
+                      <td className="p-2 text-foreground text-xs sm:text-sm font-medium">{item.priority}</td>
+                      <td className="text-right p-2 text-foreground text-xs sm:text-sm">{item.count}</td>
+                      <td className="text-right p-2 text-foreground text-xs sm:text-sm hidden sm:table-cell">{Math.round((item.count / totalTasks) * 100)}%</td>
+                      <td className="text-right p-2 text-foreground text-xs sm:text-sm hidden md:table-cell">{completedInPriority}</td>
+                      <td className="text-right p-2 text-foreground text-xs sm:text-sm">{completionRate}%</td>
                     </tr>
                   );
                 })}

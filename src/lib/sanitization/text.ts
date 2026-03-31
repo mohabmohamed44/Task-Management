@@ -48,12 +48,6 @@ export const sanitizeEmail = (email: string): string => {
     sanitized = sanitized.substring(0, 254);
   }
 
-  // Basic email format validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(sanitized)) {
-    throw new Error('Invalid email format');
-  }
-
   return sanitized.toLowerCase();
 };
 
