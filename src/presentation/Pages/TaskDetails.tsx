@@ -73,8 +73,8 @@ export default function TaskDetails() {
         type="website"
         path="/task/:id"
       />
-      <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="min-h-screen bg-background p-2 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
           {/* Header Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <Button 
@@ -85,14 +85,14 @@ export default function TaskDetails() {
             >
               <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
-            <div className="min-w-0">
+            <div className="min-w-0 ml-4">
               <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">Task Details</h1>
               <p className="text-xs sm:text-sm text-muted-foreground">View full information about this task</p>
             </div>
           </div>
 
-          <Card className="border">
-            <CardHeader className="space-y-4">
+          <Card className="border shadow-none">
+            <CardHeader className="space-y-3 sm:space-y-4 p-4 sm:p-6">
               <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
                 <div className="space-y-2 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -104,7 +104,7 @@ export default function TaskDetails() {
                       className={`text-xs font-medium ${getPriorityColor(task.priority)} flex items-center gap-1.5 px-2 sm:px-3 py-1`}
                     >
                       {getPriorityIconName(task.priority)}
-                      {task.priority} Priority
+                      {task.priority}
                     </Badge>
                   </div>
                   <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
@@ -112,20 +112,20 @@ export default function TaskDetails() {
                   </CardTitle>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-2 sm:gap-3">
-                  <div className="flex items-center gap-2 bg-secondary/50 p-2 rounded-lg border text-sm">
+                <div className="flex flex-row flex-nowrap items-center gap-1.5 sm:gap-2">
+                  <div className="flex items-center gap-1.5 bg-secondary/50 px-2 py-2 rounded-lg border text-xs sm:text-sm shrink-0">
                     <Layers className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="font-medium truncate">
+                    <span className="font-medium truncate leading-none">
                       {typeof task.category === 'object' && task.category !== null 
                         ? (task.category as any).name 
                         : task.category}
                     </span>
                   </div>
-                  <Button variant="outline" onClick={openExportModal} className="w-full sm:w-auto">
+                  <Button variant="outline" onClick={openExportModal} size="sm" className="shrink-0">
                     <Download className="h-4 w-4 mr-2" />
                     Export
                   </Button>
-                  <Button variant={"default"} onClick={openUpdateModal} className="w-full sm:w-auto">
+                  <Button variant={"default"} onClick={openUpdateModal} size="sm" className="shrink-0">
                     Update Task
                   </Button>
                 </div>
@@ -134,7 +134,7 @@ export default function TaskDetails() {
             
             <Separator />
             
-            <CardContent className="pt-4 sm:pt-6 space-y-6 sm:space-y-8">
+            <CardContent className="pt-3 sm:pt-6 space-y-4 sm:space-y-8 p-4 sm:p-6">
               {/* Description */}
               <div className="space-y-2 sm:space-y-3">
                 <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
@@ -152,13 +152,13 @@ export default function TaskDetails() {
                     <Tag className="h-3 w-3 sm:h-4 sm:w-4" />
                     Tags
                   </h3>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  <div className="flex flex-row gap-3 gap-y-3 sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-3">
                     {task.tags.map((tag, index) => {
                       const tagText = typeof tag === 'object' && tag !== null 
                         ? (tag as any).name || (tag as any).id || JSON.stringify(tag)
                         : tag;
                       return (
-                        <Badge key={index} variant="secondary" className="px-2 sm:px-3 py-0.5 sm:py-1 text-xs sm:text-sm font-medium">
+                        <Badge key={index} variant="secondary" className="w-fit max-w-full px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium leading-none">
                           # {tagText}
                         </Badge>
                       );
@@ -194,7 +194,7 @@ export default function TaskDetails() {
 
             <Separator />
 
-            <CardFooter className="bg-slate-50 dark:bg-slate-900/30 p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <CardFooter className="bg-slate-50 dark:bg-slate-900/30 p-3 sm:p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
               <div className="space-y-1">
                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Due Date</p>
                 <div className="flex items-center gap-2 text-sm font-medium">
