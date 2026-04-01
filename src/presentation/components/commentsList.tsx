@@ -68,9 +68,9 @@ export default function CommentsList({ taskId }: CommentsListProps) {
 
     return (
         <Card className="h-full flex flex-col">
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2 sm:pb-3 px-3 sm:px-6 pt-3 sm:pt-6">
                 <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                    <CardTitle className="text-base sm:text-lg font-semibold flex items-center gap-2">
                         Comments
                         <Badge variant="secondary" className="ml-2">
                             {comments?.length || 0}
@@ -78,22 +78,22 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                     </CardTitle>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 flex flex-col gap-4 overflow-hidden">
-                <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            <CardContent className="flex-1 flex flex-col gap-3 sm:gap-4 overflow-hidden px-3 sm:px-6 pb-3 sm:pb-6">
+                <div className="flex-1 overflow-y-auto space-y-3 sm:space-y-4 pr-1 sm:pr-2">
                     {isLoading ? (
                         <div className="text-center text-muted-foreground py-4">Loading comments...</div>
                     ) : comments && comments.length > 0 ? (
                         comments.map((comment: any) => (
-                            <div key={comment.id} className="flex gap-3 group">
-                                <Avatar className="w-8 h-8">
+                            <div key={comment.id} className="flex gap-2 sm:gap-3 group">
+                                <Avatar className="w-7 h-7 sm:w-8 sm:h-8 shrink-0">
                                     <AvatarImage src={userImage} />
                                     <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "ME"}</AvatarFallback>
                                 </Avatar>
                                 <div className="flex-1 space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-semibold">{comment.userName}</span>
-                                            <span className="text-xs text-muted-foreground">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                            <span className="text-xs sm:text-sm font-semibold">{comment.userName}</span>
+                                            <span className="text-[10px] sm:text-xs text-muted-foreground">
                                                 {comment.created_at ? formatDate(new Date(comment.created_at)) : ""}
                                             </span>
                                         </div>
@@ -122,7 +122,7 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                                             <Textarea
                                                 value={editingText}
                                                 onChange={(e) => setEditingText(e.target.value)}
-                                                className="min-h-[60px]"
+                                                className="min-h-15"
                                             />
                                             <div className="flex justify-end gap-2">
                                                 <Button variant="ghost" size="sm" onClick={cancelEditing}>
@@ -134,7 +134,7 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                                             </div>
                                         </div>
                                     ) : (
-                                        <p className="text-sm text-foreground/90 whitespace-pre-wrap">{comment.text}</p>
+                                        <p className="text-xs sm:text-sm text-foreground/90 whitespace-pre-wrap">{comment.text}</p>
                                     )}
                                 </div>
                             </div>
@@ -146,8 +146,8 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                     )}
                 </div>
 
-                <div className="pt-4 border-t mt-auto">
-                    <div className="flex gap-3">
+                <div className="pt-3 sm:pt-4 border-t mt-auto">
+                    <div className="flex gap-2 sm:gap-3">
                         <Avatar className="w-8 h-8">
                             <AvatarImage src={userImage} />
                             <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "ME"}</AvatarFallback>
@@ -157,13 +157,14 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                                 placeholder="Write a comment..."
                                 value={newCommentText}
                                 onChange={(e) => setNewCommentText(e.target.value)}
-                                className="min-h-[80px] resize-none"
+                                className="min-h-[60px] sm:min-h-20 resize-none text-xs sm:text-sm"
                             />
                             <div className="flex justify-end">
                                 <Button 
                                     size="sm" 
                                     onClick={handleCreateComment} 
                                     disabled={!newCommentText.trim() || createCommentMutation.isPending}
+                                    className="text-xs sm:text-sm"
                                 >
                                     <Send className="h-4 w-4 mr-2" />
                                     Post Comment
