@@ -42,3 +42,7 @@ DEBUG_LOGIN.md
 .idea
 # Qoder Settings
 .qoder
+
+# Qwen Coder
+.qwen
+settings.json
