@@ -3,6 +3,13 @@
     publish = "dist"
 
 [[redirects]]
+    from = "/api/*"
+    to = "https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1/:splat"
+    status = 200
+    force = true
+    headers = {X-From = "Netlify"}
+
+[[redirects]]
     from = "/*"
     to = "index.html"
     status = 200
@@ -15,7 +22,7 @@
         X-XSS-Protection = "1; mode=block"
         X-Content-Type-Options = "nosniff"
         Referrer-Policy = "strict-origin-when-cross-origin"
-        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' https://*.koyeb.app;"
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';"
 
 [[headers]]
     for = "/index.html"
