@@ -70,7 +70,7 @@ export const AddGoalModal = ({
           Add Goal
         </Button>
       </DialogTrigger>
-      <DialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800">
+      <DialogContent className="bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 w-[calc(100%-2rem)] max-w-lg mx-auto max-h-[calc(100vh-4rem)] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-gray-900 dark:text-gray-100">
             Add New Goal
@@ -115,7 +115,7 @@ export const AddGoalModal = ({
               rows={3}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label
                 htmlFor="goal-priority"
