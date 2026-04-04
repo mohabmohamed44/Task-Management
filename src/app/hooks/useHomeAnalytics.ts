@@ -22,13 +22,22 @@ export interface UseHomeAnalyticsReturn {
 export const useHomeAnalytics = (): UseHomeAnalyticsReturn => {
   const { data } = useTasksQuery({});
 
-  const tasks = useMemo(() => data?.tasks ?? [], [data?.tasks]);
+  const tasks = useMemo(() => {
+    const t = data?.tasks ?? [];
+    return Array.isArray(t) ? t : [];
+  }, [data?.tasks]);
   const completedCount = useMemo(
-    () => tasks.filter((t) => t.completed).length,
+    () => {
+      const safeTasks = Array.isArray(tasks) ? tasks : [];
+      return safeTasks.filter((t) => t.completed).length;
+    },
     [tasks]
   );
   const pendingCount = useMemo(
-    () => tasks.filter((t) => !t.completed).length,
+    () => {
+      const safeTasks = Array.isArray(tasks) ? tasks : [];
+      return safeTasks.filter((t) => !t.completed).length;
+    },
     [tasks]
   );
   const totalCount = useMemo(() => tasks.length, [tasks]);

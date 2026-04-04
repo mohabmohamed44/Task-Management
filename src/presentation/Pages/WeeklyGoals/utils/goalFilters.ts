@@ -5,6 +5,7 @@ export const filterGoals = (
   filterStatus: FilterStatus,
   searchQuery: string
 ): any[] => {
+  if (!Array.isArray(goals)) return [];
   let filtered = [...goals];
 
   // Filter by status

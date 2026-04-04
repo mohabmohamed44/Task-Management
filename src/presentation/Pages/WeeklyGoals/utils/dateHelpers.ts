@@ -34,6 +34,7 @@ export interface DayGoal {
 }
 
 export const organizeGoalsByDay = (goals: any[], weekDays: Date[]): DayGoal[] => {
+  if (!Array.isArray(goals) || !Array.isArray(weekDays)) return [];
   return weekDays.map((day) => {
     const dayGoals = goals.filter((goal: any) => {
       // Goals are already filtered by week in useWeeklyGoals
