@@ -1,0 +1,5 @@
+/api/auth/login  https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1/auth/login  200!
+/api/auth/register  https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1/auth/register  200!
+/api/auth/me  https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1/auth/me  200!
+/api/auth/profile-picture  https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1/auth/profile-picture  200!
+/* /index.html 200

@@ -13,41 +13,41 @@ export default defineConfig(({ mode }) => {
     'https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1';
 
   return {
-    plugins: [
-      react({
-        babel: {
-          plugins: [['babel-plugin-react-compiler']],
-        },
-      }),
-      tailwindcss(),
-    ],
-    resolve: {
-      alias: {
-        '@': path.resolve(__dirname, './src'),
+  plugins: [
+    react({
+      babel: {
+        plugins: [['babel-plugin-react-compiler']],
+      },
+    }),
+    tailwindcss(),
+  ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'), 
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: apiTarget,
+        changeOrigin: true,
+        secure: true,
+        rewrite: (p) => p.replace(/^\/api/, ''),
       },
     },
-    server: {
-      proxy: {
-        '/api': {
-          target: apiTarget,
-          changeOrigin: true,
-          secure: true,
-          rewrite: (p) => p.replace(/^\/api/, ''),
-        },
-      },
-    },
-    build: {
-      minify: 'terser',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        } as any,
+  },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
       } as any,
-    },
-    test: {
-      globals: true,
-      environment: 'jsdom',
-    },
+    } as any,
+  },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
   };
-});
+})
