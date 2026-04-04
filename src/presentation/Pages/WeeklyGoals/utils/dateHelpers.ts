@@ -34,9 +34,14 @@ export interface DayGoal {
 }
 
 export const organizeGoalsByDay = (goals: any[], weekDays: Date[]): DayGoal[] => {
-  if (!Array.isArray(goals) || !Array.isArray(weekDays)) return [];
+  // Ensure weekDays is valid - we need to always return 7 days structure
+  if (!Array.isArray(weekDays)) return [];
+  
+  // goals might be undefined/loading initially, default to empty array
+  const safeGoals = Array.isArray(goals) ? goals : [];
+  
   return weekDays.map((day) => {
-    const dayGoals = goals.filter((goal: any) => {
+    const dayGoals = safeGoals.filter((goal: any) => {
       // Goals are already filtered by week in useWeeklyGoals
       // Now distribute them by created_at date within the week
       const goalCreatedDate = goal.created_at
