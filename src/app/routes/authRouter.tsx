@@ -2,6 +2,7 @@ import type { RouteObject } from "react-router";
 import AuthLayout from "@/presentation/Layout/AuthLayout";
 import { LoginPage } from "@/presentation/Pages/LoginPage";
 import RegisterPage from "@/presentation/Pages/RegisterPage";
+import AuthCallback from "@/presentation/Pages/AuthCallback";
 
 export const authRoutes: RouteObject[] = [ 
   {
@@ -11,6 +12,7 @@ export const authRoutes: RouteObject[] = [
       { index: true, element: <LoginPage /> },
       { path: "login", element: <LoginPage /> },
       { path: "register", element: <RegisterPage /> },
+      { path: "callback", element: <AuthCallback /> },
     ],
   },
 ];
