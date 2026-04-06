@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { Github, Facebook, Linkedin, Twitter, Mail, Heart } from "lucide-react";
+import { Github, Facebook, LinkedinIcon, Twitter, Mail, Heart } from "lucide-react";
 import { Button } from "./Button";
 
 export default function Footer() {
@@ -19,7 +19,7 @@ export default function Footer() {
   const socialLinks = [
     { href: "https://github.com/mohabmohamed44", icon: Github, label: "GitHub", color: "hover:bg-gray-800 hover:text-white" },
     { href: "https://facebook.com", icon: Facebook, label: "Facebook", color: "hover:bg-blue-600 hover:text-white" },
-    { href: "https://linkedin.com", icon: Linkedin, label: "LinkedIn", color: "hover:bg-blue-700 hover:text-white" },
+    { href: "https://linkedin.com", icon: LinkedinIcon, label: "LinkedIn", color: "hover:bg-blue-700 hover:text-white" },
     { href: "https://twitter.com", icon: Twitter, label: "Twitter", color: "hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black" },
   ];
 
@@ -148,8 +148,6 @@ export default function Footer() {
                 </li>
               </ul>
             </div>
-
-            {/* Newsletter / Contact - REMOVED, moved to Platform column */}
           </div>
         </div>
 
