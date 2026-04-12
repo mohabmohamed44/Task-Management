@@ -48,6 +48,7 @@
     "dompurify": "^3.3.3",
     "exceljs": "^4.4.0",
     "export-to-csv": "^1.4.0",
+    "framer-motion": "^12.38.0",
     "js-cookie": "^3.0.5",
     "jspdf": "^4.2.1",
     "jspdf-autotable": "^5.0.7",
