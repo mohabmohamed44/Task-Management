@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Private pages - do not index auth routes
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://prioritize.netlify.app/sitemap.xml
