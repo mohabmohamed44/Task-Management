@@ -291,6 +291,7 @@ export const LoginPage: React.FC = () => {
                           variant="ghost"
                           size="icon"
                           className="absolute right-0 top-0 h-full px-3"
+                          name="show-password"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (
@@ -351,21 +352,20 @@ export const LoginPage: React.FC = () => {
           <Separator />
           <div className="text-center text-sm text-muted-foreground">
             Don't have an account?{" "}
-            <Button
-              variant="link"
-              className="px-0 font-semibold"
-              onClick={() => console.log('Navigate to sign up')}
+            <Link
+              to="/auth/register"
+              className="font-semibold text-primary hover:underline inline-flex items-center px-2 py-1 min-h-11 min-w-11"
             >
-              <Link to="/auth/register">Sign Up</Link>
-            </Button>
+              Sign Up
+            </Link>
           </div>
           <div className="text-xs text-center text-muted-foreground">
             By continuing, you agree to our{" "}
-            <Button variant="link" className="px-0 text-xs h-auto font-normal">
+            <Button variant="link" className="px-2 py-1 text-xs h-auto font-normal min-h-11 min-w-11">
               Terms of Service
             </Button>{" "}
             and{" "}
-            <Button variant="link" className="px-0 text-xs h-auto font-normal">
+            <Button variant="link" className="px-2 py-1 text-xs h-auto font-normal min-h-11 min-w-11">
               Privacy Policy
             </Button>
           </div>

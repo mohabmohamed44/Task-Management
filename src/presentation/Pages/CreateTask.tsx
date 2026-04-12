@@ -124,6 +124,7 @@ export default function CreateTask() {
       title="Create Task"
       description="Create your first new task"
       path="/create-task"
+      noIndex={false}
       type="website"
     />
     <div className="flex flex-col items-center justify-center min-h-screen p-4 selection:text-white selection:bg-black dark:selection:bg-gray-700 dark:selection:text-gray-300">

@@ -124,6 +124,7 @@ export const SignUpPage: React.FC = () => {
       description="Create a new Account to have full access into our System"
       path="/auth/register"
       type="website"
+      noIndex={true}
     />
     <div className="min-h-screen flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl border-border/50 bg-background">

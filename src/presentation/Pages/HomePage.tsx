@@ -118,6 +118,7 @@ export default function HomePage() {
           description="Get started with Prioritize - Your minimalist task manager"
           path="/"
           type="website"
+          noIndex={false}
         />
       <div className="min-h-screen p-4 md:p-8 selection:text-white selection:bg-gray-900">
         <div className="max-w-7xl mx-auto">

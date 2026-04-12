@@ -76,6 +76,7 @@ const TaskPage = () => {
       title="Tasks"
       description="the Tasks Page where you see all of the tasks you created"
       path="/tasks"
+      noIndex={false}
       type="website"
     />
     <div className="min-h-screen bg-background p-6">

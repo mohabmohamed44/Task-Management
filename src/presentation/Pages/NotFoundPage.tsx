@@ -10,6 +10,7 @@ export default function NotFoundPage() {
             description="Not found"
             type="website"
             path="*"
+            noIndex={false}
         />
         <div className="flex flex-col items-center justify-center min-h-screen text-center p-4 selection:text-white selection:bg-black">
             <div className="flex items-center justify-center">

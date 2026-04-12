@@ -43,7 +43,7 @@ export default function ProfilePage() {
         description="Profile Page where you can see your Account Info."
         path="/profile"
         type="website"
-        noIndex
+        noIndex={false}
       />
       <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
         <Card className="w-full max-w-md shadow-lg overflow-hidden">

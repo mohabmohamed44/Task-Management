@@ -71,6 +71,7 @@ export default function TaskDetails() {
         title="Task Details"
         description="here you can see your task details, subtasks, comments, Attachments"
         type="website"
+        noIndex={false}
         path="/task/:id"
       />
       <div className="min-h-screen bg-background p-2 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">

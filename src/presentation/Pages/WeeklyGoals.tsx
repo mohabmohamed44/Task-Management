@@ -136,6 +136,7 @@ export default function WeeklyGoals() {
         path="/goals"
         image="/goals-og.png"
         type="website"
+        noIndex={false}
       />
       <div
         className="min-h-screen p-4 md:p-6 lg:p-8 selection:text-white selection:bg-gray-900"

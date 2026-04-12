@@ -67,7 +67,7 @@ export default function StatisticsPage() {
             description="Manage and track your Statistics and Productivity here"
             type = "website"
             path="/statistics"
-            noIndex
+            noIndex={false}
          />
         <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 dark:selection:bg-gray-600 dark:selection:text-gray-300 selection:bg-black selection:text-white">
             <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">

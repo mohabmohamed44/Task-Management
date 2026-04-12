@@ -51,7 +51,7 @@ export default function EditProfilePage() {
       description="change and edit your Profile Data"
       type="website"
       path="profile/edit"
-      noIndex
+      noIndex={false}
     />
     <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md shadow-lg">
