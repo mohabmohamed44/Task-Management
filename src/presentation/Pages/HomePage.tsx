@@ -446,10 +446,10 @@ export default function HomePage() {
             <Card className="max-w-6xl mx-auto border border-gray-200/50 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl shadow-2xl rounded-4xl overflow-hidden">
               <CardHeader className="p-6 md:p-8 bg-white/30 dark:bg-white/5 border-b border-gray-200/50 dark:border-white/5">
                 <Tabs defaultValue="overview" className="w-full">
-                  <TabsList className="grid w-full grid-cols-3 bg-gray-200/50 dark:bg-gray-900/50 p-1 rounded-2xl">
-                    <TabsTrigger value="overview" className="rounded-xl font-bold py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Overview</TabsTrigger>
-                    <TabsTrigger value="projects" className="rounded-xl font-bold py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Networks</TabsTrigger>
-                    <TabsTrigger value="analytics" className="rounded-xl font-bold py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Telemetry</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3 h-auto bg-gray-200/50 dark:bg-gray-900/50 p-1 md:p-1.5 rounded-2xl">
+                    <TabsTrigger value="overview" className="rounded-xl text-xs md:text-sm font-bold py-2 md:py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Overview</TabsTrigger>
+                    <TabsTrigger value="projects" className="rounded-xl text-xs md:text-sm font-bold py-2 md:py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Networks</TabsTrigger>
+                    <TabsTrigger value="analytics" className="rounded-xl text-xs md:text-sm font-bold py-2 md:py-3 data-[state=active]:bg-white dark:data-[state=active]:bg-black data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg">Telemetry</TabsTrigger>
                   </TabsList>
 
                   <TabsContent value="overview" className="mt-8">
