@@ -50,22 +50,11 @@ const itemVariants: Variants = {
 
 const BackgroundGradient = () => (
   <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50 dark:bg-[#09090b] transition-colors duration-700">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] bg-size[24px_24px] opacity-50 dark:opacity-20" />
-    <motion.div
-      animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.4, 0.3] }}
-      transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-      className="absolute -top-[10%] -left-[10%] w-[600px] h-[600px] rounded-full bg-blue-500/30 dark:bg-blue-600/20 blur-[120px]"
-    />
-    <motion.div
-      animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.4, 0.2] }}
-      transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-      className="absolute top-[20%] -right-[10%] w-[500px] h-[500px] rounded-full bg-purple-500/20 dark:bg-purple-600/20 blur-[120px]"
-    />
-    <motion.div
-      animate={{ scale: [1, 1.3, 1], opacity: [0.1, 0.2, 0.1] }}
-      transition={{ duration: 15, repeat: Infinity, ease: "easeInOut", delay: 4 }}
-      className="absolute -bottom-[20%] left-[20%] w-[600px] h-[600px] rounded-full bg-emerald-500/20 dark:bg-emerald-600/10 blur-[120px]"
-    />
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] bg-size-[24px_24px] opacity-50 dark:opacity-20" />
+    {/* Static gradients instead of animated blur for better scroll performance */}
+    <div className="absolute -top-[10%] -left-[10%] w-150 h-150 rounded-full bg-blue-500/10 dark:bg-blue-600/10" />
+    <div className="absolute top-[20%] -right-[10%] w-125 h-125 rounded-full bg-purple-500/10 dark:bg-purple-600/10" />
+    <div className="absolute -bottom-[20%] left-[20%] w-125 h-125 rounded-full bg-emerald-500/5 dark:bg-emerald-600/5" />
   </div>
 );
 
@@ -105,10 +94,10 @@ export default function HomePage() {
   const [isNewUser] = useState(true);
 
   const features = [
-    { icon: <Target className="h-5 w-5" />, title: "Smart Goals", description: "Set and track your objectives" },
-    { icon: <Users className="h-5 w-5" />, title: "Team Collaboration", description: "Work seamlessly with your team" },
-    { icon: <Calendar className="h-5 w-5" />, title: "Calendar Sync", description: "Sync with calendar apps" },
-    { icon: <Zap className="h-5 w-5" />, title: "Automation", description: "Automate repetitive workflows" },
+    { icon: <Target className="h-5 w-5 text-green-600" />, title: "Smart Goals", description: "Set and track your objectives" },
+    { icon: <Users className="h-5 w-5 text-violet-600" />, title: "Team Collaboration", description: "Work seamlessly with your team" },
+    { icon: <Calendar className="h-5 w-5 text-pink-600" />, title: "Calendar Sync", description: "Sync with calendar apps" },
+    { icon: <Zap className="h-5 w-5 text-yellow-600" />, title: "Automation", description: "Automate repetitive workflows" },
   ];
 
   const quickStartTasks = [
@@ -139,14 +128,14 @@ export default function HomePage() {
   if (isLoggedIn && isNewUser && !hasCompletedOnboarding) {
     return (
       <>
-        <MetaData title="Welcome" description="Get started with Prioritize" path="/" type="website" />
+        <MetaData title="Welcome" description="Get started with Prioritize" path="/" type="website"/>
         <BackgroundGradient />
-        <div className="min-h-screen p-4 md:p-8 pt-12 md:pt-16 selection:text-white selection:bg-blue-600">
+        <div className="min-h-screen scroll-smooth p-4 md:p-8 pt-12 md:pt-16 selection:text-white selection:bg-blue-600">
           <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-7xl mx-auto">
             {/* Header */}
             <motion.header variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
               <div className="flex items-center gap-4">
-                <div className="p-4 bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 dark:border-white/10">
+                <div className="p-4 bg-white/80 dark:bg-black/60 rounded-2xl shadow-xl border border-white/40 dark:border-white/10">
                   <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
@@ -158,7 +147,7 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-              <Badge variant="outline" className="px-4 py-2 text-base backdrop-blur-md bg-white/40 dark:bg-black/40 border-gray-300 dark:border-gray-700">
+              <Badge variant="outline" className="px-4 py-2 text-base bg-white/60 dark:bg-black/60 border-gray-300 dark:border-gray-700">
                 Step {currentStep} of {steps.length}
               </Badge>
             </motion.header>
@@ -168,7 +157,7 @@ export default function HomePage() {
               <div className="xl:col-span-2 space-y-8">
                 {/* Progress Steps */}
                 <motion.div variants={itemVariants}>
-                  <Card className="bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-2xl overflow-hidden rounded-3xl">
+                  <Card className="bg-white/80 dark:bg-black/60 border border-gray-200/70 dark:border-white/10 shadow-2xl overflow-hidden rounded-3xl">
                     <CardContent className="pt-8">
                       <div className="flex justify-between items-end mb-4">
                         <span className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Setup Evolution</span>
@@ -176,7 +165,7 @@ export default function HomePage() {
                       </div>
                       <Progress value={progress} className="h-3 bg-gray-200/50 dark:bg-gray-800/50 overflow-hidden rounded-full" />
                       
-                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 mt-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-4 md:grid-cols-2 gap-4 mt-8">
                         {steps.map((step) => {
                           const isActive = currentStep === step.id;
                           const isComplete = currentStep > step.id;
@@ -211,9 +200,9 @@ export default function HomePage() {
 
                 {/* Step Content */}
                 <motion.div variants={itemVariants}>
-                  <Card className="bg-white/70 dark:bg-black/50 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
-                    <CardHeader className="border-b border-gray-200/50 dark:border-white/5 pb-6 bg-white/30 dark:bg-white/5">
-                      <CardTitle className="flex items-center gap-4 text-3xl font-bold">
+                  <Card className="bg-white/90 dark:bg-black/70 border border-gray-200/70 dark:border-white/10 shadow-2xl rounded-3xl overflow-hidden">
+                    <CardHeader className="border-b border-gray-200/50 dark:border-white/5 pb-6 bg-white/30 dark:bg-white/5 ">
+                      <CardTitle className="flex items-center gap-4 text-3xl font-bold mt-4">
                         <span className="p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl text-blue-600 dark:text-blue-400">
                           {steps[currentStep - 1].icon}
                         </span>
@@ -225,7 +214,7 @@ export default function HomePage() {
                     </CardHeader>
                     <CardContent className="pt-8 space-y-8">
                       {/* Interactive Step Content Wrapper with AnimatePresence */}
-                      <div className="min-h-[280px]">
+                      <div className="min-h-70">
                         {currentStep === 1 && (
                           <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
                             <div className="bg-blue-50/50 dark:bg-blue-900/10 p-6 rounded-2xl border border-blue-100 dark:border-blue-900/30">
@@ -285,7 +274,7 @@ export default function HomePage() {
                         )}
                         {currentStep === 4 && (
                           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                            <div className="p-8 bg-white/50 dark:bg-white/5 backdrop-blur-md rounded-3xl border border-gray-200 dark:border-white/10">
+                            <div className="p-8 bg-white/90 dark:bg-white/10 rounded-3xl border border-gray-200 dark:border-white/10">
                               <div className="flex items-center gap-4 mb-6">
                                 <div className="p-3 bg-purple-100 dark:bg-purple-900/30 rounded-xl">
                                   <Layers className="w-8 h-8 text-purple-600 dark:text-purple-400" />
@@ -304,7 +293,7 @@ export default function HomePage() {
                                 ))}
                               </div>
                               <Button className="w-full h-14 text-lg font-bold rounded-xl bg-purple-600 hover:bg-purple-700 text-white" asChild>
-                                <Link to="/weekly-goals">Configure Weekly Sprint</Link>
+                                <Link to="/goals">Configure Weekly Sprint</Link>
                               </Button>
                             </div>
                           </motion.div>
@@ -339,9 +328,9 @@ export default function HomePage() {
               <motion.div variants={containerVariants} className="space-y-8">
                 {/* Stats Card */}
                 <motion.div variants={itemVariants}>
-                  <Card className="bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+                  <Card className="bg-white/80 dark:bg-black/60 border border-gray-200/70 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
                     <CardHeader className="bg-white/30 dark:bg-white/5 border-b border-gray-200/50 dark:border-white/5">
-                      <CardTitle className="text-xl flex items-center gap-3 font-bold">
+                      <CardTitle className="text-xl flex items-center gap-3 font-bold mt-4">
                         <ChartNoAxesColumn className="w-6 h-6 text-blue-500" /> Diagnostics
                       </CardTitle>
                     </CardHeader>
@@ -369,9 +358,9 @@ export default function HomePage() {
 
                 {/* System Features */}
                 <motion.div variants={itemVariants}>
-                  <Card className="bg-white/60 dark:bg-black/40 backdrop-blur-xl border border-gray-200/50 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
+                  <Card className="bg-white/80 dark:bg-black/60 border border-gray-200/70 dark:border-white/10 shadow-xl rounded-3xl overflow-hidden">
                     <CardHeader className="bg-white/30 dark:bg-white/5 border-b border-gray-200/50 dark:border-white/5">
-                      <CardTitle className="text-xl font-bold flex items-center gap-3">
+                      <CardTitle className="text-xl font-bold flex items-center justify-self-start mt-4 gap-3">
                         <Zap className="w-6 h-6 text-yellow-500" /> Capabilities
                       </CardTitle>
                     </CardHeader>
@@ -415,13 +404,15 @@ export default function HomePage() {
               initial={{ scale: 0.8, opacity: 0 }} 
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 dark:bg-black/50 backdrop-blur-md border border-gray-200 dark:border-white/10 text-sm font-bold tracking-widest uppercase mb-8 shadow-sm"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 dark:bg-black/70 border border-gray-200 dark:border-white/10 text-sm font-bold tracking-widest uppercase mb-8 shadow-sm"
             >
-              <Activity className="w-4 h-4 text-emerald-500 animate-pulse" />
-              System Online
+              <Activity className="w-4 h-4 text-yellow-500 animate-pulse" />
+              <span className="bg-linear-to-r from-green-600 via-blue-500 to-indigo-500 bg-clip-text text-transparent bg-size-[200%_auto] animate-[gradient-move_3s_ease_infinite]">
+                System Online
+              </span>
             </motion.div>
             <h1 className="text-5xl md:text-7xl font-black mb-6 text-gray-900 dark:text-white tracking-tighter leading-tight">
-              Operational <br className="md:hidden" />
+              <span className="block md:inline">Operational </span>
               <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-purple-600 to-emerald-500">
                 Command Center
               </span>
@@ -433,7 +424,7 @@ export default function HomePage() {
               <Button size="lg" className="h-14 px-8 text-lg font-bold rounded-xl bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 shadow-xl" asChild>
                 <Link to="/tasks">Access Task Node</Link>
               </Button>
-              <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-white/50 dark:bg-black/50 backdrop-blur-sm" asChild>
+              <Button size="lg" variant="outline" className="h-14 px-8 text-lg font-bold rounded-xl border-2 border-gray-300 dark:border-gray-700 bg-white/70 dark:bg-black/70" asChild>
                 <Link to="/create-task" className="flex items-center gap-2">
                   <Zap className="w-5 h-5" /> Initialize New
                 </Link>
@@ -443,7 +434,7 @@ export default function HomePage() {
 
           {/* Interactive HUD / Dashboard */}
           <motion.div variants={itemVariants}>
-            <Card className="max-w-6xl mx-auto border border-gray-200/50 dark:border-white/10 bg-white/60 dark:bg-black/40 backdrop-blur-xl shadow-2xl rounded-4xl overflow-hidden">
+            <Card className="max-w-6xl mx-auto border border-gray-200/70 dark:border-white/10 bg-white/80 dark:bg-black/60 shadow-2xl rounded-4xl overflow-hidden">
               <CardHeader className="p-6 md:p-8 bg-white/30 dark:bg-white/5 border-b border-gray-200/50 dark:border-white/5">
                 <Tabs defaultValue="overview" className="w-full">
                   <TabsList className="grid w-full grid-cols-3 h-auto bg-gray-200/50 dark:bg-gray-900/50 p-1 md:p-1.5 rounded-2xl">
@@ -483,7 +474,7 @@ export default function HomePage() {
                             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-widest mb-4">Payload</h3>
                             <div className="text-6xl font-black text-gray-900 dark:text-white mb-4">{totalCount}</div>
                             <Badge variant="secondary" className="px-3 py-1 font-bold text-sm bg-purple-100 dark:bg-purple-900/50 text-purple-700 dark:text-purple-300">
-                              Efficacy: {completionRate}%
+                              Effciency: {completionRate}%
                             </Badge>
                           </CardContent>
                         </Card>
