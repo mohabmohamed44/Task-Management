@@ -26,6 +26,7 @@ import type { CreateTaskDTO } from "@/domain/entities/task.dto";
 import { TaskPriority } from "@/domain/enums/task-priority.enum";
 import { useNavigate } from "react-router";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
+import { sanitizeUserInput } from "@/lib/sanitization";
 import MetaData from "../components/MetaData";
 
 const taskSchema = z.object({
@@ -71,6 +72,13 @@ export default function CreateTask() {
   });
 
   const onSubmit = async (values: TaskFormValues) => {
+    // Split tags first before sanitization to preserve commas
+    const rawTags = values.tags || "";
+    const tagsArray = rawTags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean);
+
     // Sanitize form values before creating task
     const sanitized = sanitizeValues({
       title: values.title,
@@ -79,18 +87,16 @@ export default function CreateTask() {
       tags: values.tags || ""
     });
 
+    // Sanitize individual tags
+    const sanitizedTags = tagsArray.map(tag => sanitizeUserInput(tag, 'text'));
+
     const payload: CreateTaskDTO = {
       title: sanitized.title,
       description: sanitized.description,
       priority: values.priority as TaskPriority,
       category: sanitized.category,
       dueDate: values.dueDate || undefined,
-      tags: sanitized.tags
-        ? sanitized.tags
-            .split(",")
-            .map((tag) => tag.trim())
-            .filter(Boolean)
-        : [],
+      tags: sanitizedTags,
     };
 
     try {
