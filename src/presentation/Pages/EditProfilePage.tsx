@@ -64,22 +64,7 @@ export default function EditProfilePage() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex flex-col items-center space-y-2">
-            <label htmlFor="profile-picture" className="text-sm text-muted-foreground">
-              Select Profile Picture
-            </label>
-            <input
-              id="profile-picture"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100"
-            />
-            {selectedFile && (
-              <p className="text-sm text-muted-foreground">
-                Selected: {selectedFile.name}
-              </p>
-            )}
+          <div className="flex flex-col items-center space-y-4">
             {imagePreview ? (
               <img
                 src={imagePreview}
@@ -89,13 +74,25 @@ export default function EditProfilePage() {
             ) : (
               <label
                 htmlFor="profile-picture"
-                className="flex flex-col items-center cursor-pointer"
+                className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-secondary/50 hover:bg-secondary border-muted-foreground/25 transition-colors"
               >
                 <CloudUpload className="h-12 w-12 text-gray-400" />
                 <span className="mt-2 text-sm text-gray-500">
-                  Upload Image
+                  Select Profile Picture
                 </span>
               </label>
+            )}
+            <input
+              id="profile-picture"
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            {selectedFile && (
+              <p className="text-sm text-muted-foreground">
+                Selected: {selectedFile.name}
+              </p>
             )}
           </div>
         </CardContent>

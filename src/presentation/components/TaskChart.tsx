@@ -107,7 +107,7 @@ export default function TaskChart({ tasks }: TaskChartProps) {
     <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 dark:selection:bg-gray-600 dark:selection:text-gray-300">
       <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6 lg:space-y-7">
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Card className="border shadow hover:shadow-xl transition-all hover:-translate-y-1">
             <CardContent className="p-3 sm:p-4 md:p-6">
               <div className="flex items-center justify-between">

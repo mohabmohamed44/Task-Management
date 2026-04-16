@@ -108,7 +108,7 @@ export function Attachments({ taskId }: AttachmentsProps) {
             </CardHeader>
             <CardContent className="space-y-4">
                 {/* Upload Form */}
-                <div className="space-y-2">
+                <form onSubmit={handleUpload} className="space-y-2">
                     <Label htmlFor="file">Upload File</Label>
                     <div className="flex items-center justify-center w-full">
                         <label
@@ -134,7 +134,6 @@ export function Attachments({ taskId }: AttachmentsProps) {
                                 onChange={(e) =>
                                     setFile(e.target.files?.[0] || null)
                                 }
-                                onClick={() => handleUpload}
                                 accept="image/png,image/jpeg,image/jpg,application/pdf"
                             />
                         </label>
@@ -150,7 +149,7 @@ export function Attachments({ taskId }: AttachmentsProps) {
                         <SendHorizontal size={24} />
                       </Button>
                     </div>
-                </div>
+                </form>
 
                 {/* Attachments List */}
                 <div className="space-y-2">

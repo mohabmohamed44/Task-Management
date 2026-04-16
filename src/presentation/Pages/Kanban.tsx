@@ -370,7 +370,7 @@ function KanbanBoard({
                 >
                   {/* Column Header */}
                   <Card className="border border-gray-200 dark:border-gray-800 shadow-sm bg-gray-50 dark:bg-gray-800/50">
-                    <CardHeader className="pb-3 pt-4 px-4">
+                    <CardHeader className="pt-2 px-4">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <div
