@@ -2,7 +2,7 @@ import { Calendar, Flag, Tag } from "lucide-react";
 import { Card, CardContent } from "@/presentation/components/ui/card";
 import { Badge } from "@/presentation/components/ui/badge";
 import type { Task } from "@/domain/entities/task.entity";
-import {getPriorityColor} from "@/domain/utils/task-ui";
+import { getPriorityColor } from "@/domain/utils/task-ui";
 
 interface TaskCardProps {
   task: Task;
