@@ -113,8 +113,8 @@ export default function TaskDetails() {
                   </CardTitle>
                 </div>
                 
-                <div className="flex flex-row flex-nowrap items-center gap-1.5 sm:gap-2">
-                  <div className="flex items-center gap-1.5 bg-secondary/50 px-2 py-2 rounded-lg border text-xs sm:text-sm shrink-0">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
+                  <div className="flex items-center justify-center sm:justify-start gap-1.5 bg-secondary/50 px-3 py-2 rounded-lg border text-xs sm:text-sm">
                     <Layers className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="font-medium truncate leading-none">
                       {typeof task.category === 'object' && task.category !== null 
@@ -122,13 +122,15 @@ export default function TaskDetails() {
                         : task.category}
                     </span>
                   </div>
-                  <Button variant="outline" onClick={openExportModal} size="sm" className="shrink-0">
-                    <Download className="h-4 w-4 mr-2" />
-                    Export
-                  </Button>
-                  <Button variant={"default"} onClick={openUpdateModal} size="sm" className="shrink-0">
-                    Update Task
-                  </Button>
+                  <div className="flex flex-row gap-2 sm:contents">
+                    <Button variant="outline" onClick={openExportModal} size="sm" className="flex-1 sm:flex-none">
+                      <Download className="h-4 w-4 sm:mr-2" />
+                      <span className="sm:inline">Export</span>
+                    </Button>
+                    <Button variant={"default"} onClick={openUpdateModal} size="sm" className="flex-1 sm:flex-none">
+                      Update Task
+                    </Button>
+                  </div>
                 </div>
               </div>
             </CardHeader>

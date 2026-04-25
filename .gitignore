@@ -22,9 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
+# markdown files
 DEBUG_LOGIN.md
-
+frontend-design.md
 # enviroment Variables
 .env
 .env.local
