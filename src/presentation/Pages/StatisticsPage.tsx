@@ -7,6 +7,9 @@ import { Button } from "@/presentation/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import MetaData from "../components/MetaData";
+import { Separator } from "@/presentation/components/ui/separator";
+import { GitHubStreak } from "../components/streak";
+import type { ContributionDay } from "@/domain/entities/stats";
 
 export default function StatisticsPage() {
     const navigate = useNavigate();
@@ -22,12 +25,50 @@ export default function StatisticsPage() {
     );
 
     const {  data,isLoading, isError, refetch } = useTasksQuery(query);
-    const tasks = data?.tasks || [];
-    // const completedCount = tasks.filter((t) => t.completed).length;
-    // const pendingCount = tasks.filter((t) => !t.completed).length;
-    // const urgentCount = tasks.filter(
-    //     (t) => t.priority === TaskPriority.Urgent
-    // ).length;
+    const tasks = useMemo(() => data?.tasks || [], [data]);
+
+    // Compute contributions (last 365 days) from tasks client-side
+    const contributions = useMemo<ContributionDay[]>(() => {
+        const days: ContributionDay[] = [];
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        // Pre-compute timestamps for fast lookups
+        const completedDates = tasks
+            .filter((t) => t.completed)
+            .map((t) => {
+                const d = new Date(t.updatedAt);
+                d.setHours(0, 0, 0, 0);
+                return d.getTime();
+            });
+
+        const createdDates = tasks.map((t) => {
+            const d = new Date(t.createdAt);
+            d.setHours(0, 0, 0, 0);
+            return d.getTime();
+        });
+
+        for (let i = 364; i >= 0; i--) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - i);
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const dateStr = `${year}-${month}-${day}`;
+            const targetTime = date.getTime();
+
+            // Count tasks completed on this day (using updatedAt for completed tasks)
+            // plus tasks created on this day
+            const completedOnDay = completedDates.filter((time) => time === targetTime).length;
+            const createdOnDay = createdDates.filter((time) => time === targetTime).length;
+
+            days.push({
+                date: dateStr,
+                count: completedOnDay + createdOnDay,
+            });
+        }
+        return days;
+    }, [tasks]);
 
     if (isLoading) {
         return (
@@ -91,6 +132,8 @@ export default function StatisticsPage() {
                 <TaskChart tasks={tasks} />
 
                 {/* Summary Statistics Cards */}
+                <Separator />
+                <GitHubStreak data={contributions} isLoading={isLoading} />
             </div>
         </div>
         </>

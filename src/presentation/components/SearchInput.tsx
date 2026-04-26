@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from "react";
-import { Input } from "@/presentation/components/ui/input";
+import { useState, useEffect } from "react";
 import { Search, Calendar, Tag } from "lucide-react";
 import { useSearchTasksQuery } from "@/app/redux/slices/search.slice";
 import { useNavigate } from "react-router";
@@ -8,11 +7,20 @@ import { formatDate } from "@/domain/utils/date";
 import { useDebounce } from "../hooks/useDebounce";
 import { getPriorityColor } from "@/domain/utils/task-ui";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
+import { Button } from "@/presentation/components/ui/button";
+import {
+  CommandDialog,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from "@/presentation/components/ui/command";
+
 export default function SearchInput() {
     const [query, setQuery] = useState("");
-    const [isOpen, setIsOpen] = useState(false);
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
-    const searchRef = useRef<HTMLDivElement>(null);
     
     // Initialize sanitization hook for search input
     const { sanitizeValues } = useSanitizedForm<{ query: string }>({
@@ -28,78 +36,76 @@ export default function SearchInput() {
 
     const tasks = data?.tasks || [];
 
-    // Close dropdown when clicking outside
+    // Keyboard shortcut handler
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                searchRef.current &&
-                !searchRef.current.contains(event.target as Node)
-            ) {
-                setIsOpen(false);
+        const down = (e: KeyboardEvent) => {
+            if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                setOpen((open) => !open);
             }
         };
 
-        document.addEventListener("mousedown", handleClickOutside);
-        return () =>
-            document.removeEventListener("mousedown", handleClickOutside);
+        document.addEventListener("keydown", down);
+        return () => document.removeEventListener("keydown", down);
     }, []);
 
     const handleTaskClick = (taskId: number) => {
         navigate(`/tasks/${taskId}`);
-        setIsOpen(false);
+        setOpen(false);
         setQuery("");
     };
 
     return (
-        <div
-            className="hidden md:flex flex-1 justify-center px-2"
-            ref={searchRef}
-        >
+        <div className="flex flex-1 justify-center px-0 md:px-2">
             <div className="w-full max-w-2xl relative">
-                <div className="relative">
-                    <Input
-                        placeholder="Search tasks..."
-                        type="text"
-                        value={query}
-                        onChange={(e) => {
-                            const sanitized = sanitizeValues({ query: e.target.value });
-                            setQuery(sanitized.query);
-                            setIsOpen(true);
-                        }}
-                        onFocus={() => setIsOpen(true)}
-                        className="pl-10 pr-4"
-                    />
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    {isLoading && (
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                            <div className="animate-spin h-4 w-4 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
-                        </div>
-                    )}
-                </div>
+                <Button
+                    variant="outline"
+                    className="relative h-10 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none pr-12"
+                    onClick={() => setOpen(true)}
+                >
+                    <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    <span>Search tasks...</span>
+                    <kbd className="pointer-events-none absolute right-[0.3rem] top-[0.35rem] hidden h-7 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium opacity-100 sm:flex">
+                        <span className="text-xs">⌘</span>K
+                    </kbd>
+                </Button>
 
-                {/* Search Results Dropdown */}
-                {isOpen && query.length >= 2 && (
-                    <div className="absolute top-full mt-2 w-full dark:bg-black dark:text-white bg-white border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg max-h-96 overflow-y-auto z-50">
-                        {tasks.length === 0 && !isLoading ? (
-                            <div className="p-4 text-center text-gray-500">
-                                <Search className="h-8 w-8 mx-auto mb-2 text-gray-300" />
-                                <p>No tasks found</p>
-                            </div>
-                        ) : (
-                            <div className="py-2">
+                <CommandDialog open={open} onOpenChange={setOpen}>
+                    <CommandInput
+                        placeholder="Search tasks..."
+                        value={query}
+                        onValueChange={(val) => {
+                            const sanitized = sanitizeValues({ query: val });
+                            setQuery(sanitized.query);
+                        }}
+                    />
+                    <CommandList className="max-h-96">
+                        <CommandEmpty>
+                            {isLoading ? (
+                                <div className="flex items-center justify-center py-6">
+                                    <div className="animate-spin h-5 w-5 border-2 border-gray-300 border-t-blue-500 rounded-full"></div>
+                                </div>
+                            ) : (
+                                "No tasks found."
+                            )}
+                        </CommandEmpty>
+
+                        {!isLoading && tasks.length > 0 && (
+                            <CommandGroup heading="Tasks">
                                 {tasks.map((task: Task) => (
-                                    <div
+                                    <CommandItem
                                         key={task.id}
-                                        onClick={() => handleTaskClick(task.id)}
-                                        className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-blue-500 cursor-pointer border-b border-gray-100 dark:border-0 last:border-b-0 transition-colors"
+                                        value={`${task.title} ${task.description || ''}`}
+                                        onSelect={() => handleTaskClick(task.id)}
+                                        className="px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer border-b border-gray-100 dark:border-gray-800 last:border-b-0"
                                     >
-                                        <div className="flex items-start justify-between">
+                                        <div className="flex items-start justify-between w-full">
                                             <div className="flex-1 min-w-0">
-                                                <h4 className="font-medium dark:text-white text-gray-900 truncate">
+                                                <h4 className="font-medium dark:text-gray-100 text-gray-900 truncate">
                                                     {task.title}
                                                 </h4>
                                                 {task.description && (
-                                                    <p className="text-sm text-gray-600 dark:text-gray-300 mt-1 line-clamp-2">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
                                                         {task.description}
                                                     </p>
                                                 )}
@@ -137,30 +143,18 @@ export default function SearchInput() {
                                                                         index
                                                                     ) => (
                                                                         <span
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                            className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600"
+                                                                            key={index}
+                                                                            className="inline-flex items-center px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300"
                                                                         >
-                                                                            #
-                                                                            {
-                                                                                tag
-                                                                            }
+                                                                            #{tag}
                                                                         </span>
                                                                     )
                                                                 )}
-                                                            {task.tags &&
-                                                                task.tags
-                                                                    .length >
-                                                                    3 && (
-                                                                    <span className="text-xs text-gray-500">
-                                                                        +
-                                                                        {task
-                                                                            .tags
-                                                                            .length -
-                                                                            3}
-                                                                    </span>
-                                                                )}
+                                                            {task.tags.length > 3 && (
+                                                                <span className="text-xs text-gray-500">
+                                                                    +{task.tags.length - 3}
+                                                                </span>
+                                                            )}
                                                         </div>
                                                     )}
                                             </div>
@@ -169,17 +163,17 @@ export default function SearchInput() {
                                                     className={`w-2 h-2 rounded-full ${
                                                         task.completed
                                                             ? "bg-green-500"
-                                                            : "bg-gray-300"
+                                                            : "bg-gray-300 dark:bg-gray-600"
                                                     }`}
-                                                ></div>
+                                                />
                                             </div>
                                         </div>
-                                    </div>
+                                    </CommandItem>
                                 ))}
-                            </div>
+                            </CommandGroup>
                         )}
-                    </div>
-                )}
+                    </CommandList>
+                </CommandDialog>
             </div>
         </div>
     );

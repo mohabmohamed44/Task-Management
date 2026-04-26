@@ -116,3 +116,33 @@ export class UpdateTaskUseCase {
         }
     }
 }
+
+export class DeleteTaskUseCase {
+  async execute(id: string) {
+    try {
+      return await TaskAPI.deleteTask(id);
+    } catch (error) {
+      console.error('=== DeleteTaskUseCase Error ===');
+      console.error('Error:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as any;
+        console.error('Response status:', axiosError.response?.status);
+        console.error('Response data:', axiosError.response?.data);
+      }
+      throw error;
+    }
+  }
+}
+
+export class GetUserStatsUseCase {
+  async execute() {
+    try {
+      const response = await TaskAPI.getStats();
+      return response.data;
+    } catch (error) {
+      console.error('=== GetUserStatsUseCase Error ===');
+      console.error('Error:', error);
+      throw error;
+    }
+  }
+}
