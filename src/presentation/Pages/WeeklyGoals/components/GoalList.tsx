@@ -21,6 +21,7 @@ export const GoalList = ({ goals, onToggle, onDelete, onView, onEdit }: GoalList
   // Note: TanStack Virtual has known React Compiler compatibility issues
   const useVirtual = goals.length > 20;
 
+  // eslint-disable-next-line
   const virtualizer = useVirtualizer({
     count: goals.length,
     getScrollElement: () => parentRef.current,

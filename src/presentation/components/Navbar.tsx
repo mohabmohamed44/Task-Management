@@ -9,7 +9,7 @@ import {
 } from "@/presentation/components/ui/dropdown-menu";
 import SearchInput from "@/presentation/components/SearchInput";
 import { Menu, X, User, LogOut, Settings } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 import ThemeToggle from "./ThemeToggle";
@@ -52,9 +52,11 @@ export default function Navbar({
   }
 
   // Auto-close mobile menu on route change
-  useEffect(() => {
+  const [prevLocation, setPrevLocation] = useState(location.pathname);
+  if (location.pathname !== prevLocation) {
+    setPrevLocation(location.pathname);
     setIsOpen(false);
-  }, [location.pathname]);
+  }
 
   return (
     <header
