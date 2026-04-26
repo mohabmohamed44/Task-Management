@@ -9,7 +9,7 @@ import {
 } from "@/presentation/components/ui/dropdown-menu";
 import SearchInput from "@/presentation/components/SearchInput";
 import { Menu, X, User, LogOut, Settings } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 import ThemeToggle from "./ThemeToggle";
@@ -51,6 +51,11 @@ export default function Navbar({
     setIsOpen(false);
   }
 
+  // Auto-close mobile menu on route change
+  useEffect(() => {
+    setIsOpen(false);
+  }, [location.pathname]);
+
   return (
     <header
       className={`w-full bg-background/80 backdrop-blur sticky border-b shadow-sm top-0 z-40 ${className}`}
@@ -90,17 +95,16 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Center Search */}
-          <div className="flex-1 flex justify-center px-4">
+
+          {/* Search - md and up */}
+          <div className="hidden md:flex flex-1 justify-center px-4 max-w-xl">
             <SearchInput />
           </div>
-          {/* Theme Toggle */}
-          <div className="mr-2">
-            <ThemeToggle />
-          </div>
-
           {/* Right */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Theme Toggle */}
+            <ThemeToggle />
+
             {/* Desktop Auth */}
             <div className="hidden sm:flex sm:items-center sm:gap-2">
               {!isAuthenticated ? (
@@ -191,6 +195,10 @@ export default function Navbar({
         {/* Mobile Menu */}
         {isOpen && (
           <div id="mobile-menu" className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
+            <div className="px-3 pb-2">
+              <SearchInput />
+            </div>
+
             {links.map((l) => (
               <Link
                 key={l.href}
@@ -202,11 +210,6 @@ export default function Navbar({
                 {l.label}
               </Link>
             ))}
-
-            <div className="px-4">
-              <SearchInput />
-            </div>
-
             {!isAuthenticated && (
               <div className="px-3 flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={closeMenu}>

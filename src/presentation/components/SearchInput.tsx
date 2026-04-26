@@ -109,7 +109,7 @@ export default function SearchInput() {
                                                         {task.description}
                                                     </p>
                                                 )}
-                                                <div className="flex items-center gap-3 mt-2">
+                                                <div className="flex flex-wrap items-center gap-2 mt-2">
                                                     <span
                                                         className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
                                                             task.priority
@@ -134,7 +134,7 @@ export default function SearchInput() {
                                                 </div>
                                                 {task.tags &&
                                                     task.tags.length > 0 && (
-                                                        <div className="flex items-center gap-1 mt-2">
+                                                        <div className="flex flex-wrap items-center gap-1 mt-2">
                                                             {task.tags
                                                                 .slice(0, 3)
                                                                 .map(
