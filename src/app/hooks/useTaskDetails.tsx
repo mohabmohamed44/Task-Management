@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router";
-import { useTaskQuery, useUpdateTaskMutation, useDeleteTaskMutation } from "@/app/Queries/task.query";
+import { useTaskQuery, useUpdateTaskMutation, useDeleteTaskMutation, useGetTaskHistory } from "@/app/Queries/task.query";
 import { TaskUpdateForm } from "@/presentation/components/TaskUpdateForm";
 import { useGlobalModal } from '@/app/hooks/useGlobalModal';
 import { Button } from "@/presentation/components/ui/button";
@@ -14,6 +14,7 @@ export function useTaskDetails(taskId?: string) {
   const updateTaskMutation = useUpdateTaskMutation();
   const deleteTaskMutation = useDeleteTaskMutation();
   const { openModal, closeModal } = useGlobalModal();
+  const { data: taskHistory, isLoading: isHistoryLoading } = useGetTaskHistory(taskId || '');
 
   const toggleComplete = async () => {
     if (!task) return;
@@ -138,5 +139,7 @@ export function useTaskDetails(taskId?: string) {
     goBackToTasks,
     isUpdating: updateTaskMutation.isPending,
     isDeleting: deleteTaskMutation.isPending,
+    taskHistory,
+    isHistoryLoading,
   };
 }

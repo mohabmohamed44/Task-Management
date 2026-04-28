@@ -4,13 +4,20 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/presenta
 import { Badge } from "@/presentation/components/ui/badge";
 import { Button } from "@/presentation/components/ui/button";
 import { Separator } from "@/presentation/components/ui/separator";
-import { ArrowLeft, Calendar, Clock, AlertCircle, CheckCircle2, Tag, Layers, Download } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, AlertCircle, CheckCircle2, Tag, Layers, Download, MoreHorizontal, Trash2, PenLine } from "lucide-react";
 import { getPriorityIconName } from "@/domain/utils/task-ui";
 import { formatDate } from "@/domain/utils/date";
 import { getPriorityColor } from "@/domain/utils/task-ui";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/presentation/components/ui/dropdown-menu";
 import {TailSpin} from "react-loader-spinner";
 import { Suspense, lazy } from "react";
 import CommentsList from "../components/commentsList";
+import TaskHistory from "../components/TaskHistory";
 import { ExportModal } from "@/presentation/components/export/ExportModal";
 import { useExportHandlers } from "@/presentation/hooks/useExportHandlers";
 import { Attachments } from "@/presentation/components/attachments/Attachments";
@@ -28,10 +35,13 @@ export default function TaskDetails() {
     openUpdateModal,
     goBackToTasks,
     isUpdating,
+    isDeleting,
+    openDeleteConfirmation,
+    taskHistory,
+    isHistoryLoading,
   } = useTaskDetails(id);
   
   const { isExportModalOpen, openExportModal, closeExportModal } = useExportHandlers();
-
 
   if (isLoading) {
     return (
@@ -75,7 +85,7 @@ export default function TaskDetails() {
         path="/task/:id"
       />
       <div className="min-h-screen bg-background p-2 sm:p-4 md:p-6 lg:p-8 selection:bg-black selection:text-white dark:selection:bg-gray-600 dark:selection:text-gray-300">
-        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
+        <div className="max-w-5xl mx-auto space-y-4 sm:space-y-6">
           {/* Header Navigation */}
           <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
             <Button 
@@ -108,12 +118,12 @@ export default function TaskDetails() {
                       {task.priority}
                     </Badge>
                   </div>
-                  <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold leading-tight wrap-break-word">
+                  <CardTitle className="text-xl sm:text-2xl font-bold leading-tight wrap-break-word">
                     {task.title}
                   </CardTitle>
                 </div>
                 
-                <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                   <div className="flex items-center justify-center sm:justify-start gap-1.5 bg-secondary/50 px-3 py-2 rounded-lg border text-xs sm:text-sm">
                     <Layers className="h-4 w-4 text-muted-foreground shrink-0" />
                     <span className="font-medium truncate leading-none">
@@ -122,15 +132,34 @@ export default function TaskDetails() {
                         : task.category}
                     </span>
                   </div>
-                  <div className="flex flex-row gap-2 sm:contents">
-                    <Button variant="outline" onClick={openExportModal} size="sm" className="flex-1 sm:flex-none">
-                      <Download className="h-4 w-4 sm:mr-2" />
-                      <span className="sm:inline">Export</span>
-                    </Button>
-                    <Button variant={"default"} onClick={openUpdateModal} size="sm" className="flex-1 sm:flex-none">
-                      Update Task
-                    </Button>
-                  </div>
+                  
+                  {/* Actions Dropdown */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" className="gap-1">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="hidden sm:inline">Actions</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={openExportModal}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Export
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={openUpdateModal}>
+                        <PenLine className="h-4 w-4 mr-2" />
+                        Update Task
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={openDeleteConfirmation}
+                        disabled={isDeleting}
+                        className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                      >
+                        <Trash2 className="h-4 w-4 mr-2" />
+                        {isDeleting ? 'Deleting...' : 'Delete'}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             </CardHeader>
@@ -183,6 +212,8 @@ export default function TaskDetails() {
               </Suspense>
               
               <Attachments taskId={task.id.toString()} />
+              
+              <TaskHistory history={taskHistory || []} isLoading={isHistoryLoading} />
               
               <Button 
                 variant={task.completed ? "secondary" : "default"}

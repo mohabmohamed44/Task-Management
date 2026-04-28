@@ -2,7 +2,7 @@ import { TaskAPI } from "@/InfraStructure/api/task.api";
 import { mapTaskFromApi } from "@/InfraStructure/mappers/task.mapper";
 import type { GetTaskQueryDTO } from "@/domain/entities/get-tasks-query.dto";
 import type { CreateTaskDTO, UpdateTaskDTO } from "@/domain/entities/task.dto";
-import type { Task } from "@/domain/entities/task.entity";
+import type { getTaskHistory, Task } from "@/domain/entities/task.entity";
 import type { PaginatedTasksApiResponse } from "@/domain/entities/task-api.response";
 
 
@@ -142,6 +142,26 @@ export class GetUserStatsUseCase {
     } catch (error) {
       console.error('=== GetUserStatsUseCase Error ===');
       console.error('Error:', error);
+      throw error;
+    }
+  }
+}
+
+// Task History
+
+export class GetTaskHistoryUseCase {
+  async execute(id: string): Promise<getTaskHistory[]> {
+    try {
+      const response = await TaskAPI.getTaskHistory(id);
+      return response.data;
+    } catch (error) {
+      console.error('=== GetTaskHistoryUseCase Error ===');
+      console.error('Error:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as any;
+        console.error('Response status:', axiosError.response?.status);
+        console.error('Response data:', axiosError.response?.data);
+      }
       throw error;
     }
   }
