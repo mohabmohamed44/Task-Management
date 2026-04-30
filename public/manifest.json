@@ -58,7 +58,7 @@
       "short_name": "New Task",
       "description": "Create a new task quickly",
       "url": "/tasks/new",
-      "icons": [{ "src": "/priority(1c).png", "sizes": "96x96" }]
+      "icons": [{ "src": "/priority(1).png", "sizes": "96x96" }]
     },
     {
       "name": "Weekly Goals",
