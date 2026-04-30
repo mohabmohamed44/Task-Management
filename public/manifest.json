@@ -1,0 +1,73 @@
+{
+  "name": "Prioritize - Task Management System",
+  "short_name": "Prioritize",
+  "description": "A powerful SaaS task management system for organizing your work, tracking progress, and achieving your goals efficiently.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["productivity", "business", "utilities"],
+  "screenshots": [
+    {
+      "src": "/priority.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "App Dashboard"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/priority(2).png",
+      "sizes": "64x64",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/priority(1).png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/priority(3).png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/priority.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/priority.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Task",
+      "short_name": "New Task",
+      "description": "Create a new task quickly",
+      "url": "/tasks/new",
+      "icons": [{ "src": "/priority(1c).png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Weekly Goals",
+      "short_name": "Goals",
+      "description": "View your weekly goals",
+      "url": "/weekly-goals",
+      "icons": [{ "src": "/priority(1).png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
+}

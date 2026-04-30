@@ -25,6 +25,7 @@ dist-ssr
 # markdown files
 DEBUG_LOGIN.md
 frontend-design.md
+Endpoints.md
 # enviroment Variables
 .env
 .env.local
