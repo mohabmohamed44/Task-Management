@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react'
+import {VitePWA} from "vite-plugin-pwa";
 import tailwindcss from '@tailwindcss/vite'
 import path from 'path'
 
@@ -14,6 +15,22 @@ export default defineConfig(({ mode }) => {
   return {
   plugins: [
     react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      strategies: 'injectManifest', // Use custom service worker
+      srcDir: 'src',
+      filename: 'serviceWorker.ts',
+      manifest: false, // Use public/manifest.json instead
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globIgnores: ['**/node_modules/**/*', '**/sw.js'],
+        injectionPoint: 'self.__WB_MANIFEST',
+      },
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
+    }),
     tailwindcss(),
   ],
   resolve: {
