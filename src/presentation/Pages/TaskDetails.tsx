@@ -104,8 +104,8 @@ export default function TaskDetails() {
 
           <Card className="border shadow-none">
             <CardHeader className="space-y-3 sm:space-y-4 p-4 sm:p-6">
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-3">
-                <div className="space-y-2 min-w-0">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                <div className="space-y-2 min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge variant={task.completed ? "secondary" : "default"} className={`${task.completed ? "" : "bg-primary"} text-xs sm:text-sm`}>
                       {task.completed ? "Completed" : "In Progress"}
@@ -118,48 +118,65 @@ export default function TaskDetails() {
                       {task.priority}
                     </Badge>
                   </div>
-                  <CardTitle className="text-xl sm:text-2xl font-bold leading-tight wrap-break-word">
+                  <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold leading-snug break-words">
                     {task.title}
                   </CardTitle>
                 </div>
                 
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center justify-center sm:justify-start gap-1.5 bg-secondary/50 px-3 py-2 rounded-lg border text-xs sm:text-sm">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  {/* Category - full width on mobile */}
+                  <div className="flex items-center justify-center gap-1.5 bg-secondary/50 px-3 py-2 rounded-lg border text-xs sm:text-sm whitespace-nowrap">
                     <Layers className="h-4 w-4 text-muted-foreground shrink-0" />
-                    <span className="font-medium truncate leading-none">
+                    <span className="font-medium truncate leading-none ">
                       {typeof task.category === 'object' && task.category !== null 
                         ? (task.category as any).name 
                         : task.category}
                     </span>
                   </div>
-                  
-                  {/* Actions Dropdown */}
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm" className="gap-1">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="hidden sm:inline">Actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem onClick={openExportModal}>
-                        <Download className="h-4 w-4 mr-2" />
-                        Export
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={openUpdateModal}>
-                        <PenLine className="h-4 w-4 mr-2" />
-                        Update Task
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={openDeleteConfirmation}
-                        disabled={isDeleting}
-                        className="text-destructive focus:text-destructive focus:bg-destructive/10"
+
+                  {/* Buttons row */}
+                  <div className="flex items-center gap-2">
+                    {/* Actions Dropdown */}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="outline" size="sm" className="gap-1 shrink-0 flex-1 sm:flex-initial">
+                          <span className="sm:inline">Actions</span>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={openExportModal}>
+                          <Download className="h-4 w-4 mr-2" />
+                          Export
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={openUpdateModal}>
+                          <PenLine className="h-4 w-4 mr-2" />
+                          Update Task
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={openDeleteConfirmation}
+                          disabled={isDeleting}
+                          className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          {isDeleting ? 'Deleting...' : 'Delete'}
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+
+                    {/* Mark as Complete button */}
+                    <Button 
+                        variant={task.completed ? "secondary" : "default"}
+                        onClick={() => toggleComplete()}
+                        disabled={isUpdating}
+                        size="sm"
+                        className="pointer-cursor whitespace-nowrap shrink-0 flex-1 sm:flex-initial"
                       >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        {isDeleting ? 'Deleting...' : 'Delete'}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                          <CheckCircle2 className="mr-1.5 h-4 w-4" />
+                          <span className="hidden sm:inline">{task.completed ? "Mark Incomplete" : "Mark Complete"}</span>
+                          <span className="sm:hidden">{task.completed ? "Incomplete" : "Complete"}</span>
+                      </Button>
+                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -214,16 +231,6 @@ export default function TaskDetails() {
               <Attachments taskId={task.id.toString()} />
               
               <TaskHistory history={taskHistory || []} isLoading={isHistoryLoading} />
-              
-              <Button 
-                variant={task.completed ? "secondary" : "default"}
-                onClick={() => toggleComplete()}
-                disabled={isUpdating}
-                className="pointer-cursor w-full sm:w-auto"
-              >
-                <CheckCircle2 className="mr-2 h-4 w-4" />
-                {task.completed ? "Mark as Incomplete" : "Mark as Complete"}
-              </Button>
             </CardContent>
 
             <Separator />

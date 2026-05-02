@@ -30,7 +30,7 @@ export default function Navbar({
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
-    { href: "/goals", label: "Weekly Goals"},
+    { href: "/goals", label: "Goals"},
     { href: "/kanban", label: "Kanban"}
   ],
   className = "",

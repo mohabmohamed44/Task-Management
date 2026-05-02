@@ -219,13 +219,26 @@ export default function TaskChart({ tasks }: TaskChartProps) {
                     cy="50%"
                     outerRadius={80}
                     dataKey="count"
-                    label={({ payload, value }) => `${payload.priority}: ${value}`}
+                    label={false}
                   >
                     {priorityData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip content={<ChartTooltipContent />} />
+                  <Tooltip
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const data = payload[0].payload;
+                        return (
+                          <div className="bg-background border border-border rounded-lg p-3 shadow-lg">
+                            <p className="text-sm font-medium text-foreground">{data.priority}</p>
+                            <p className="text-xs text-muted-foreground">{data.count} tasks</p>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
