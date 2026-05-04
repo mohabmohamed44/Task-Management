@@ -118,7 +118,7 @@ export default function TaskDetails() {
                       {task.priority}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold leading-snug break-words">
+                  <CardTitle className="text-lg sm:text-xl lg:text-2xl font-bold leading-snug wrap-break-word">
                     {task.title}
                   </CardTitle>
                 </div>
