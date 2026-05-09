@@ -140,8 +140,8 @@ export default function TaskDetails() {
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="outline" size="sm" className="gap-1 shrink-0 flex-1 sm:flex-initial">
-                          <span className="sm:inline">Actions</span>
                           <MoreHorizontal className="h-4 w-4" />
+                          <span className="sm:inline">Actions</span>
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48">
@@ -201,14 +201,14 @@ export default function TaskDetails() {
                     <Tag className="h-3 w-3 sm:h-4 sm:w-4" />
                     Tags
                   </h3>
-                  <div className="flex flex-row gap-2 gap-y-2 sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-3">
+                  <div className="flex flex-col gap-2 gap-y-2 sm:flex-row sm:flex-wrap sm:gap-x-4 sm:gap-y-3">
                     {task.tags.map((tag, index) => {
                       const tagText = typeof tag === 'object' && tag !== null 
                         ? (tag as any).name || (tag as any).id || JSON.stringify(tag)
                         : tag;
                       return (
                         <Badge key={index} variant="secondary" className="w-fit max-w-full px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-medium leading-none">
-                          # {tagText}
+                          <Tag size={20} /> {tagText}
                         </Badge>
                       );
                     })}
