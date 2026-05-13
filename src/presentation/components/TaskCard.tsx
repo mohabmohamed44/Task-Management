@@ -7,41 +7,36 @@ import { getPriorityColor } from "@/domain/utils/task-ui";
 interface TaskCardProps {
   task: Task;
   isOverlay?: boolean;
+  onClick?: () => void;
 }
 
-export function TaskCard({ task, isOverlay = false }: TaskCardProps) {
+export function TaskCard({ task, isOverlay = false, onClick }: TaskCardProps) {
 
   return (
     <Card
+      onClick={onClick}
       className={`
         border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900
-        ${isOverlay ? 'shadow-2xl scale-105 ring-2 ring-blue-500 cursor-grabbing' : 'hover:shadow-md transition-shadow'}
+        ${isOverlay ? 'shadow-2xl scale-105 ring-2 ring-blue-500 cursor-grabbing' : 'hover:shadow-md transition-shadow cursor-pointer'}
       `}
-      style={{ cursor: isOverlay ? 'grabbing' : 'grab' }}
+      style={{ cursor: isOverlay ? 'grabbing' : 'pointer' }}
     >
       <CardContent className="p-4">
         {/* Task Header */}
         <div className="flex items-start justify-between gap-2 mb-2">
-          <div className="flex items-center gap-2 flex-1">
-            {/* <Button
-              variant="ghost"
-              size="icon"
-              className="h-5 w-5 p-0 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              aria-label={task.completed ? "Mark as incomplete" : "Mark as complete"}
-            >
-              {task.completed ? (
-                <CheckCircle className="h-5 w-5" />
-              ) : (
-                <Circle className="h-5 w-5" />
-              )}
-            </Button> */}
+          <div className="flex flex-col gap-1 min-w-0 flex-1">
             <span
-              className={`text-sm font-medium text-gray-800 dark:text-gray-200 ${
+              className={`text-sm font-semibold text-gray-800 dark:text-gray-200 truncate ${
                 task.completed ? "line-through text-gray-500 dark:text-gray-500" : ""
               }`}
             >
               {task.title}
             </span>
+            {task.description && (
+              <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 leading-relaxed">
+                {task.description}
+              </p>
+            )}
           </div>
         </div>
 
@@ -89,7 +84,7 @@ export function TaskCard({ task, isOverlay = false }: TaskCardProps) {
             ))}
           </div>
         )}
-      </CardContent>
+        </CardContent>
     </Card>
   );
 }

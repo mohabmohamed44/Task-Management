@@ -23,7 +23,8 @@ import type {
   createCardInBoardDTO,
   moveCardsBetweenColumnsDTO,
   ReorderColumnPositionDTO,
-  ReorderCardWithInColumnDTO
+  ReorderCardWithInColumnDTO,
+  updateCardDTO
 } from "@/domain/entities/kanban.dto";
 import toast from "react-hot-toast";
 
@@ -205,7 +206,7 @@ export const useCreateCardMutation = () => {
 export const useUpdateCardMutation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ boardId, cardId, data }: { boardId: string; cardId: string; data: Partial<createCardInBoardDTO> }) => {
+    mutationFn: async ({ boardId, cardId, data }: { boardId: string; cardId: string; data: Partial<updateCardDTO> }) => {
       const useCase = new UpdateCardUseCase();
       const result = await useCase.execute(boardId, cardId, data);
       if (!result.success) {

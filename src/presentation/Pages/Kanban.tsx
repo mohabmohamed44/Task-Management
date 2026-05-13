@@ -25,6 +25,7 @@ import { AddColumnDialog } from "@/presentation/components/Kanban/AddColumnDialo
 import { EditBoardDialog } from "@/presentation/components/Kanban/EditBoardDialog";
 import { EditColumnDialog } from "@/presentation/components/Kanban/EditColumnDialog";
 import { AddBoardDialog } from "@/presentation/components/Kanban/AddBoardDialog";
+import { CardDetailDialog } from "@/presentation/components/Kanban/CardDetailDialog";
 import { useKanbanBoardsQuery, useCreateBoardMutation, useDeleteColumnMutation } from "@/app/Queries/kanban.query";
 import {
   DropdownMenu,
@@ -163,6 +164,7 @@ function KanbanBoard({
     columnId: string;
     columnName: string;
   } | null>(null);
+  const [detailCardTarget, setDetailCardTarget] = useState<Task | null>(null);
 
 
   const deleteColumnMutation = useDeleteColumnMutation();
@@ -441,6 +443,7 @@ function KanbanBoard({
                         <SortableItem id={task.id.toString()}>
                           <TaskCard 
                             task={task}
+                            onClick={() => setDetailCardTarget(task)}
                           />
                         </SortableItem>
 
@@ -559,6 +562,15 @@ function KanbanBoard({
       columnId={editColumnTarget?.id ?? ""}
       currentName={editColumnTarget?.name ?? ""}
       currentColor={editColumnTarget?.color ?? ""}
+    />
+
+    <CardDetailDialog
+      open={!!detailCardTarget}
+      onOpenChange={(open) => {
+        if (!open) setDetailCardTarget(null);
+      }}
+      boardId={boardId}
+      task={detailCardTarget}
     />
 
 

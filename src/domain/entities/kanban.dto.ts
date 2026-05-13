@@ -53,7 +53,6 @@ export interface updateCardDTO {
   description?: string;
   priority?: TaskPriority;
   labels?: string[];
-  completed?: boolean; // Add completed toggle field
 }
 
 export interface deleteKanboardDTO {

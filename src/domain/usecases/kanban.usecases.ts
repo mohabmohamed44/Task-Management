@@ -8,7 +8,8 @@ import type {
   ReorderColumnPositionDTO,
   ReorderCardWithInColumnDTO,
   updateBoardInfoDTO,
-  updateColumnDTO
+  updateColumnDTO,
+  updateCardDTO
 } from "@/domain/entities/kanban.dto";
 import type { KanbanBoard, KanbanColumn, KanbanCard } from "@/domain/entities/kanban.entity";
 interface UseCaseSuccess<T = any> {
@@ -214,7 +215,7 @@ export class CreateCardUseCase {
 }
 
 export class UpdateCardUseCase {
-  async execute(boardId: string, cardId: string, data: Partial<createCardInBoardDTO>) {
+  async execute(boardId: string, cardId: string, data: Partial<updateCardDTO>) {
     try {
       const response = await KanbanAPI.updateCard(boardId, cardId, data);
       return {
