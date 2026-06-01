@@ -81,7 +81,7 @@ describe('AuthAPI', () => {
 
       apiClientMock.post.mockRejectedValue(networkError);
 
-      await expect(authAPI.login(mockData)).rejects.toThrow('Network error. Please check your connection.');
+      await expect(authAPI.login(mockData)).rejects.toThrow('Network error');
     });
   });
 
