@@ -43,7 +43,7 @@ flowchart LR
   B --> C((Use Cases))
   C --> D((Entities / Domain))
 
-  classDef circle fill:transparent,stroke:#111,stroke-width:1px,color:#111;
+  classDef circle fill:#f9f9f9,stroke:#111,stroke-width:1px,color:#111;
   class A,B,C,D circle;
 ```
 
