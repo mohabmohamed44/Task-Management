@@ -39,6 +39,7 @@
     "@tanstack/react-virtual": "^3.14.2",
     "@testing-library/dom": "^10.4.1",
     "@types/chart.js": "^4.0.1",
+    "@vitest/ui": "^4.1.8",
     "axios": "^1.17.0",
     "chart.js": "^4.5.1",
     "class-variance-authority": "^0.7.1",
