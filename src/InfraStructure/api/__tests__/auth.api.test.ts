@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import axios from 'axios';
 import { AuthAPI } from '../auth.api';
 import type { LoginDTO, RegisterDTO } from '@/domain/entities/auth.dto';
 import type { LoginResponse } from '@/domain/entities/user';
@@ -8,7 +7,9 @@ import type { User } from '@/domain/entities/user';
 // Mock axios
 const { apiClientMock } = vi.hoisted(() => {
   const apiClientMock = {
+    get: vi.fn(),
     post: vi.fn(),
+    put: vi.fn(),
     interceptors: {
       response: {
         use: vi.fn(),
@@ -22,12 +23,8 @@ const { apiClientMock } = vi.hoisted(() => {
 vi.mock('axios', () => ({
   default: {
     create: vi.fn(() => apiClientMock),
-    get: vi.fn(),
-    put: vi.fn(),
   },
 }));
-
-const mockedAxios = vi.mocked(axios);
 
 describe('AuthAPI', () => {
   let authAPI: AuthAPI;
@@ -153,11 +150,11 @@ describe('AuthAPI', () => {
         config: { headers: {} as any },
       };
 
-      (mockedAxios.get as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(fullResponse);
+      apiClientMock.get.mockResolvedValue(fullResponse);
 
       const result = await authAPI.getCurrentUser(token);
 
-      expect(mockedAxios.get).toHaveBeenCalledWith(expect.stringContaining('/auth/me'), {
+      expect(apiClientMock.get).toHaveBeenCalledWith('/auth/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -183,7 +180,7 @@ describe('AuthAPI', () => {
         config: { headers: {} as any },
       };
 
-      (mockedAxios.get as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(fullResponse);
+      apiClientMock.get.mockResolvedValue(fullResponse);
 
       const result = await authAPI.getCurrentUser(token);
 
@@ -209,12 +206,12 @@ describe('AuthAPI', () => {
         config: { headers: {} as any },
       };
 
-      (mockedAxios.put as unknown as ReturnType<typeof vi.fn>).mockResolvedValue(fullResponse);
+      apiClientMock.put.mockResolvedValue(fullResponse);
 
       const result = await authAPI.updateProfilePicture(token, mockFile);
 
-      expect(mockedAxios.put).toHaveBeenCalledWith(
-        expect.stringContaining('/auth/profile-picture'),
+      expect(apiClientMock.put).toHaveBeenCalledWith(
+        '/auth/profile-picture',
         expect.any(FormData),
         {
           headers: {
@@ -225,7 +222,7 @@ describe('AuthAPI', () => {
       );
 
       // Check form data content
-      const formData = (mockedAxios.put as unknown as ReturnType<typeof vi.fn>).mock.calls[0][1] as FormData;
+      const formData = apiClientMock.put.mock.calls[0][1] as FormData;
       expect(formData.get('profilePicture')).toEqual(mockFile);
 
       expect(result).toEqual(mockResponse);
