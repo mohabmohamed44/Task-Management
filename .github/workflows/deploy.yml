@@ -26,6 +26,11 @@ jobs:
 
       - name: Build Vite app
         run: npm run build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_STORAGE_SECRET: ${{ secrets.VITE_STORAGE_SECRET }}
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v4.0
