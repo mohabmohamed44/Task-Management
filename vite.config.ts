@@ -10,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const apiTarget =
     env.VITE_API_URL ||
-    'https://official-tasha-newcairoacademy-a0560cfa.koyeb.app/api/v1';
+    'https://prioritize.runasp.net';
 
   return {
   plugins: [
@@ -45,7 +45,6 @@ export default defineConfig(({ mode }) => {
         target: apiTarget,
         changeOrigin: true,
         secure: true,
-        rewrite: (p) => p.replace(/^\/api/, ''),
       },
     },
   },
