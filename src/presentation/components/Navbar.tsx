@@ -11,7 +11,6 @@ import SearchInput from "@/presentation/components/SearchInput";
 import { Menu, X, User, LogOut, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
-import { useCurrentUserQuery } from "@/app/Queries/auth.query";
 import ThemeToggle from "./ThemeToggle";
 
 export interface NavLink {
@@ -26,7 +25,7 @@ export interface NavbarProps {
 }
 
 export default function Navbar({
-  brand = <span className="font-extrabold text-lg text-violet-600">Prioritize</span>,
+  brand = <span className="bg-linear-to-b from-gray-600 to-gray-400 bg-clip-text text-transparent text-2xl font-extrabold">Prioritize</span>,
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
@@ -37,9 +36,8 @@ export default function Navbar({
 }: NavbarProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   // Destructing some Props from useAuth hook
-  const { isAuthenticated, logout } = useAuth();
-  const { data: currentUser } = useCurrentUserQuery();
-  const userImage = currentUser?.profile_image_url || (currentUser as any)?.profilePicture;
+  const { isAuthenticated, logout, user: currentUser } = useAuth();
+  const userImage = currentUser?.profile_image_url;
   const location = useLocation();
 
   const toggleMenu = () => {

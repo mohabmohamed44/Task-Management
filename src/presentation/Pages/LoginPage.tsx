@@ -1,375 +1,273 @@
 import React, { useState } from "react";
-import { 
-  Card, 
-  CardContent, 
-  CardHeader, 
-  CardTitle, 
-  CardDescription,
-  CardFooter 
-} from '@/presentation/components/ui/card';
-import { Input } from '@/presentation/components/ui/input';
-import { Button } from '@/presentation/components/Button';
-import { Checkbox } from '@/presentation/components/ui/checkbox';
-import { Separator } from '@/presentation/components/ui/separator';
-import { 
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage 
-} from '@/presentation/components/ui/form';
+import {
+  Eye,
+  EyeOff,
+  Loader2,
+} from "lucide-react";
+import { useNavigate, Link } from "react-router";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Eye, EyeOff, Mail, Lock } from 'lucide-react';
-import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from "react-router";
 import { useLoginMutation } from "@/app/Queries/auth.query";
 import { useRateLimitState } from "@/app/hooks/useRateLimitState";
-import toast from "react-hot-toast";
 import { useSanitizedForm } from "@/app/hooks/useSanitizedForm";
 import MetaData from "../components/MetaData";
-// Validation schema
-const formSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-  rememberMe: z.boolean().optional()
+import { Card, CardContent } from "@/presentation/components/ui/card";
+import toast from "react-hot-toast";
+
+const loginSchema = z.object({
+  email: z.string().email("Please provide a valid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
+  rememberMe: z.boolean().optional(),
 });
 
-export const LoginPage: React.FC = () => {
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
   const { mutateAsync: login, isPending } = useLoginMutation();
   const navigate = useNavigate();
-  
-  // Initialize sanitization hook for email field
-  const { sanitizeValues } = useSanitizedForm<{ email: string }>({
-    email: 'email'
+  const { isBlocked, timeRemaining } = useRateLimitState("login");
+  const { sanitizeValues } = useSanitizedForm<{ email: string }>({ email: "email" });
+
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: { email: "", password: "", rememberMe: false },
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-      rememberMe: false
-    }
-  });
+  const isLoading = isPending;
 
+  const formatTimeRemaining = (ms: number): string => {
+    const minutes = Math.floor(ms / 60000);
+    const seconds = Math.floor((ms % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
 
-  const {isBlocked, remainingAttempts, timeRemaining} = useRateLimitState('login');
-  const formatTimeRemaining = (ms: number) : string => {
-    const minutes = Math.floor(ms / 6000);
-    const seconds = Math.floor((ms % 6000) / 1000);
-    return `${minutes}: ${seconds.toString().padStart(2,'0')}`
-  }
+  const onSubmit = async (values: LoginFormValues) => {
+    setAuthError(null);
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    
     if (isBlocked) {
-      toast.error(`please Wait ${formatTimeRemaining(timeRemaining)} before trying again. `)
+      toast.error(`Please wait ${formatTimeRemaining(timeRemaining)} before trying again.`);
+      return;
     }
 
     try {
-      // Sanitize email before login
       const sanitized = sanitizeValues({ email: values.email });
-      
-      const response = await login({
+      await login({
         email: sanitized.email,
         password: values.password,
       });
-      
-      // If we get here, login was successful (no error thrown)
-      console.log("Login successful:", response);
-      // Navigate to home page after successful login
       navigate("/");
     } catch (error: any) {
-      console.error("Login error:", error);
-      
-      // Extract error message from various possible error formats
-      let errorMessage = "An error occurred during login. Please try again.";
-      
+      let message = "An unexpected error occurred. Please try again.";
       if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
+        message = error.response.data.message;
       } else if (error.response?.data?.error) {
-        errorMessage = error.response.data.error;
+        message = error.response.data.error;
       } else if (error.message) {
-        errorMessage = error.message;
+        message = error.message;
       }
-      
-      // Display error message to user
-      form.setError("root", {
-        type: "manual",
-        message: errorMessage
-      });
+      setAuthError(message);
     }
   };
 
-  const handleForgotPassword = () => {
-    console.log('Forgot password clicked');
-    // Navigate to forgot password page
-  };
-  // Social Media Login Feature using Supabase
-  const handleSocialLogin = async (provider: string) => {
+  const handleGoogleAuth = async () => {
     try {
-      // Import here horizontally if needed or assume user can add import
-      // We will add the import at the top later if not present.
-      const { supabase } = await import('@/lib/supabase');
-      
+      const { supabase } = await import("@/lib/supabase");
       const { error } = await supabase.auth.signInWithOAuth({
-        provider: provider as 'google' | 'github',
+        provider: "google",
         options: {
-          // Redirect back to the FRONTEND, not the backend!
-          // This allows Supabase JS to read its PKCE verifier from LocalStorage
           redirectTo: `${window.location.origin}/auth/callback`,
         },
       });
-
       if (error) {
-        toast.error(`Error with ${provider} login: ${error.message}`);
-        console.error(error);
+        toast.error(`Google sign-in error: ${error.message}`);
       }
     } catch (err: any) {
-      toast.error(`Unexpected error during ${provider} login`);
-      console.error(err);
+      toast.error("Unexpected error during Google sign-in.");
+      console.error("Unexpected error", err);
     }
   };
 
   return (
     <>
-    <MetaData
-      title="Login"
-      description="Enter Your Credentials here to continue"
-      path="/auth/login"
-      noIndex={true}
-      type="website"
-    />
-    <div className="flex items-center justify-center p-3 sm:p-4 md:p-6 lg:p-8 selection:text-white selection:bg-black">
-      <Card className="w-full sm:max-w-xl md:max-w-3xl lg:max-w-4xl xl:max-w-5xl bg-background border-0 shadow-none">
-        <CardHeader className="space-y-1 text-center px-4 sm:px-6 md:px-8">
-          <div className="flex justify-center mb-4">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
-            </div>
-          </div>
-          <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight">
-            Welcome back
-          </CardTitle>
-          <CardDescription className="text-sm sm:text-base text-muted-foreground">
-            Enter your credentials to access your account
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent className="space-y-4 px-4 sm:px-6 md:px-8">
-          {/* Social Login Buttons */}
-          <div className="grid grid-cols-1 gap-3">
-            <Button 
-              variant="outline" 
-              onClick={() => handleSocialLogin('google')}
-              className="w-full"
-            >
-              <FcGoogle size={20} className="mr-3" />
-              Sign in With Google
-            </Button>
-            {/* <Button 
-              variant="outline" 
-              onClick={() => handleSocialLogin('github')}
-              className="w-full"
-            >
-              <svg className="w-4 h-4 mr-2" viewBox="0 0 24 24">
-                <path fill="currentColor" d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-              </svg>
-              GitHub
-            </Button> */}
-          </div>
-
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <Separator className="w-full" />
-            </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">
-                Or continue with
-              </span>
-            </div>
-          </div>
-
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-
-              {isBlocked && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 dark:bg-yellow-900 dark:border-yellow-800">
-                  <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                    {remainingAttempts} attempt{remainingAttempts !== 1 ? 's' : ''} remaining
-                  </p>
+      <MetaData
+        title="Sign In"
+        description="Sign in to your workspace"
+        path="/auth/login"
+        noIndex={true}
+        type="website"
+      />
+      <div className="min-h-screen w-full bg-[#0c0c0c] flex items-center justify-center p-6 selection:bg-zinc-800 selection:text-white">
+        <div className="w-full max-w-lg flex flex-col gap-8">
+          {/* Card */}
+          <Card className="rounded-none border-2 border-gray-400/25 bg-zinc-900/40 backdrop-blur-sm">
+            <CardContent className="p-8 flex flex-col items-center gap-6">
+            <div className="flex flex-col items-center gap-3">
+              <div className="mb-6 flex items-center gap-3">
+                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-5 h-5 bg-[#0c0c0c] rounded-sm rotate-45" />
                 </div>
-              )}
+                <h1 className="text-4xl font-semibold text-white font-playfair-display">Prioritize</h1>
+              </div>
+              <h3 className="font-['Playfair_Display'] text-3xl font-light text-white mb-2 text-center">
+                Welcome <span className="italic text-zinc-300">Back</span>
+              </h3>
+              <p className="font-['Inter'] text-sm text-zinc-500 text-center">
+                Sign in to your workspace to continue.
+              </p>
+            </div>
+            {/* Error Message */}
+            {authError && (
+              <div className="mb-5 bg-[#ffdad6]/10 border border-[#ba1a1a]/50 text-red-200 text-xs font-semibold p-3 flex items-center justify-between">
+                <span>{authError}</span>
+                <button onClick={() => setAuthError(null)} className="p-1 hover:bg-white/10 cursor-pointer shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
 
-              {/* Remaining Attempts */}
-              {!isBlocked && remainingAttempts < 5 && (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 dark:bg-yellow-900 dark:border-yellow-600">
-                  <p className="text-sm text-yellow-700 dark:text-yellow-100">
-                    {remainingAttempts} attempt{remainingAttempts !== 1 ? 's' : ''} remaining
-                  </p>
+            {/* Rate Limit Warning */}
+            {isBlocked && (
+              <div className="mb-5 bg-[#ffdad6]/10 border border-[#ba1a1a]/50 text-red-200 text-xs font-semibold p-3">
+                Too many attempts. Wait {formatTimeRemaining(timeRemaining)} before trying again.
+              </div>
+            )}
+
+            {/* Form */}
+            <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-5 w-full">
+              {/* Email */}
+              <div className="flex flex-col gap-1.5">
+                <label className="font-['Inter'] text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                  Email Address
+                </label>
+                <input
+                  {...form.register("email")}
+                  type="email"
+                  placeholder="you@example.com"
+                  onCopy={(e) => e.preventDefault()}
+                  onPaste={(e) => e.preventDefault()}
+                  onCut={(e) => e.preventDefault()}
+                  autoComplete="email"
+                  spellCheck={false}
+                  className="w-full border border-zinc-800 p-3 bg-zinc-950/80 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+                />
+                {form.formState.errors.email && (
+                  <p className="font-['Inter'] text-xs text-red-300">{form.formState.errors.email.message as string}</p>
+                )}
+              </div>
+
+              {/* Password */}
+              <div className="flex flex-col gap-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="font-['Inter'] text-xs font-medium text-zinc-400 uppercase tracking-wider">
+                    Password
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => toast.error("Password reset is not available in this demo.")}
+                    className="font-['Inter'] text-xs text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
+                  >
+                    Forgot password?
+                  </button>
                 </div>
-              )}
-
-              {form.formState.errors.root && (
-                <div className="p-3 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-md">
-                  {form.formState.errors.root.message}
+                <div className="relative">
+                  <input
+                    {...form.register("password")}
+                    type={showPassword ? "text" : "password"}
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                    disabled={isBlocked}
+                    className="w-full border border-zinc-800 p-3 pr-12 bg-zinc-950/80 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
                 </div>
-              )}
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          placeholder="name@example.com"
-                          className="pl-10"
-                          {...field}
-                          disabled={isBlocked}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            sanitizeValues({ email: e.target.value });
-                          }}
-                          onCopy={(e) => e.preventDefault()}
-                          onPaste={(e) => e.preventDefault()}
-                          onCut={(e) => e.preventDefault()}
-                          autoComplete="email"
-                          spellCheck={false}
-                        />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                {form.formState.errors.password && (
+                  <p className="font-['Inter'] text-xs text-red-300">{form.formState.errors.password.message as string}</p>
                 )}
-              />
+              </div>
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center justify-between">
-                      <FormLabel>Password</FormLabel>
-                      <Button
-                        type="button"
-                        variant="link"
-                        size="sm"
-                        onClick={handleForgotPassword}
-                        className="px-0 font-normal"
-                        disabled={isBlocked}
-                      >
-                        Forgot password?
-                      </Button>
-                    </div>
-                    <FormControl>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                        <Input
-                          type={showPassword ? "text" : "password"}
-                          placeholder="Enter your password"
-                          className="pl-10 pr-10"
-                          {...field}
-                          disabled={isBlocked}
-                          onCopy={(e) => e.preventDefault()}
-                          onCut={(e) => e.preventDefault()}
-                          onPaste={(e) => e.preventDefault()}
-                          autoComplete="off"
-                        />
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="absolute right-0 top-0 h-full px-3"
-                          name="show-password"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? (
-                            <EyeOff className="h-4 w-4" />
-                          ) : (
-                            <Eye className="h-4 w-4" />
-                          )}
-                        </Button>
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {/* Remember Me */}
+              <div className="flex items-center gap-2 mt-1 select-none">
+                <input
+                  {...form.register("rememberMe")}
+                  type="checkbox"
+                  id="rememberMe"
+                  className="w-4 h-4 border-zinc-700 bg-zinc-950/80 accent-zinc-400 cursor-pointer"
+                />
+                <label htmlFor="rememberMe" className="font-['Inter'] text-xs font-medium text-zinc-500 cursor-pointer">
+                  Keep me signed in for 30 days
+                </label>
+              </div>
 
-              <FormField
-                control={form.control}
-                name="rememberMe"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                    <FormControl>
-                      <Checkbox
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                    <FormLabel className="font-normal cursor-pointer">
-                      Remember me
-                    </FormLabel>
-                  </FormItem>
-                )}
-              />
+              {/* Submit */}
+              <div className="flex flex-col gap-3 mt-2">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full bg-white text-[#0c0c0c] font-['Inter'] text-sm font-semibold py-3.5 hover:bg-zinc-200 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Processing Request
+                    </>
+                  ) : (
+                    "Sign In"
+                  )}
+                </button>
 
-              <Button 
-                type="submit" 
-                className="w-full" 
-                disabled={isPending || isBlocked}
-              >
-                {isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
-                  </>
-                ) : isBlocked ? (
-                  <>
-                    <Lock className="mr-2 h-4 w-4" />
-                    Wait {formatTimeRemaining(timeRemaining)} before trying again
-                  </>
-                ) : (
-                  "Sign In"
-                )}
-              </Button>
+                {/* Divider */}
+                <div className="flex items-center gap-3 py-1">
+                  <div className="flex-1 h-px bg-zinc-800" />
+                  <span className="font-['Inter'] text-xs text-zinc-600 uppercase">or</span>
+                  <div className="flex-1 h-px bg-zinc-800" />
+                </div>
+
+                {/* Google Auth */}
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={handleGoogleAuth}
+                  className="w-full bg-transparent text-zinc-400 border border-zinc-800 font-['Inter'] text-sm font-medium py-3 hover:bg-zinc-800/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
+                >
+                  <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M22.56 12.25C22.56 11.47 22.49 10.72 22.36 10H12V14.26H17.92C17.66 15.63 16.88 16.79 15.72 17.57V20.34H19.28C21.36 18.42 22.56 15.6 22.56 12.25Z" fill="#4285F4" />
+                    <path d="M12 23C14.97 23 17.46 22.02 19.28 20.34L15.72 17.57C14.73 18.23 13.48 18.63 12 18.63C9.14 18.63 6.71 16.7 5.84 14.12H2.17V16.97C3.98 20.57 7.7 23 12 23Z" fill="#34A853" />
+                    <path d="M5.84 14.12C5.62 13.46 5.49 12.74 5.49 12C5.49 11.26 5.62 10.54 5.84 9.88V7.03H2.17C1.42 8.52 1 10.21 1 12C1 13.79 1.42 15.48 2.17 16.97L5.84 14.12Z" fill="#FBBC05" />
+                    <path d="M12 5.38C13.62 5.38 15.06 5.94 16.2 7.02L19.36 3.86C17.46 2.09 14.97 1 12 1C7.7 1 3.98 3.43 2.17 7.03L5.84 9.88C6.71 7.3 9.14 5.38 12 5.38Z" fill="#EA4335" />
+                  </svg>
+                  Sign In with Google
+                </button>
+              </div>
             </form>
-          </Form>
-        </CardContent>
+            </CardContent>
+          </Card>
 
-        <CardFooter className="flex flex-col space-y-4 px-4 sm:px-6 md:px-8">
-          <Separator />
-          <div className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
+          {/* Sign Up Link */}
+          <div className="text-center">
+            <span className="font-['Inter'] text-sm text-zinc-600">
+              Don't have an account?
+            </span>{" "}
             <Link
               to="/auth/register"
-              className="font-semibold text-primary hover:underline inline-flex items-center px-2 py-1 min-h-11 min-w-11"
+              className="font-['Inter'] text-sm text-zinc-400 hover:text-white hover:underline font-medium underline-offset-4 transition-colors"
             >
               Sign Up
             </Link>
           </div>
-          <div className="text-xs text-center text-muted-foreground">
-            By continuing, you agree to our{" "}
-            <Button variant="link" className="px-2 py-1 text-xs h-auto font-normal min-h-11 min-w-11">
-              Terms of Service
-            </Button>{" "}
-            and{" "}
-            <Button variant="link" className="px-2 py-1 text-xs h-auto font-normal min-h-11 min-w-11">
-              Privacy Policy
-            </Button>
-          </div>
-        </CardFooter>
-      </Card>
-    </div>
+        </div>
+      </div>
     </>
   );
 };
-
-export default LoginPage;

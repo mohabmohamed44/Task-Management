@@ -42,13 +42,16 @@ export const useRegisterMutation = () =>
   });
 
 export const useCurrentUserQuery = () => {
-  const token = TokenStorage.get();
-
   return useQuery({
     queryKey: ["current-user"],
-    queryFn: () => getCurrentUser.execute(token!),
-    enabled: !!token,
+    queryFn: () => {
+      const token = TokenStorage.get();
+      if (!token) throw new Error("No token");
+      return getCurrentUser.execute(token);
+    },
+    enabled: !!TokenStorage.get(),
     staleTime: 1000 * 60 * 5,
+    retry: false,
   });
 };
 

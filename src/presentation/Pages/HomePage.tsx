@@ -51,10 +51,6 @@ const itemVariants: Variants = {
 const BackgroundGradient = () => (
   <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50 dark:bg-[#09090b] transition-colors duration-700">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] bg-size-[24px_24px] opacity-50 dark:opacity-20" />
-    {/* Static gradients instead of animated blur for better scroll performance */}
-    <div className="absolute -top-[10%] -left-[10%] w-150 h-150 rounded-full bg-blue-500/10 dark:bg-blue-600/10" />
-    <div className="absolute top-[20%] -right-[10%] w-125 h-125 rounded-full bg-purple-500/10 dark:bg-purple-600/10" />
-    <div className="absolute -bottom-[20%] left-[20%] w-125 h-125 rounded-full bg-emerald-500/5 dark:bg-emerald-600/5" />
   </div>
 );
 
@@ -395,7 +391,7 @@ export default function HomePage() {
       <MetaData title="Command Center" description="Your centralized task and goal management node" path="/" type="website" />
       <BackgroundGradient />
       
-      <div className="min-h-screen pt-12 md:pt-20 px-4 md:px-8 selection:text-white selection:bg-purple-600">
+      <div className="min-h-screen pt-12 md:pt-20 px-4 md:px-8 selection:text-white selection:bg-gray-500">
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="max-w-7xl mx-auto space-y-12">
           
           {/* Hero Header */}
@@ -407,17 +403,14 @@ export default function HomePage() {
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 dark:bg-black/70 border border-gray-200 dark:border-white/10 text-sm font-bold tracking-widest uppercase mb-8 shadow-sm"
             >
               <Activity className="w-4 h-4 text-yellow-500 animate-pulse" />
-              <span className="bg-linear-to-r from-green-600 via-blue-500 to-indigo-500 bg-clip-text text-transparent bg-size-[200%_auto] animate-[gradient-move_3s_ease_infinite]">
+              <span className="bg-linear-to-r from-gray-700 via-gray-300 to-white-500 bg-clip-text text-transparent bg-size-[200%_auto] animate-[gradient-move_3s_ease_infinite]">
                 System Online
               </span>
             </motion.div>
-            <h1 className="text-5xl md:text-7xl font-black mb-6 text-gray-900 dark:text-white tracking-tighter leading-tight">
-              <span className="block md:inline">Operational </span>
-              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-purple-600 to-emerald-500">
-                Command Center
-              </span>
+            <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-bold leading-none tracking-tight text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl -translate-y-4 animate-fade-in [animation-fill-mode:forwards] [--animation-delay:200ms]">
+              Operational Command Center
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto font-medium leading-relaxed mb-10">
+            <p className="mb-12 text-xl tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] fade-in [--animation-delay:400ms]">
               Your intelligent nexus for tracking workflows, synthesizing goals, and optimizing daily execution.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -12,6 +12,8 @@ const loginUser = new LoginUser(authAPI);
 const registerUser = new RegisterUser(authAPI);
 const getCurrentUser = new GetCurrentUser(authAPI);
 
+let authFetchPromise: Promise<User | LoginResponse> | null = null;
+
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(() => !!TokenStorage.get());
@@ -24,24 +26,36 @@ export const useAuth = () => {
       return;
     }
 
-    getCurrentUser
-      .execute(token)
+    if (!authFetchPromise) {
+      authFetchPromise = getCurrentUser.execute(token)
+        .catch((err) => {
+          authFetchPromise = null;
+          throw err;
+        });
+    }
+
+    authFetchPromise
       .then((data) => {
-        if (data?.id) {
-          setUser(data as User);
-        } else if (data && typeof data === 'object' && 'user' in data) {
+        if (data && typeof data === 'object' && 'user' in data) {
           const loginResponse = data as unknown as LoginResponse;
           if (loginResponse.user) {
-            setUser(loginResponse.user);
+            setUser(loginResponse.user as User);
+          }
+        } else {
+          const userData = data as User;
+          if (userData?.id) {
+            setUser(userData);
           }
         }
       })
-      .catch((err) => {
-        console.error("Auth check failed:", err);
+      .catch(() => {
         TokenStorage.remove();
         setUser(null);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        authFetchPromise = null;
+      });
   }, []);
 
   // Login

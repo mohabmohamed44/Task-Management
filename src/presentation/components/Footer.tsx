@@ -1,185 +1,144 @@
 import { Link, useLocation } from "react-router";
-import { Mail, Heart } from "lucide-react";
+import { Heart, LayoutGrid } from "lucide-react";
 import { FaXTwitter, FaLinkedin, FaFacebook, FaGithub } from "react-icons/fa6";
-import { Button } from "./Button";
 
 export default function Footer() {
-  const location = useLocation();
-  const currentYear = new Date().getFullYear();
+	const location = useLocation();
+	const currentYear = new Date().getFullYear();
 
-  // Navigation links
-  const navLinks = [
-    { path: "/statistics", label: "Dashboard" },
-    { path: "/tasks", label: "Tasks" },
-    { path: "/kanban", label: "Kanban" },
-    { path: "/goals", label: "Goals" },
-    { path: "/profile", label: "Profile" },
-  ];
+	const platformLinks = [
+		{ path: "/statistics", label: "Dashboard" },
+		{ path: "/tasks", label: "Tasks" },
+		{ path: "/kanban", label: "Kanban" },
+		{ path: "/goals", label: "Goals" },
+	];
 
-  // Social links
-  const socialLinks = [
-    { href: "https://github.com/mohabmohamed44", icon: FaGithub, label: "GitHub", color: "hover:bg-gray-800 hover:text-white" },
-    { href: "https://facebook.com", icon: FaFacebook, label: "Facebook", color: "hover:bg-blue-600 hover:text-white" },
-    { href: "https://linkedin.com", icon: FaLinkedin, label: "LinkedIn", color: "hover:bg-blue-700 hover:text-white" },
-    { href: "https://twitter.com", icon: FaXTwitter, label: "Twitter", color: "hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black" },
-  ];
+	const accountLinks = [
+		{ path: "/profile", label: "Profile" },
+		{ path: "/settings", label: "Settings" },
+		{ path: "/privacy", label: "Privacy Policy" },
+		{ path: "/terms", label: "Terms of Service" },
+	];
 
-  return (
-    <footer 
-      role="contentinfo" 
-      className="bg-background/80 backdrop-blur text-gray-500 border-t shadow-sm  dark:border-gray-800"
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Footer Content */}
-        <div className="py-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
-            {/* Brand Section */}
-            <div className="lg:col-span-1">
-              <Link 
-                to="/" 
-                aria-label="Prioritize home page"
-                className="inline-flex items-center gap-2"
-              >
-                <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center">
-                  <span className="text-gray-900 dark:text-gray-100 font-bold text-xl">P</span>
-                </div>
-                <span className="text-xl font-bold text-foreground dark:text-gray-100">Prioritize</span>
-              </Link>
-              <p className="mt-4 text-sm text-gray-400 leading-relaxed">
-                Organize, prioritize, and conquer your tasks with our intuitive platform designed for individuals and teams.
-              </p>
-              {/* Social Links */}
-              <div className="flex items-center gap-3 mt-6">
-                {socialLinks.map((social) => (
-                  <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`Visit ${social.label} page`}
-                    className={`w-9 h-9 rounded-full border border-gray-700 flex items-center justify-center text-gray-400 hover:border-transparent transition-all duration-300 ${social.color}`}
-                  >
-                    <social.icon size={18} aria-hidden="true" />
-                  </a>
-                ))}
-              </div>
-            </div>
+	const socialLinks = [
+		{
+			icon: <FaGithub className="size-4" />,
+			link: "https://github.com/mohabmohamed44",
+			label: "GitHub",
+			hoverColor: "hover:bg-zinc-800 hover:text-white dark:hover:bg-zinc-100 dark:hover:text-black"
+		},
+		{
+			icon: <FaFacebook className="size-4" />,
+			link: "https://facebook.com",
+			label: "Facebook",
+			hoverColor: "hover:bg-[#1877F2] hover:text-white"
+		},
+		{
+			icon: <FaLinkedin className="size-4" />,
+			link: "https://linkedin.com",
+			label: "LinkedIn",
+			hoverColor: "hover:bg-[#0077B5] hover:text-white"
+		},
+		{
+			icon: <FaXTwitter className="size-4" />,
+			link: "https://twitter.com",
+			label: "Twitter",
+			hoverColor: "hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black"
+		},
+	];
 
-            {/* Navigation Links - Column 1 with Input */}
-            <div>
-              <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 uppercase tracking-wider mb-4">
-                Platform
-              </h3>
-              <ul className="space-y-3 mb-6">
-                {navLinks.slice(0, 3).map((link) => (
-                  <li key={link.path}>
-                    <Link
-                      to={link.path}
-                      className={`text-sm transition-colors duration-200 ${
-                        location.pathname === link.path
-                          ? "text-foreground dark:text-gray-100 font-medium"
-                          : "text-muted-foreground hover:text-foreground dark:hover:text-gray-200"
-                      }`}
-                      aria-current={location.pathname === link.path ? "page" : undefined}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+	return (
+		<footer className="relative bg-background">
+			{/* Radial background glow and top border line */}
+			<div className="bg-[radial-gradient(35%_80%_at_50%_0%,rgba(120,119,198,0.1),transparent)] mx-auto max-w-5xl md:border-x border-border/60">
+				<div className="bg-border/60 absolute inset-x-0 h-px w-full" />
+				
+				<div className="grid max-w-5xl grid-cols-6 gap-8 px-6 py-12">
+					{/* Brand Column */}
+					<div className="col-span-6 flex flex-col gap-4 md:col-span-3">
+						<Link to="/" className="inline-flex items-center gap-2 group w-max">
+							<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-muted/50 transition-all duration-300 group-hover:scale-105">
+								<LayoutGrid className="h-4 w-4 text-foreground transition-transform duration-300 group-hover:rotate-12" />
+							</div>
+							<span className="font-semibold tracking-tight text-foreground text-lg">
+								Prioritize
+							</span>
+						</Link>
+						<p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+							Organize, prioritize, and conquer your tasks with our intuitive platform designed for individuals and teams.
+						</p>
+						<div className="flex gap-2 mt-2">
+							{socialLinks.map((item, i) => (
+								<a
+									key={i}
+									className={`text-muted-foreground border border-border rounded-lg p-2 transition-all duration-300 ${item.hoverColor}`}
+									target="_blank"
+									rel="noopener noreferrer"
+									href={item.link}
+									aria-label={item.label}
+								>
+									{item.icon}
+								</a>
+							))}
+						</div>
+					</div>
 
-              {/* Newsletter Input */}
-              <form className="flex flex-col sm:flex-row gap-3" onSubmit={(e) => e.preventDefault()}>
-                <div className="relative flex-1 min-w-0">
-                  <Mail 
-                    className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" 
-                    aria-hidden="true" 
-                  />
-                  <input
-                    type="email"
-                    placeholder="Subscribe to newsletter"
-                    className="w-full pl-10 pr-4 py-2.5 bg-background dark:bg-gray-900 border border-border rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-                    aria-label="Email address for newsletter"
-                  />
-                </div>
-                <Button
-                  type="submit"
-                  role="button"
-                  className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
-                  aria-label="Subscribe to newsletter"
-                >
-                  Subscribe
-                </Button>
-              </form>
-            </div>
+					{/* Platform Links */}
+					<div className="col-span-3 md:col-span-1">
+						<span className="text-muted-foreground/80 block mb-3 text-xs font-semibold uppercase tracking-wider">
+							Platform
+						</span>
+						<div className="flex flex-col gap-2">
+							{platformLinks.map((link) => (
+								<Link
+									key={link.path}
+									to={link.path}
+									className={`w-max text-sm transition-colors duration-200 hover:text-foreground ${
+										location.pathname === link.path
+											? "text-foreground font-medium"
+											: "text-muted-foreground"
+									}`}
+								>
+									{link.label}
+								</Link>
+							))}
+						</div>
+					</div>
 
-            {/* Navigation Links - Column 2 */}
-            <div>
-              <h3 className="text-sm font-semibold text-foreground dark:text-gray-100 uppercase tracking-wider mb-4">
-                Account
-              </h3>
-              <ul className="space-y-3">
-                {navLinks.slice(3).map((link) => (
-                  <li key={link.path}>
-                    <Link
-                      to={link.path}
-                      className={`text-sm transition-colors duration-200 ${
-                        location.pathname === link.path
-                          ? "text-foreground dark:text-gray-100 font-medium"
-                          : "text-muted-foreground hover:text-foreground dark:hover:text-gray-200"
-                      }`}
-                      aria-current={location.pathname === link.path ? "page" : undefined}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-                <li>
-                  <Link
-                    to="/settings"
-                    className={`text-sm transition-colors duration-200 ${
-                      location.pathname === "/settings"
-                        ? "text-foreground dark:text-gray-100 font-medium"
-                        : "text-muted-foreground hover:text-foreground dark:hover:text-gray-200"
-                    }`}
-                    aria-current={location.pathname === "/settings" ? "page" : undefined}
-                  >
-                    Settings
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+					{/* Account Links */}
+					<div className="col-span-3 md:col-span-1">
+						<span className="text-muted-foreground/80 block mb-3 text-xs font-semibold uppercase tracking-wider">
+							Account
+						</span>
+						<div className="flex flex-col gap-2">
+							{accountLinks.map((link) => (
+								<Link
+									key={link.path}
+									to={link.path}
+									className={`w-max text-sm transition-colors duration-200 hover:text-foreground ${
+										location.pathname === link.path
+											? "text-foreground font-medium"
+											: "text-muted-foreground"
+									}`}
+								>
+									{link.label}
+								</Link>
+							))}
+						</div>
+					</div>
+				</div>
 
-        {/* Bottom Bar */}
-        <div className="py-4 border-t border-gray-200 dark:border-gray-800">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-1 text-sm text-gray-500">
-              <span>&copy; {currentYear} Prioritize. All rights reserved.</span>
-            </div>
-            <div className="flex items-center gap-4 text-sm">
-              <Link 
-                to="/privacy" 
-                className="text-muted-foreground hover:text-foreground dark:hover:text-gray-300 transition-colors"
-              >
-                Privacy Policy
-              </Link>
-              <span className="text-gray-700 dark:text-gray-600">•</span>
-              <Link 
-                to="/terms" 
-                className="text-muted-foreground hover:text-foreground dark:hover:text-gray-300 transition-colors"
-              >
-                Terms of Service
-              </Link>
-              <span className="text-gray-700 dark:text-gray-600">•</span>
-              <span className="text-muted-foreground flex items-center gap-1">
-                Made with <Heart className="h-3 w-3 text-red-500 fill-current" aria-hidden="true" /> by Prioritize
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
+				{/* Bottom Border and Copyright bar */}
+				<div className="bg-border/60 absolute inset-x-0 h-px w-full" />
+				<div className="flex flex-col sm:flex-row justify-between items-center gap-4 max-w-5xl px-6 py-6 md:border-x border-border/0">
+					<p className="text-muted-foreground text-xs font-light">
+						&copy; {currentYear} Prioritize. All rights reserved.
+					</p>
+					<p className="text-muted-foreground text-xs flex items-center gap-1 font-light">
+						Made with <Heart className="h-3 w-3 text-rose-500 fill-current" /> by Prioritize
+					</p>
+				</div>
+			</div>
+		</footer>
+	);
 }
