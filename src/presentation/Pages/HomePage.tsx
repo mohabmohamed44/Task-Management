@@ -50,7 +50,7 @@ const itemVariants: Variants = {
 
 const BackgroundGradient = () => (
   <div className="fixed inset-0 z-[-1] overflow-hidden bg-slate-50 dark:bg-[#09090b] transition-colors duration-700">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#cbd5e1_1px,transparent_1px)] dark:bg-[radial-gradient(circle_at_center,#334155_1px,transparent_1px)] bg-size-[24px_24px] opacity-50 dark:opacity-20" />
+    <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e1_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#334155_1px,transparent_1px),linear-gradient(to_bottom,#334155_1px,transparent_1px)] bg-size-[24px_24px] opacity-50 dark:opacity-20" />
   </div>
 );
 
@@ -407,7 +407,7 @@ export default function HomePage() {
                 System Online
               </span>
             </motion.div>
-            <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-bold leading-none tracking-tight text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl -translate-y-4 animate-fade-in [animation-fill-mode:forwards] [--animation-delay:200ms]">
+            <h1 className="bg-linear-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-bold leading-none tracking-tight text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl -translate-y-4 animate-fade-in [animation-fill-mode:forwards] [--animation-delay:200ms]">
               Operational Command Center
             </h1>
             <p className="mb-12 text-xl tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] fade-in [--animation-delay:400ms]">

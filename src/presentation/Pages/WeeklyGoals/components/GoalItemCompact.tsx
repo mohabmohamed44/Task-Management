@@ -14,10 +14,10 @@ export const GoalItemCompact = ({ goal, onToggle, onDelete, onView, onEdit }: Go
 
   return (
     <div
-      className={`flex items-center justify-between p-2 rounded border transition-all ${
+      className={`flex items-center justify-between p-2 rounded-lg border transition-all ${
         isCompleted
-          ? "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-          : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300"
+          ? "bg-muted/40 border-border/60"
+          : "bg-card border-border/60 hover:border-primary/30 hover:shadow-sm"
       }`}
     >
       <div className="flex items-center gap-2 min-w-0 flex-1">

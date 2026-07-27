@@ -40,10 +40,13 @@ Endpoints.md
 .vscode
 
 # Webstorm
-.idea
+.ideax
 # Qoder Settings
 .qoder
 
 # Qwen Coder
 .qwen
 settings.json
+
+# Kilo Code
+.kilo/

@@ -31,7 +31,7 @@ export const GoalList = ({ goals, onToggle, onDelete, onView, onEdit }: GoalList
 
   if (goals.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500 dark:text-gray-500">
+      <div className="text-center py-8 text-muted-foreground rounded-lg border border-dashed border-border/60 bg-card/60">
         <Target className="h-8 w-8 mx-auto mb-2 opacity-50" />
         <p>No goals found</p>
         <p className="text-sm mt-1">Add a new goal to get started</p>

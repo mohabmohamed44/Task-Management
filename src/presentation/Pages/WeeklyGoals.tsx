@@ -7,7 +7,6 @@ import {
   TrendingUp,
   Clock,
   BarChart3,
-  Sparkles,
   Filter,
   CheckCircle,
   Circle,
@@ -226,8 +225,8 @@ function Header({ weekDays, onPreviousWeek, onNextWeek, onCurrentWeek }: HeaderP
     <header className="mb-8 md:mb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-gray-200 dark:bg-gray-800 rounded-xl shadow-sm" aria-hidden="true">
-            <Target className="h-7 w-7 text-gray-700 dark:text-gray-300" />
+          <div className="bg-linear-to-br from-primary to-primary/80 p-3 rounded-xl shadow-lg shadow-primary/20" aria-hidden="true">
+            <Target className="h-7 w-7 text-primary-foreground" />
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Weekly Goals</h1>
@@ -387,7 +386,7 @@ function GoalsSection({
 }: GoalsSectionProps) {
   return (
     <section className="mb-8" aria-label="Goals of the week">
-      <Card className="border border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900">
+      <Card className="border shadow-sm bg-card transition-all duration-200 hover:shadow-md">
         <CardHeader className="pb-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
@@ -493,10 +492,10 @@ interface WeeklyProgressCardProps {
 
 function WeeklyProgressCard({ completionRate, weeklyGoalsByDay, isToday }: WeeklyProgressCardProps) {
   return (
-    <Card className="lg:col-span-1 border border-gray-200 dark:border-gray-800 shadow bg-white dark:bg-gray-900">
+    <Card className="lg:col-span-1 border shadow-sm bg-card transition-all duration-200 hover:shadow-md">
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-gray-100">
-          <Sparkles className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+          <Calendar className="h-5 w-5 text-gray-600 dark:text-gray-400" />
           Weekly Progress
         </CardTitle>
         <CardDescription className="text-gray-600 dark:text-gray-400">Your overall progress this week</CardDescription>
@@ -600,8 +599,8 @@ function DayCard({ dayGoal, isToday }: DayCardProps) {
     <Card
       className={`border transition-all duration-200 ${
         today
-          ? "border-gray-400 dark:border-gray-600 shadow-md bg-gray-50 dark:bg-gray-800"
-          : "border-gray-200 dark:border-gray-800 shadow-sm bg-white dark:bg-gray-900"
+          ? "border-primary/30 shadow-md bg-primary/5"
+          : "border-border/60 shadow-sm bg-card hover:shadow-md"
       }`}
       role="listitem"
       aria-label={`${dayGoal.day} goals: ${dayGoal.completedCount} of ${dayGoal.totalCount} goals completed`}
@@ -609,8 +608,8 @@ function DayCard({ dayGoal, isToday }: DayCardProps) {
       <CardContent className="p-4 md:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
           <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${today ? "bg-gray-800 dark:bg-gray-200" : "bg-gray-200 dark:bg-gray-700"}`} aria-hidden="true">
-              <Sparkles className={`h-4 w-4 ${today ? "text-white dark:text-gray-900" : "text-gray-700 dark:text-gray-300"}`} />
+            <div className={`p-2 rounded-lg ${today ? "bg-linear-to-br from-primary to-primary/80" : "bg-primary/10"}`} aria-hidden="true">
+              <Calendar className={`h-4 w-4 ${today ? "text-primary-foreground" : "text-primary"}`} />
             </div>
             <div>
               <h3 className={`font-semibold text-lg ${today ? "text-gray-900 dark:text-gray-100" : "text-gray-800 dark:text-gray-200"}`}>

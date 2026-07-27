@@ -18,8 +18,8 @@ export const GoalItem = ({ goal, onToggle, onDelete, onView, onEdit }: GoalItemP
     <div
       className={`flex items-start gap-3 p-4 rounded-lg border transition-all ${
         isCompleted
-          ? "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
-          : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-600"
+          ? "bg-muted/40 border-border/60"
+          : "bg-card border-border/60 hover:border-primary/30 hover:shadow-sm"
       }`}
     >
       <Button
