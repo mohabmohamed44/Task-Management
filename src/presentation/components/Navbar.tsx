@@ -12,7 +12,7 @@ import { Menu, X, User, LogOut, Settings } from "lucide-react";
 import React, { useState } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import ThemeToggle from "./ThemeToggle";
-
+import logo from "@/assets/logo.png";
 export interface NavLink {
   href: string;
   label: string;
@@ -27,13 +27,7 @@ export interface NavbarProps {
 
 export default function Navbar({
   brand = <span className="bg-linear-to-b from-gray-600 to-gray-400 bg-clip-text text-transparent text-2xl font-extrabold">Prioritize</span>,
-  image = (
-    <img
-      src="/src/assets/logo.png"
-      alt="Prioritize logo"
-      className="h-12 w-12 object-contain"
-    />
-  ),
+  image = logo,
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
