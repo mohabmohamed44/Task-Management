@@ -4,6 +4,7 @@ import {
   Plus,
   MoreHorizontal,
   CheckCircle,
+  Circle,
   Filter,
   List,
   LayoutGrid,
@@ -176,6 +177,7 @@ function KanbanBoard({
     handleDragStart,
     handleDragOver,
     handleDragEnd,
+    moveTaskToColumn,
     deleteBoard,
     isDeletingBoard,
   } = useKanbanTasks(boardId);
@@ -353,106 +355,112 @@ function KanbanBoard({
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div
-            className="overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-transparent hover:scrollbar-thumb-sky-700 transition-colors"
-            role="region"
-            aria-label="Kanban board columns"
-          >
-            <div className="flex gap-4 min-w-max">
-              {columns.map((column) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {columns.map((column, colIndex) => {
+              const colTasks = tasks[column.id] || [];
+              const isFirst = colIndex === 0;
+              const isLast = colIndex === columns.length - 1;
+              const ColIcon = isFirst ? List : isLast ? CheckCircle : Circle;
+
+              return (
                 <div
                   key={column.id}
-                  className="w-80 shrink-0"
+                  className="bg-[#f3f4f6] dark:bg-[#0A0A0A] border border-[#cfc4c5] dark:border-white/10 rounded-xl p-4 flex flex-col min-h-[500px]"
                   role="list"
                   aria-label={`${column.title} column`}
                 >
-                  <div className="border border-[#E5E7EB] dark:border-white/10 bg-[#F3F4F6] dark:bg-[#0A0A0A]">
-                    <div className="px-4 pt-3 pb-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <div
-                            className={`w-2.5 h-2.5 shrink-0 ${!column.color?.startsWith('#') ? column.color : ''}`}
-                            style={column.color?.startsWith('#') ? { backgroundColor: column.color } : undefined}
-                            aria-hidden="true"
-                          />
-                          <span className="text-sm font-semibold text-black dark:text-white font-['Montserrat'] truncate">
-                            {column.title}
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider font-['Montserrat'] text-[#4B5563] dark:text-white border border-[#E5E7EB] dark:border-white/10 px-1.5 py-0.5">
-                            {tasks[column.id]?.length || 0}
-                          </span>
-                        </div>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <button
-                              className="h-7 w-7 flex items-center justify-center text-[#4B5563] hover:bg-[#E5E7EB] shrink-0"
-                              aria-label="More options"
-                            >
-                              <MoreHorizontal className="h-3.5 w-3.5" />
-                            </button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-[#0A0A0A] border border-[#E5E7EB] dark:border-white/10 p-1 min-w-32">
-                            <DropdownMenuItem 
-                              onClick={() => setEditColumnTarget({ id: column.id, name: column.title, color: column.color })}
-                              className="cursor-pointer text-sm px-2 py-1.5 font-['Inter'] text-black dark:text-white hover:bg-[#F3F4F6] dark:hover:bg-[#111111]"
-                            >
-                              Rename Column
-                            </DropdownMenuItem>
-                            <DropdownMenuSeparator className="bg-[#E5E7EB] my-1" />
-                            <DropdownMenuItem 
-                              className="text-black dark:text-white cursor-pointer text-sm px-2 py-1.5 font-['Inter'] hover:bg-[#F3F4F6] dark:hover:bg-[#111111]"
-                              onClick={() => {
-                                if (confirm('Are you sure you want to delete this column? All tasks inside will be lost.')) {
-                                  deleteColumnMutation.mutate({ boardId, columnId: column.id });
-                                }
-                              }}
-                            >
-                              Delete Column
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
+                  <div className="flex items-center justify-between pb-3 mb-4 border-b border-[#cfc4c5] dark:border-white/10">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <ColIcon className="h-4 w-4 text-[#000000] dark:text-white shrink-0" />
+                      <h3 className="font-bold font-['Montserrat'] text-sm uppercase text-[#000000] dark:text-white truncate">
+                        {column.title}
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <span className="bg-[#000000] dark:bg-white text-white dark:text-black px-2 py-0.5 rounded text-[10px] font-bold">
+                        {colTasks.length}
+                      </span>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="h-6 w-6 flex items-center justify-center text-[#7e7576] dark:text-white hover:bg-[#edeef0] dark:hover:bg-white/10 rounded"
+                            aria-label="More options"
+                          >
+                            <MoreHorizontal className="h-3.5 w-3.5" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="bg-white dark:bg-[#0A0A0A] border border-[#cfc4c5] dark:border-white/10 p-1 min-w-32">
+                          <DropdownMenuItem 
+                            onClick={() => setEditColumnTarget({ id: column.id, name: column.title, color: column.color })}
+                            className="cursor-pointer text-sm px-2 py-1.5 font-['Inter'] text-black dark:text-white hover:bg-[#f3f4f6] dark:hover:bg-[#111111]"
+                          >
+                            Rename Column
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator className="bg-[#cfc4c5] dark:bg-white/10 my-1" />
+                          <DropdownMenuItem 
+                            className="text-black dark:text-white cursor-pointer text-sm px-2 py-1.5 font-['Inter'] hover:bg-[#f3f4f6] dark:hover:bg-[#111111]"
+                            onClick={() => {
+                              if (confirm('Are you sure you want to delete this column? All tasks inside will be lost.')) {
+                                deleteColumnMutation.mutate({ boardId, columnId: column.id });
+                              }
+                            }}
+                          >
+                            Delete Column
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
 
-                  <DraggableContainer
-                    items={tasks[column.id] || []}
-                    id={column.id}
-                    getItemId={(task: Task) => task.id.toString()}
-                    renderItem={(task: Task, index: number) => (
-                      <>
-                        {dropIndicator &&
-                         dropIndicator.overId === task.id.toString() &&
-                         dropIndicator.position === 'before' && (
-                          <div className="h-0.5 bg-black my-1 mx-2" />
-                        )}
-
-                        <SortableItem id={task.id.toString()}>
-                          <TaskCard 
-                            task={task}
-                            onClick={() => setDetailCardTarget(task)}
-                          />
-                        </SortableItem>
-
-                        {dropIndicator &&
-                         dropIndicator.overId === task.id.toString() &&
-                         dropIndicator.position === 'after' && (
-                          <div className="h-0.5 bg-black my-1 mx-2" />
-                        )}
-
-                        {dropIndicator &&
-                         dropIndicator.overId === column.id &&
-                         dropIndicator.position === 'column' &&
-                         index === (tasks[column.id]?.length || 0) - 1 && (
-                          <div className="h-0.5 bg-black my-1 mx-2" />
-                        )}
-                      </>
+                  <div className="space-y-4 flex-1">
+                    {colTasks.length === 0 && (
+                      <div className="p-6 text-center border-2 border-dashed border-[#cfc4c5] dark:border-white/10 rounded-lg text-[#7e7576] dark:text-white/50 text-xs">
+                        No items in {column.title}
+                      </div>
                     )}
-                    className="space-y-2 min-h-50 py-2"
-                  />
+
+                    <DraggableContainer
+                      items={colTasks}
+                      id={column.id}
+                      getItemId={(task: Task) => task.id.toString()}
+                      renderItem={(task: Task, index: number) => (
+                        <>
+                          {dropIndicator &&
+                           dropIndicator.overId === task.id.toString() &&
+                           dropIndicator.position === 'before' && (
+                            <div className="h-0.5 bg-black dark:bg-white my-1" />
+                          )}
+
+                          <SortableItem id={task.id.toString()}>
+                            <TaskCard 
+                              task={task}
+                              onClick={() => setDetailCardTarget(task)}
+                              columnId={column.id}
+                              columns={columns}
+                              onMove={moveTaskToColumn}
+                            />
+                          </SortableItem>
+
+                          {dropIndicator &&
+                           dropIndicator.overId === task.id.toString() &&
+                           dropIndicator.position === 'after' && (
+                            <div className="h-0.5 bg-black dark:bg-white my-1" />
+                          )}
+
+                          {dropIndicator &&
+                           dropIndicator.overId === column.id &&
+                           dropIndicator.position === 'column' &&
+                           index === colTasks.length - 1 && (
+                            <div className="h-0.5 bg-black dark:bg-white my-1" />
+                          )}
+                        </>
+                      )}
+                      className="space-y-4"
+                    />
+                  </div>
 
                   <button
-                    className="w-full flex items-center justify-center gap-1.5 py-2.5 text-xs font-bold uppercase tracking-wider font-['Montserrat'] text-[#4B5563] dark:text-white border border-dashed border-[#E5E7EB] dark:border-white/10 hover:border-black hover:text-black dark:hover:border-white/20 dark:hover:text-white transition-colors bg-white dark:bg-[#0A0A0A]"
+                    className="w-full flex items-center justify-center gap-1.5 py-2.5 mt-4 text-xs font-bold uppercase tracking-wider font-['Montserrat'] text-[#4c4546] dark:text-white border border-dashed border-[#cfc4c5] dark:border-white/10 hover:border-black hover:text-black dark:hover:border-white/20 dark:hover:text-white transition-colors bg-white dark:bg-[#0A0A0A] rounded-lg"
                     aria-label="Add card to this column"
                     onClick={() => openAddCardDialog(column.id, column.title)}
                   >
@@ -460,18 +468,18 @@ function KanbanBoard({
                     Add card
                   </button>
                 </div>
-              ))}
+              );
+            })}
 
-              <div className="w-80 shrink-0">
-                <button
-                  className="w-full flex items-center justify-center gap-1.5 py-4 text-xs font-bold uppercase tracking-wider font-['Montserrat'] text-[#4B5563] border border-dashed border-[#E5E7EB] hover:border-black hover:text-black transition-colors bg-white"
-                  aria-label="Add new column"
-                  onClick={() => setAddColumnOpen(true)}
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  Add Column
-                </button>
-              </div>
+            <div className="bg-[#f3f4f6] dark:bg-[#0A0A0A] border-2 border-dashed border-[#cfc4c5] dark:border-white/10 rounded-xl p-4 flex flex-col min-h-[500px]">
+              <button
+                className="flex-1 w-full flex items-center justify-center gap-1.5 text-xs font-bold uppercase tracking-wider font-['Montserrat'] text-[#4c4546] dark:text-white border border-dashed border-[#cfc4c5] dark:border-white/10 hover:border-black hover:text-black dark:hover:border-white/20 dark:hover:text-white transition-colors bg-white dark:bg-[#0A0A0A] rounded-lg"
+                aria-label="Add new column"
+                onClick={() => setAddColumnOpen(true)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Add Column
+              </button>
             </div>
           </div>
 

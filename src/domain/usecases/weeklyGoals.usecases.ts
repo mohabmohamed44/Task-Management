@@ -1,15 +1,11 @@
 import { WeeklyGoalAPI } from "@/InfraStructure/api/weeklyGoal.api";
 import type {
     CreateGoal,
-    addMilestoneToGoal,
-    addMilestone,
     reOrderGoalPosition,
     updateGoal,
-    UpdateMilestone,
     GetGoalsBySpecificWeek,
     GetGoalById,
     DeleteGoal,
-    DeleteMilestone,
     DuplicateGoalToNextWeek,
     UnlinkTaskFromGoal,
     linkGoalToTask
@@ -176,87 +172,6 @@ export class DuplicateGoalToNextWeekUseCase {
                 success: false,
                 error: error,
                 message: "Failed to duplicate goal"
-            };
-        }
-    }
-}
-
-// Milestone Use Cases
-export class AddMilestoneToGoalUseCase {
-    async execute(goalId: string, data: addMilestoneToGoal): Promise<UseCaseResult> {
-        try {
-            const response = await WeeklyGoalAPI.addMilestoneToGoal(goalId, data);
-            return {
-                success: true,
-                data: response.data,
-                message: "Milestone added successfully"
-            };
-        } catch (error) {
-            console.error('=== AddMilestoneToGoalUseCase Error ===', error);
-            return {
-                success: false,
-                error: error,
-                message: "Failed to add milestone"
-            };
-        }
-    }
-}
-
-export class AddMilestoneUseCase {
-    async execute(data: addMilestone): Promise<UseCaseResult> {
-        try {
-            const response = await WeeklyGoalAPI.addMilestone(data);
-            return {
-                success: true,
-                data: response.data,
-                message: "Milestone added successfully"
-            };
-        } catch (error) {
-            console.error('=== AddMilestoneUseCase Error ===', error);
-            return {
-                success: false,
-                error: error,
-                message: "Failed to add milestone"
-            };
-        }
-    }
-}
-
-export class UpdateMilestoneUseCase {
-    async execute(milestoneId: string, data: Partial<UpdateMilestone>): Promise<UseCaseResult> {
-        try {
-            const response = await WeeklyGoalAPI.updateMilestone(milestoneId, data);
-            return {
-                success: true,
-                data: response.data,
-                message: "Milestone updated successfully"
-            };
-        } catch (error) {
-            console.error('=== UpdateMilestoneUseCase Error ===', error);
-            return {
-                success: false,
-                error: error,
-                message: "Failed to update milestone"
-            };
-        }
-    }
-}
-
-export class DeleteMilestoneUseCase {
-    async execute(params: DeleteMilestone): Promise<UseCaseResult> {
-        try {
-            await WeeklyGoalAPI.deleteMilestone(params);
-            return {
-                success: true,
-                data: null,
-                message: "Milestone deleted successfully"
-            };
-        } catch (error) {
-            console.error('=== DeleteMilestoneUseCase Error ===', error);
-            return {
-                success: false,
-                error: error,
-                message: "Failed to delete milestone"
             };
         }
     }

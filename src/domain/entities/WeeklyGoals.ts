@@ -9,15 +9,6 @@ export interface CreateGoal {
     week_end: Date;
 }
 
-export interface addMilestoneToGoal {
-    title: string;
-}
-
-export interface addMilestone {
-    title: string;
-    goalId: string;
-}
-
 export interface reOrderGoalPosition {
     weekStart: Date;
     newPosition: string;
@@ -28,12 +19,6 @@ export interface updateGoal {
     priority?: TaskPriority;
     status: string;
     progress: number;
-}
-
-export interface UpdateMilestone {
-    title?: string;
-    status?: string;
-    progress?: number;
 }
 
 export interface GetCurrentWeekGoals {
@@ -52,10 +37,6 @@ export interface GetGoalById {
 
 export interface DeleteGoal {
     goalId: string;
-}
-
-export interface DeleteMilestone {
-    milestoneId: string;
 }
 
 export interface DuplicateGoalToNextWeek {

@@ -20,17 +20,26 @@ export interface NavLink {
 
 export interface NavbarProps {
   brand?: React.ReactNode;
+  image?: React.ReactNode;
   links?: NavLink[];
   className?: string;
 }
 
 export default function Navbar({
   brand = <span className="bg-linear-to-b from-gray-600 to-gray-400 bg-clip-text text-transparent text-2xl font-extrabold">Prioritize</span>,
+  image = (
+    <img
+      src="/src/assets/logo.png"
+      alt="Prioritize logo"
+      className="h-12 w-12 object-contain"
+    />
+  ),
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
     { href: "/goals", label: "Goals"},
-    { href: "/kanban", label: "Kanban"}
+    { href: "/kanban", label: "Kanban"},
+    { href: "/milestones", label: "Milestones"},
   ],
   className = "",
 }: NavbarProps) {
@@ -78,6 +87,7 @@ export default function Navbar({
             </div>
 
             <Link to="/" className="flex items-center gap-2">
+              {image}
               {brand}
             </Link>
 

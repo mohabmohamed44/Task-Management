@@ -11,12 +11,13 @@ import {
   CheckCircle,
   Circle,
   AlertCircle,
+  Edit,
+  Trash2,
+  CalendarX,
 } from "lucide-react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/presentation/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader } from "@/presentation/components/ui/card";
 import { Progress } from "@/presentation/components/ui/progress";
 import { Button } from "@/presentation/components/Button";
-import { Badge } from "@/presentation/components/ui/badge";
-import { Separator } from "@/presentation/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -28,10 +29,11 @@ import {
 } from "@/presentation/components/ui/select";
 
 import { format, isSameDay } from "date-fns";
+import { cn } from "@/lib/utils";
 import MetaData from "../components/MetaData";
 import { SanitizedSearchInput } from "@/presentation/components/SanitizedSearchInput";
-import { useWeeklyGoals, useFilteredGoals } from "@/app/hooks/useWeeklyGoals";
-import { GoalList, AddGoalModal, GoalDetailsModal, EditGoalModal } from "./WeeklyGoals/components";
+import { useWeeklyGoals } from "@/app/hooks/useWeeklyGoals";
+import { AddGoalModal, GoalDetailsModal, EditGoalModal } from "./WeeklyGoals/components";
 import { type FilterStatus } from "./WeeklyGoals/utils/goalFilters";
 import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
 
@@ -58,7 +60,6 @@ export default function WeeklyGoals() {
 
   // Data and business logic via custom hook
   const {
-    goals,
     isLoading,
     isError,
     weeklyGoalsByDay,
@@ -73,9 +74,6 @@ export default function WeeklyGoals() {
     updateGoal,
     isUpdating,
   } = useWeeklyGoals(currentWeekOffset);
-
-  // Filter goals based on UI state
-  const filteredGoals = useFilteredGoals(goals, filterStatus, searchQuery);
 
   // Navigation handlers
   const goToPreviousWeek = () => setCurrentWeekOffset((prev) => prev - 1);
@@ -95,36 +93,35 @@ export default function WeeklyGoals() {
     setIsEditOpen(true);
   };
 
-
-  if(isLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+      <div className="min-h-screen p-6 flex items-center justify-center">
         <div className="flex flex-col items-center space-y-4">
           <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-border"></div>
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-primary absolute top-0"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 dark:border-gray-700"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-black dark:border-t-white absolute top-0"></div>
           </div>
-          <p className="text-muted-foreground font-medium">Loading Weekly Goals...</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading Weekly Goals...</p>
         </div>
       </div>
-    )
+    );
   }
 
-  if(isError) {
+  if (isError) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+      <div className="min-h-screen p-6 flex items-center justify-center">
         <div className="text-center space-y-4">
-          <div className="bg-destructive/10 p-6 rounded-full w-fit mx-auto">
-              <AlertCircle className="h-16 w-16 text-destructive" />
+          <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full w-fit mx-auto">
+            <AlertCircle className="h-16 w-16 text-gray-900 dark:text-gray-100" />
           </div>
-            <h3 className="text-xl font-semibold text-foreground">Error loading statistics</h3>
-            <p className="text-muted-foreground">Unable to load task statistics. Please try again.</p>
-            <Button variant="outline" onClick={() => refetch()}>
-                Retry
-            </Button>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Error loading statistics</h3>
+          <p className="text-gray-500 dark:text-gray-400">Unable to load task statistics. Please try again.</p>
+          <Button variant="outline" onClick={() => refetch()}>
+            Retry
+          </Button>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -138,7 +135,7 @@ export default function WeeklyGoals() {
         noIndex={false}
       />
       <div
-        className="min-h-screen p-4 md:p-6 lg:p-8 selection:text-white selection:bg-gray-900"
+        className="min-h-screen p-4 md:p-6 lg:p-8 selection:text-white selection:bg-gray-900 dark:selection:bg-white dark:selection:text-gray-900"
         role="main"
         aria-label="Weekly Goals Page"
       >
@@ -152,18 +149,22 @@ export default function WeeklyGoals() {
           />
 
           {/* Stats Overview Cards */}
-          <StatsOverview goalsStats={goalsStats} weekDaysCount={weekDays.length} />
+          <StatsOverview
+            goalsStats={goalsStats}
+            weeklyStats={weeklyStats}
+            weekDaysCount={weekDays.length}
+          />
 
-          {/* Goals of the Week Section */}
-          <GoalsSection
+          {/* Week Calendar */}
+          <WeekCalendar
+            weeklyGoalsByDay={weeklyGoalsByDay}
+            isToday={isToday}
             filterStatus={filterStatus}
             onFilterChange={setFilterStatus}
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
             isModalOpen={isModalOpen}
             onModalOpenChange={setIsModalOpen}
-            goalsStats={goalsStats}
-            filteredGoals={filteredGoals}
             onToggleGoal={toggleGoalCompletion}
             onDeleteGoal={deleteGoal}
             onViewGoal={handleViewGoal}
@@ -171,20 +172,6 @@ export default function WeeklyGoals() {
             onCreateGoal={createGoal}
             isCreating={isCreating}
           />
-
-          {/* Main Content Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <WeeklyProgressCard
-              completionRate={weeklyStats.completionRate}
-              weeklyGoalsByDay={weeklyGoalsByDay}
-              isToday={isToday}
-            />
-            <DailyGoalsCards
-              weeklyGoalsByDay={weeklyGoalsByDay}
-              isLoading={isLoading}
-              isToday={isToday}
-            />
-          </div>
         </div>
       </div>
 
@@ -222,11 +209,11 @@ interface HeaderProps {
 
 function Header({ weekDays, onPreviousWeek, onNextWeek, onCurrentWeek }: HeaderProps) {
   return (
-    <header className="mb-8 md:mb-12">
+    <header className="mb-8 md:mb-10">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-linear-to-br from-primary to-primary/80 p-3 rounded-xl shadow-lg shadow-primary/20" aria-hidden="true">
-            <Target className="h-7 w-7 text-primary-foreground" />
+          <div className="bg-gray-900 dark:bg-gray-100 p-3 rounded-xl" aria-hidden="true">
+            <Target className="h-7 w-7 text-white dark:text-gray-900" />
           </div>
           <div>
             <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Weekly Goals</h1>
@@ -283,10 +270,11 @@ function WeekNavigation({ onPrevious, onNext, onCurrent }: WeekNavigationProps) 
 
 interface StatsOverviewProps {
   goalsStats: { total: number; completed: number; rate: number };
+  weeklyStats: { totalTasks: number; completedTasks: number; completionRate: number; daysWithTasks: number };
   weekDaysCount: number;
 }
 
-function StatsOverview({ goalsStats, weekDaysCount }: StatsOverviewProps) {
+function StatsOverview({ goalsStats, weeklyStats, weekDaysCount }: StatsOverviewProps) {
   return (
     <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8" aria-label="Weekly statistics">
       <StatCard
@@ -310,9 +298,9 @@ function StatsOverview({ goalsStats, weekDaysCount }: StatsOverviewProps) {
       />
       <StatCard
         icon={<Clock className="h-4 w-4" />}
-        label="Remaining"
-        value={goalsStats.total - goalsStats.completed}
-        subtext="Goals to complete"
+        label="Active Days"
+        value={weeklyStats.daysWithTasks}
+        subtext={`Out of ${weekDaysCount} days this week`}
       />
     </section>
   );
@@ -351,15 +339,15 @@ function StatCard({ icon, label, value, subtext, showProgress, progressValue }: 
   );
 }
 
-interface GoalsSectionProps {
+interface WeekCalendarProps {
+  weeklyGoalsByDay: any[];
+  isToday: (date: Date) => boolean;
   filterStatus: FilterStatus;
   onFilterChange: (status: FilterStatus) => void;
   searchQuery: string;
   onSearchChange: (query: string) => void;
   isModalOpen: boolean;
   onModalOpenChange: (open: boolean) => void;
-  goalsStats: { total: number; completed: number; rate: number };
-  filteredGoals: any[];
   onToggleGoal: (goalId: string, currentStatus: string) => void;
   onDeleteGoal: (goalId: string) => void;
   onViewGoal: (goal: any) => void;
@@ -368,65 +356,265 @@ interface GoalsSectionProps {
   isCreating: boolean;
 }
 
-function GoalsSection({
+function WeekCalendar({
+  weeklyGoalsByDay,
+  isToday,
   filterStatus,
   onFilterChange,
   searchQuery,
   onSearchChange,
   isModalOpen,
   onModalOpenChange,
-  goalsStats,
-  filteredGoals,
   onToggleGoal,
   onDeleteGoal,
   onViewGoal,
   onEditGoal,
   onCreateGoal,
   isCreating,
-}: GoalsSectionProps) {
+}: WeekCalendarProps) {
   return (
-    <section className="mb-8" aria-label="Goals of the week">
-      <Card className="border shadow-sm bg-card transition-all duration-200 hover:shadow-md">
-        <CardHeader className="pb-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-gray-100">
-                <Target className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                Goals of the Week
-              </CardTitle>
-              <CardDescription className="text-gray-600 dark:text-gray-400 mt-1">
-                Set and track your weekly objectives
-              </CardDescription>
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
-              <FilterSelect value={filterStatus} onChange={onFilterChange} />
-              <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
-              <Button variant="default" className="w-full sm:w-auto">Add Milestone</Button>
-            </div>
-          </div>
-
+    <section className="mb-8" aria-label="Weekly calendar">
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex items-center gap-2 text-gray-700 dark:text-gray-300">
+          <Calendar className="h-4 w-4" />
+          <span className="text-sm font-semibold uppercase tracking-wider">Week Calendar</span>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
           <SanitizedSearchInput
             value={searchQuery}
             onChange={onSearchChange}
             placeholder="Search goals..."
-            className="mt-4"
+            className="w-full sm:w-56"
             ariaLabel="Search goals"
           />
-        </CardHeader>
+          <FilterSelect value={filterStatus} onChange={onFilterChange} />
+          <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
+        </div>
+      </div>
 
-        <CardContent>
-          <GoalsStatsBar goalsStats={goalsStats} />
-          <GoalList
-            goals={filteredGoals}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 xl:gap-px xl:overflow-hidden xl:rounded-xl xl:border xl:border-gray-200 xl:bg-gray-200 dark:xl:border-gray-800 dark:xl:bg-gray-800">
+        {weeklyGoalsByDay.map((dayGoal, index) => (
+          <DayColumn
+            key={index}
+            dayGoal={dayGoal}
+            isToday={isToday}
+            filterStatus={filterStatus}
+            searchQuery={searchQuery}
+            onToggleGoal={onToggleGoal}
+            onDeleteGoal={onDeleteGoal}
+            onViewGoal={onViewGoal}
+            onEditGoal={onEditGoal}
+          />
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 text-[11px] text-gray-400 dark:text-gray-500">
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-gray-900 dark:bg-gray-100" />
+          Completed
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full border border-gray-400 dark:border-gray-500" />
+          Pending
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-2.5 w-2.5 rounded-full bg-gray-200 dark:bg-gray-700" />
+          Today
+        </span>
+        <span className="ml-auto hidden sm:flex items-center gap-1.5">
+          {weeklyStatsPreviewLabel(weeklyGoalsByDay)}
+        </span>
+      </div>
+    </section>
+  );
+}
+
+function weeklyStatsPreviewLabel(weeklyGoalsByDay: any[]): string {
+  const total = weeklyGoalsByDay.reduce((sum, day) => sum + day.totalCount, 0);
+  const completed = weeklyGoalsByDay.reduce((sum, day) => sum + day.completedCount, 0);
+  const rate = total > 0 ? Math.round((completed / total) * 100) : 0;
+  return `${completed}/${total} goals completed this week (${rate}%)`;
+}
+
+interface DayColumnProps {
+  dayGoal: any;
+  isToday: (date: Date) => boolean;
+  filterStatus: FilterStatus;
+  searchQuery: string;
+  onToggleGoal: (goalId: string, currentStatus: string) => void;
+  onDeleteGoal: (goalId: string) => void;
+  onViewGoal: (goal: any) => void;
+  onEditGoal: (goal: any) => void;
+}
+
+function DayColumn({
+  dayGoal,
+  isToday,
+  filterStatus,
+  searchQuery,
+  onToggleGoal,
+  onDeleteGoal,
+  onViewGoal,
+  onEditGoal,
+}: DayColumnProps) {
+  const today = isToday(dayGoal.date);
+  const tasks = dayGoal.tasks.filter((goal: any) => matchesDayFilter(goal, filterStatus, searchQuery));
+  const progress = dayGoal.totalCount > 0 ? Math.round((dayGoal.completedCount / dayGoal.totalCount) * 100) : 0;
+
+  return (
+    <div
+      className={cn(
+        "flex flex-col rounded-xl border border-gray-200 bg-white transition-colors dark:border-gray-800 dark:bg-gray-900 xl:h-125 xl:rounded-none xl:border-0",
+        today && "bg-gray-50 dark:bg-gray-800/60"
+      )}
+      role="listitem"
+      aria-label={`${dayGoal.day}, ${format(dayGoal.date, "MMMM d, yyyy")}: ${dayGoal.completedCount} of ${dayGoal.totalCount} goals completed`}
+    >
+      <header className="flex flex-row items-center justify-between gap-1 border-b border-gray-100 dark:border-gray-800 px-3 py-3 xl:flex-col xl:items-center xl:justify-start xl:gap-1 xl:px-2 xl:pb-3 xl:pt-3">
+        <div className="flex items-center gap-2.5 xl:flex-col xl:gap-1">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-400 dark:text-gray-500">
+            {dayGoal.day.slice(0, 3)}
+          </span>
+          <span
+            className={cn(
+              "flex h-10 w-10 items-center justify-center rounded-full text-base font-bold",
+              today
+                ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
+                : "text-gray-900 dark:text-gray-100"
+            )}
+          >
+            {format(dayGoal.date, "d")}
+          </span>
+          <span className="text-[10px] font-medium uppercase tracking-wider text-gray-400 dark:text-gray-500">
+            {format(dayGoal.date, "MMM")}
+          </span>
+        </div>
+        {today && (
+          <span className="rounded-full bg-gray-900 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-white dark:bg-white dark:text-gray-900">
+            Today
+          </span>
+        )}
+      </header>
+
+      <div className="flex-1 space-y-1.5 overflow-y-auto p-1.5 max-h-96 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 xl:max-h-none">
+        {tasks.map((goal: any) => (
+          <CalendarGoalItem
+            key={goal.id}
+            goal={goal}
             onToggle={onToggleGoal}
             onDelete={onDeleteGoal}
             onView={onViewGoal}
             onEdit={onEditGoal}
           />
-        </CardContent>
-      </Card>
-    </section>
+        ))}
+        {tasks.length === 0 && (
+          <div
+            className="flex h-full min-h-30 flex-col items-center justify-center gap-1 text-center"
+            role="status"
+            aria-label={`No goals for ${dayGoal.day}`}
+          >
+            <CalendarX className="h-6 w-6 text-gray-200 dark:text-gray-700" />
+            <p className="text-xs text-gray-400 dark:text-gray-500">No goals</p>
+            {today && <p className="text-[10px] text-gray-300 dark:text-gray-600">Plan something</p>}
+          </div>
+        )}
+      </div>
+
+      <footer className="border-t border-gray-100 dark:border-gray-800 px-3 py-2.5">
+        <div className="h-1 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-gray-800" aria-hidden="true">
+          <div
+            className="h-full rounded-full bg-gray-900 transition-all duration-300 dark:bg-gray-200"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <div className="mt-1.5 flex items-center justify-between">
+          <span className="text-[10px] font-medium text-gray-400 dark:text-gray-500">
+            {dayGoal.completedCount}/{dayGoal.totalCount} done
+          </span>
+          {dayGoal.totalCount > 0 && (
+            <span className="text-[10px] font-semibold text-gray-900 dark:text-gray-100">{progress}%</span>
+          )}
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+interface CalendarGoalItemProps {
+  goal: any;
+  onToggle: (goalId: string, currentStatus: string) => void;
+  onDelete: (goalId: string) => void;
+  onView: (goal: any) => void;
+  onEdit: (goal: any) => void;
+}
+
+function CalendarGoalItem({ goal, onToggle, onDelete, onView, onEdit }: CalendarGoalItemProps) {
+  const isCompleted = goal.status === "completed" || goal.status === "Completed";
+
+  return (
+    <div
+      className={cn(
+        "group relative flex items-start gap-1.5 rounded-lg border p-2 transition-colors",
+        isCompleted
+          ? "border-gray-100 bg-gray-50 dark:border-gray-800 dark:bg-gray-800/60"
+          : "border-gray-200 bg-white hover:border-gray-900 dark:border-gray-700/60 dark:bg-gray-900 dark:hover:border-gray-400"
+      )}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onToggle(goal.id, goal.status);
+        }}
+        aria-label={isCompleted ? "Mark as incomplete" : "Mark as complete"}
+        className={cn(
+          "mt-0.5 shrink-0 cursor-pointer transition-colors",
+          isCompleted
+            ? "text-gray-400"
+            : "text-gray-400 hover:text-gray-900 dark:text-gray-500 dark:hover:text-white"
+        )}
+      >
+        {isCompleted ? <CheckCircle className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
+      </button>
+
+      <button
+        type="button"
+        onClick={() => onView(goal)}
+        className="min-w-0 flex-1 cursor-pointer text-left"
+        aria-label={`View goal: ${goal.title}`}
+      >
+        <span
+          className={cn(
+            "block truncate text-xs font-medium",
+            isCompleted ? "text-gray-400 line-through" : "text-gray-800 dark:text-gray-200"
+          )}
+        >
+          {goal.title}
+        </span>
+        {goal.category && (
+          <span className="mt-0.5 block truncate text-[10px] text-gray-400 dark:text-gray-500">{goal.category}</span>
+        )}
+      </button>
+
+      <div className="flex shrink-0 items-center gap-0.5 lg:opacity-0 lg:transition-opacity lg:group-hover:opacity-100">
+        <button
+          type="button"
+          onClick={() => onEdit(goal)}
+          aria-label="Edit goal"
+          className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white"
+        >
+          <Edit className="h-3 w-3" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(goal.id)}
+          aria-label="Delete goal"
+          className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white"
+        >
+          <Trash2 className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
   );
 }
 
@@ -438,7 +626,10 @@ interface FilterSelectProps {
 function FilterSelect({ value, onChange }: FilterSelectProps) {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="w-32.5 border-gray-300 mb-3 md:mb-0 dark:border-gray-700 bg-white dark:bg-gray-900" aria-label="Filter goals">
+      <SelectTrigger
+        className="border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900"
+        aria-label="Filter goals"
+      >
         <Filter className="h-4 w-4 mr-2" />
         <SelectValue placeholder="Filter" />
       </SelectTrigger>
@@ -454,242 +645,15 @@ function FilterSelect({ value, onChange }: FilterSelectProps) {
   );
 }
 
-interface GoalsStatsBarProps {
-  goalsStats: { total: number; completed: number; rate: number };
-}
-
-function GoalsStatsBar({ goalsStats }: GoalsStatsBarProps) {
-  return (
-    <div className="flex flex-wrap items-center gap-4 mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600 dark:text-gray-400">Total Goals:</span>
-        <span className="font-semibold text-gray-900 dark:text-gray-100">{goalsStats.total}</span>
-      </div>
-      <Separator orientation="vertical" className="h-4 bg-gray-300 dark:bg-gray-700" />
-      <div className="flex items-center gap-2">
-        <Target className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-        <span className="text-sm text-gray-600 dark:text-gray-400">Completed:</span>
-        <span className="font-semibold text-gray-900 dark:text-gray-100">{goalsStats.completed}</span>
-      </div>
-      <Separator orientation="vertical" className="h-4 bg-gray-300 dark:bg-gray-700" />
-      <div className="flex items-center gap-2">
-        <Progress
-          value={goalsStats.rate}
-          className="w-24 h-2 bg-gray-200 dark:bg-gray-700"
-          aria-label={`Goals completion rate: ${goalsStats.rate}%`}
-        />
-        <span className="text-sm text-gray-600 dark:text-gray-400">{goalsStats.rate}%</span>
-      </div>
-    </div>
-  );
-}
-
-interface WeeklyProgressCardProps {
-  completionRate: number;
-  weeklyGoalsByDay: any[];
-  isToday: (date: Date) => boolean;
-}
-
-function WeeklyProgressCard({ completionRate, weeklyGoalsByDay, isToday }: WeeklyProgressCardProps) {
-  return (
-    <Card className="lg:col-span-1 border shadow-sm bg-card transition-all duration-200 hover:shadow-md">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2 text-xl text-gray-900 dark:text-gray-100">
-          <Calendar className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-          Weekly Progress
-        </CardTitle>
-        <CardDescription className="text-gray-600 dark:text-gray-400">Your overall progress this week</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="flex justify-center">
-          <div className="relative w-32 h-32" role="img" aria-label={`Weekly completion: ${completionRate}%`}>
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" className="text-gray-200 dark:text-gray-700" strokeWidth="12" />
-              <circle
-                cx="50"
-                cy="50"
-                r="42"
-                fill="none"
-                stroke="currentColor"
-                className="text-gray-800 dark:text-gray-200 transition-all duration-500"
-                strokeWidth="12"
-                strokeLinecap="round"
-                strokeDasharray={`${completionRate * 2.64} 264`}
-              />
-            </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-3xl font-bold text-gray-900 dark:text-gray-100">{completionRate}%</span>
-            </div>
-          </div>
-        </div>
-
-        <Separator className="bg-gray-200 dark:bg-gray-800" />
-
-        <div className="space-y-4">
-          <h3 className="font-semibold text-gray-800 dark:text-gray-200">Daily Breakdown</h3>
-          <div className="space-y-3">
-            {weeklyGoalsByDay.map((dayGoal, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`text-sm font-medium w-20 ${
-                      isToday(dayGoal.date) ? "text-gray-900 dark:text-gray-100" : "text-gray-600 dark:text-gray-400"
-                    }`}
-                  >
-                    {dayGoal.day.slice(0, 3)}
-                  </span>
-                  <span className="text-xs text-gray-500 dark:text-gray-500">{formatDateDisplay(dayGoal.date)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Progress
-                    value={dayGoal.totalCount > 0 ? (dayGoal.completedCount / dayGoal.totalCount) * 100 : 0}
-                    className="w-16 h-2 bg-gray-200 dark:bg-gray-700"
-                    aria-label={`${dayGoal.day} progress: ${dayGoal.completedCount} of ${dayGoal.totalCount} goals completed`}
-                  />
-                  <span className="text-xs text-gray-600 dark:text-gray-400 w-12 text-right">
-                    {dayGoal.completedCount}/{dayGoal.totalCount}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
-
-interface DailyGoalsCardsProps {
-  weeklyGoalsByDay: any[];
-  isLoading: boolean;
-  isToday: (date: Date) => boolean;
-}
-
-function DailyGoalsCards({ weeklyGoalsByDay, isLoading, isToday }: DailyGoalsCardsProps) {
-  return (
-    <div className="lg:col-span-2 space-y-4" role="list" aria-label="Daily goals">
-      <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Daily Goals</h2>
-
-      {isLoading ? (
-        Array.from({ length: 7 }).map((_, i) => (
-          <Card key={i} className="animate-pulse" aria-hidden="true">
-            <CardContent className="p-4">
-              <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-32 mb-3" />
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48" />
-            </CardContent>
-          </Card>
-        ))
-      ) : (
-        weeklyGoalsByDay.map((dayGoal, index) => <DayCard key={index} dayGoal={dayGoal} isToday={isToday} />)
-      )}
-    </div>
-  );
-}
-
-interface DayCardProps {
-  dayGoal: any;
-  isToday: (date: Date) => boolean;
-}
-
-function DayCard({ dayGoal, isToday }: DayCardProps) {
-  const today = isToday(dayGoal.date);
-  const isDayComplete = dayGoal.completedCount === dayGoal.totalCount && dayGoal.totalCount > 0;
-
-  return (
-    <Card
-      className={`border transition-all duration-200 ${
-        today
-          ? "border-primary/30 shadow-md bg-primary/5"
-          : "border-border/60 shadow-sm bg-card hover:shadow-md"
-      }`}
-      role="listitem"
-      aria-label={`${dayGoal.day} goals: ${dayGoal.completedCount} of ${dayGoal.totalCount} goals completed`}
-    >
-      <CardContent className="p-4 md:p-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`p-2 rounded-lg ${today ? "bg-linear-to-br from-primary to-primary/80" : "bg-primary/10"}`} aria-hidden="true">
-              <Calendar className={`h-4 w-4 ${today ? "text-primary-foreground" : "text-primary"}`} />
-            </div>
-            <div>
-              <h3 className={`font-semibold text-lg ${today ? "text-gray-900 dark:text-gray-100" : "text-gray-800 dark:text-gray-200"}`}>
-                {dayGoal.day}
-                {today && (
-                  <span className="ml-2 text-xs bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 px-2 py-0.5 rounded-full">
-                    Today
-                  </span>
-                )}
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-500">{formatDateDisplay(dayGoal.date)}</p>
-            </div>
-          </div>
-
-          <Badge
-            variant={isDayComplete ? "default" : "outline"}
-            className={
-              isDayComplete
-                ? "bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900"
-                : "border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300"
-            }
-            aria-label={`${dayGoal.completedCount} of ${dayGoal.totalCount} goals completed`}
-          >
-            {dayGoal.completedCount}/{dayGoal.totalCount} completed
-          </Badge>
-        </div>
-
-        {dayGoal.totalCount > 0 && (
-          <Progress
-            value={(dayGoal.completedCount / dayGoal.totalCount) * 100}
-            className="h-2 mb-4 bg-gray-200 dark:bg-gray-700"
-            aria-label={`Progress: ${Math.round((dayGoal.completedCount / dayGoal.totalCount) * 100)}%`}
-          />
-        )}
-
-        {dayGoal.tasks.length > 0 ? (
-          <ul className="space-y-2" role="list" aria-label={`Goals for ${dayGoal.day}`}>
-            {dayGoal.tasks.map((goal: any) => (
-              <li
-                key={goal.id}
-                className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
-                  goal.status === "completed" || goal.status === "Completed"
-                    ? "bg-gray-100 dark:bg-gray-800"
-                    : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
-                }`}
-              >
-                <span
-                  className={`shrink-0 ${
-                    goal.status === "completed" || goal.status === "Completed"
-                      ? "text-gray-600 dark:text-gray-400"
-                      : "text-gray-400 dark:text-gray-600"
-                  }`}
-                  aria-hidden="true"
-                >
-                  {goal.status === "completed" || goal.status === "Completed" ? <CheckCircle className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
-                </span>
-                <span
-                  className={`flex-1 text-sm ${
-                    goal.status === "completed" || goal.status === "Completed"
-                      ? "text-gray-500 dark:text-gray-500 line-through"
-                      : "text-gray-800 dark:text-gray-200"
-                  }`}
-                >
-                  {goal.title}
-                </span>
-                {(goal.status === "completed" || goal.status === "Completed") && (
-                  <span className="text-xs text-gray-500 dark:text-gray-500" aria-label="Goal completed">
-                    Done
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className="text-center py-6 text-gray-500 dark:text-gray-500" role="status" aria-label={`No goals for ${dayGoal.day}`}>
-            <p className="text-sm">No goals for this day</p>
-            <p className="text-xs mt-1">Add goals to see them here</p>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
+function matchesDayFilter(goal: any, filterStatus: FilterStatus, searchQuery: string): boolean {
+  const isCompleted = goal.status === "completed" || goal.status === "Completed";
+  if (filterStatus === "Completed" && !isCompleted) return false;
+  if (filterStatus === "Pending" && isCompleted) return false;
+  if (searchQuery) {
+    const q = searchQuery.trim().toLowerCase();
+    return Boolean(
+      goal.title?.toLowerCase().includes(q) || goal.description?.toLowerCase().includes(q)
+    );
+  }
+  return true;
 }

@@ -262,7 +262,7 @@ export default function HomePage() {
               transition={{ delay: 0.2, type: "spring" }}
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gray-200 dark:border-gray-800 text-xs font-semibold tracking-widest uppercase mb-8 text-gray-500 dark:text-gray-400"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-gray-500 dark:bg-gray-400 animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-gray-600 dark:bg-gray-400 animate-pulse" />
               System Online
             </motion.div>
 

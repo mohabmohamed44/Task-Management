@@ -2,15 +2,11 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { WeeklyGoalAPI } from '../weeklyGoal.api';
 import type {
     CreateGoal,
-    addMilestoneToGoal,
-    addMilestone,
     reOrderGoalPosition,
     updateGoal,
-    UpdateMilestone,
     GetGoalsBySpecificWeek,
     GetGoalById,
     DeleteGoal,
-    DeleteMilestone,
     DuplicateGoalToNextWeek,
     UnlinkTaskFromGoal,
     linkGoalToTask
@@ -229,90 +225,6 @@ describe('WeeklyGoalAPI', () => {
             const result = await WeeklyGoalAPI.duplicateGoalToNextWeek(params);
 
             expect(apiClientMock.post).toHaveBeenCalledWith(`/weekly-goals/${params.goalId}/duplicate`, expectedPayload);
-            expect(result).toEqual(fullResponse);
-        });
-    });
-
-    describe('addMilestone', () => {
-        it('Should call api.post with correct URL and data, and return the response', async () => {
-            const mockData: addMilestone = {
-                goalId: '1',
-                title: 'New Milestone',
-            };
-
-            const fullResponse = {
-                data: { id: 1, title: 'New Milestone' },
-                status: 200,
-            };
-
-            apiClientMock.post.mockResolvedValueOnce(fullResponse);
-
-            const result = await WeeklyGoalAPI.addMilestone(mockData);
-
-            expect(apiClientMock.post).toHaveBeenCalledWith(`/weekly-goals/${mockData.goalId}/milestones`, { title: mockData.title });
-            expect(result).toEqual(fullResponse);
-        });
-    });
-
-    describe('addMilestoneToGoal', () => {
-        it('Should call api.post with correct URL and data, and return the response', async () => {
-            const goalId = '1';
-            const mockData: addMilestoneToGoal = {
-                title: 'New Milestone',
-            };
-
-            const fullResponse = {
-                data: { id: 1, title: 'New Milestone' },
-                status: 200,
-            };
-
-            apiClientMock.post.mockResolvedValueOnce(fullResponse);
-
-            const result = await WeeklyGoalAPI.addMilestoneToGoal(goalId, mockData);
-
-            expect(apiClientMock.post).toHaveBeenCalledWith(`/weekly-goals/${goalId}/milestones`, mockData);
-            expect(result).toEqual(fullResponse);
-        });
-    });
-
-    describe('updateMilestone', () => {
-        it('Should call api.put with correct URL and data, and return the response', async () => {
-            const milestoneId = '1';
-            const mockData: Partial<UpdateMilestone> = {
-                title: 'Updated Milestone',
-                status: 'completed',
-            };
-
-            const fullResponse = {
-                data: { id: 1, ...mockData },
-                status: 200,
-            };
-
-            apiClientMock.put.mockResolvedValueOnce(fullResponse);
-
-            const result = await WeeklyGoalAPI.updateMilestone(milestoneId, mockData);
-
-            expect(apiClientMock.put).toHaveBeenCalledWith(`/weekly-goals/milestones/${milestoneId}`, mockData);
-            expect(result).toEqual(fullResponse);
-        });
-    });
-
-    describe('deleteMilestone', () => {
-        it('Should call api.delete with correct URL and return the response', async () => {
-            const params: DeleteMilestone = {
-                milestoneId: '1',
-            };
-
-            const fullResponse = {
-                data: { message: 'Milestone deleted' },
-                status: 200,
-            };
-
-            apiClientMock.delete.mockResolvedValueOnce(fullResponse);
-
-            const result = await WeeklyGoalAPI.deleteMilestone(params);
-
-            expect(apiClientMock.delete).toHaveBeenCalledWith(`/weekly-goals/milestones/${params.milestoneId}`);
             expect(result).toEqual(fullResponse);
         });
     });

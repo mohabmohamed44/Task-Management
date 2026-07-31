@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { Heart, LayoutGrid } from "lucide-react";
+import { Heart } from "lucide-react";
 import { FaXTwitter, FaLinkedin, FaFacebook, FaGithub } from "react-icons/fa6";
 
 export default function Footer() {
@@ -57,8 +57,13 @@ export default function Footer() {
 					{/* Brand Column */}
 					<div className="col-span-6 flex flex-col gap-4 md:col-span-3">
 						<Link to="/" className="inline-flex items-center gap-2 group w-max">
-							<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-muted/50 transition-all duration-300 group-hover:scale-105">
-								<LayoutGrid className="h-4 w-4 text-foreground transition-transform duration-300 group-hover:rotate-12" />
+							<div className="flex h-14 w-14 items-center justify-center rounded-lg border border-border bg-muted/50 transition-all duration-300 group-hover:scale-105">
+								{/* <LayoutGrid className="h-4 w-4 text-foreground transition-transform duration-300 group-hover:rotate-12" /> */}
+                <img
+                  src="/src/assets/logo.png"
+                  alt="Prioritize logo"
+                  className="h-12 w-12 object-contain"
+                />
 							</div>
 							<span className="font-semibold tracking-tight text-foreground text-lg">
 								Prioritize

@@ -271,6 +271,49 @@ export function useKanbanTasks(boardId: string) {
     setActiveTask(null);
   }, [tasks, columns, boardId, moveCardMutation, reorderCardMutation]);
 
+  // Move a card between columns via the phase-advance buttons
+  const moveTaskToColumn = useCallback((task: Task, targetColumnId: string) => {
+    let sourceColumn: string | null = null;
+    for (const [columnId, columnTasks] of Object.entries(tasks)) {
+      if (columnTasks.some(t => t.id === task.id)) {
+        sourceColumn = columnId;
+        break;
+      }
+    }
+
+    if (!sourceColumn || sourceColumn === targetColumnId) return;
+
+    setLocalTasks(prev => {
+      const current = prev ?? tasks;
+      const sourceTasks = [...current[sourceColumn]];
+      const sourceIndex = sourceTasks.findIndex(t => t.id === task.id);
+      if (sourceIndex === -1) return current;
+      const [movedTask] = sourceTasks.splice(sourceIndex, 1);
+
+      return {
+        ...current,
+        [sourceColumn]: sourceTasks,
+        [targetColumnId]: [...(current[targetColumnId] || []), movedTask],
+      };
+    });
+
+    moveCardMutation.mutate({
+      boardId,
+      cardId: task.id.toString(),
+      data: {
+        columnId: parseInt(targetColumnId),
+        newPosition: tasks[targetColumnId]?.length ?? 0,
+      },
+    }, {
+      onSuccess: () => {
+        toast.success("Card moved successfully");
+      },
+      onError: (error: any) => {
+        toast.error(error.message || "Failed to move card");
+      },
+    });
+  }, [tasks, boardId, moveCardMutation]);
+
   // Delete board function
   const deleteBoard = useCallback(() => {
     deleteBoardMutation.mutate({ boardId });
@@ -291,6 +334,7 @@ export function useKanbanTasks(boardId: string) {
     handleDragStart,
     handleDragOver,
     handleDragEnd,
+    moveTaskToColumn,
     deleteBoard,
     isDeletingBoard: deleteBoardMutation.isPending,
   };

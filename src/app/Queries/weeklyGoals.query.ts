@@ -8,10 +8,6 @@ import {
     DeleteGoalUseCase,
     ReOrderGoalPositionUseCase,
     DuplicateGoalToNextWeekUseCase,
-    AddMilestoneToGoalUseCase,
-    AddMilestoneUseCase,
-    UpdateMilestoneUseCase,
-    DeleteMilestoneUseCase,
     LinkGoalToTaskUseCase,
     UnlinkTaskFromGoalUseCase,
     GetWeeklyStatisticsUseCase
@@ -24,10 +20,6 @@ import type {
     DeleteGoal,
     reOrderGoalPosition,
     DuplicateGoalToNextWeek,
-    addMilestoneToGoal,
-    addMilestone,
-    UpdateMilestone,
-    DeleteMilestone,
     linkGoalToTask,
     UnlinkTaskFromGoal,
     GetWeeklyStatistics
@@ -200,93 +192,6 @@ export const useDuplicateGoalToNextWeekMutation = () => {
         },
         onError: (error: any) => {
             toast.error(error.message || "Failed to duplicate goal");
-        },
-    });
-};
-
-// Milestone Mutations
-export const useAddMilestoneToGoalMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async ({ goalId, data }: { goalId: string; data: addMilestoneToGoal }) => {
-            const useCase = new AddMilestoneToGoalUseCase();
-            const result = await useCase.execute(goalId, data);
-            if (!result.success) {
-                throw new Error(result.message);
-            }
-            return result.data;
-        },
-        onSuccess: (_, { goalId }) => {
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goal(goalId) });
-            toast.success("Milestone added successfully");
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Failed to add milestone");
-        },
-    });
-};
-
-export const useAddMilestoneMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async (data: addMilestone) => {
-            const useCase = new AddMilestoneUseCase();
-            const result = await useCase.execute(data);
-            if (!result.success) {
-                throw new Error(result.message);
-            }
-            return result.data;
-        },
-        onSuccess: (_, { goalId }) => {
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goal(goalId) });
-            toast.success("Milestone added successfully");
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Failed to add milestone");
-        },
-    });
-};
-
-export const useUpdateMilestoneMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async ({ milestoneId, data }: { milestoneId: string; data: Partial<UpdateMilestone> }) => {
-            const useCase = new UpdateMilestoneUseCase();
-            const result = await useCase.execute(milestoneId, data);
-            if (!result.success) {
-                throw new Error(result.message);
-            }
-            return result.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
-            toast.success("Milestone updated successfully");
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Failed to update milestone");
-        },
-    });
-};
-
-export const useDeleteMilestoneMutation = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: async (params: DeleteMilestone) => {
-            const useCase = new DeleteMilestoneUseCase();
-            const result = await useCase.execute(params);
-            if (!result.success) {
-                throw new Error(result.message);
-            }
-            return result.data;
-        },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.goals() });
-            queryClient.invalidateQueries({ queryKey: weeklyGoalsQueryKeys.currentWeek() });
-            toast.success("Milestone deleted successfully");
-        },
-        onError: (error: any) => {
-            toast.error(error.message || "Failed to delete milestone");
         },
     });
 };

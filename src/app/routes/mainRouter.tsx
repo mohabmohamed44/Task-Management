@@ -9,6 +9,7 @@ import CreateTask from "@/presentation/Pages/CreateTask";
 import TaskDetails from "@/presentation/Pages/TaskDetails";
 import Kanban from "@/presentation/Pages/Kanban";
 import WeeklyGoals from "@/presentation/Pages/WeeklyGoals";
+import MilestonePage from "@/presentation/Pages/MilestonePage";
 
 export const mainRoutes: RouteObject = {
   path: "/",
@@ -23,5 +24,6 @@ export const mainRoutes: RouteObject = {
     { path: "create-task", element: <CreateTask /> },
     { path: "kanban", element: <Kanban />},
     { path: "goals", element: <WeeklyGoals />},
+    { path: "milestones", element: <MilestonePage />}
   ],
 };

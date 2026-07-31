@@ -2,15 +2,11 @@ import { api } from "@/InfraStructure/api/http";
 import { format } from "date-fns";
 import type {
     CreateGoal,
-    addMilestoneToGoal,
-    addMilestone,
     reOrderGoalPosition,
     updateGoal,
-    UpdateMilestone,
     GetGoalsBySpecificWeek,
     GetGoalById,
     DeleteGoal,
-    DeleteMilestone,
     DuplicateGoalToNextWeek,
     UnlinkTaskFromGoal,
     linkGoalToTask
@@ -55,20 +51,6 @@ export const WeeklyGoalAPI = {
             newWeekStart: format(params.newWeekStart, "yyyy-MM-dd"),
             newWeekEnd: format(params.newWeekEnd, "yyyy-MM-dd")
         }),
-
-    // Add Milestone
-    addMilestone: (data: addMilestone) => 
-        api.post(`/weekly-goals/${data.goalId}/milestones`, { title: data.title }),
-
-    // Milestone Operations
-    addMilestoneToGoal: (goalId: string, data: addMilestoneToGoal) =>
-        api.post(`/weekly-goals/${goalId}/milestones`, data),
-
-    updateMilestone: (milestoneId: string, data: Partial<UpdateMilestone>) =>
-        api.put(`/weekly-goals/milestones/${milestoneId}`, data),
-
-    deleteMilestone: (params: DeleteMilestone) =>
-        api.delete(`/weekly-goals/milestones/${params.milestoneId}`),
 
     // Task-Goal Linking Operations
     linkGoalToTask: (goalId: string, params: linkGoalToTask) =>
