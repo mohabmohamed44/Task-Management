@@ -27,7 +27,7 @@ export interface NavbarProps {
 
 export default function Navbar({
   brand = <span className="bg-linear-to-b from-gray-600 to-gray-400 bg-clip-text text-transparent text-2xl font-extrabold">Prioritize</span>,
-  image = logo,
+  image = <img src={logo} alt="Prioritize logo" className="h-12 w-12 object-contain" />,
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
