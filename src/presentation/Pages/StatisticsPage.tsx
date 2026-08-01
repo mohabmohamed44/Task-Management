@@ -1,13 +1,11 @@
 import { useTasksQuery } from "@/app/Queries/task.query";
 import { useMemo } from "react";
 import type { GetTaskQueryDTO } from "@/domain/entities/get-tasks-query.dto";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, BarChart3 } from "lucide-react";
 import TaskChart from "@/presentation/components/TaskChart";
 import { Button } from "@/presentation/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router";
 import MetaData from "../components/MetaData";
-import { Separator } from "@/presentation/components/ui/separator";
 import { GitHubStreak } from "../components/streak";
 import type { ContributionDay } from "@/domain/entities/stats";
 
@@ -72,13 +70,13 @@ export default function StatisticsPage() {
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 flex items-center justify-center">
+            <div className="min-h-screen p-6 flex items-center justify-center">
                 <div className="flex flex-col items-center space-y-4">
                     <div className="relative">
-                        <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-border"></div>
-                        <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-t-primary absolute top-0"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 dark:border-gray-700"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-4 border-t-black dark:border-t-white absolute top-0"></div>
                     </div>
-                    <p className="text-muted-foreground font-medium text-sm sm:text-base">Loading statistics...</p>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium">Loading analytics...</p>
                 </div>
             </div>
         )
@@ -86,13 +84,13 @@ export default function StatisticsPage() {
 
     if (isError) {
         return (
-            <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 flex items-center justify-center">
+            <div className="min-h-screen p-6 flex items-center justify-center">
                 <div className="text-center space-y-4">
-                    <div className="bg-destructive/10 p-4 sm:p-6 rounded-full w-fit mx-auto">
-                        <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-destructive" />
+                    <div className="bg-gray-100 dark:bg-gray-800 p-6 rounded-full w-fit mx-auto">
+                        <AlertCircle className="h-16 w-16 text-gray-900 dark:text-gray-100" />
                     </div>
-                    <h3 className="text-lg sm:text-xl font-semibold text-foreground">Error loading statistics</h3>
-                    <p className="text-muted-foreground text-sm sm:text-base">Unable to load task statistics. Please try again.</p>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Error loading analytics</h3>
+                    <p className="text-gray-500 dark:text-gray-400">Unable to load task statistics. Please try again.</p>
                     <Button variant="outline" onClick={() => refetch()}>
                         Retry
                     </Button>
@@ -104,36 +102,42 @@ export default function StatisticsPage() {
     return (
         <>
          <MetaData
-            title="Statistics"
-            description="Manage and track your Statistics and Productivity here"
+            title="Analytics"
+            description="Monitor your task performance and productivity trends"
             type = "website"
             path="/statistics"
             noIndex={false}
          />
-        <div className="min-h-screen bg-background p-3 sm:p-4 md:p-6 lg:p-8 dark:selection:bg-gray-600 dark:selection:text-gray-300 selection:bg-black selection:text-white">
-            <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
-                {/* Header Navigation */}
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                    <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        onClick={() => navigate('/tasks')}
-                        className="hover:bg-secondary self-start"
-                    >
-                        <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </Button>
-                    <div className="min-w-0">
-                        <h1 className="text-xl sm:text-2xl font-bold text-foreground">Task Statistics</h1>
-                        <p className="text-xs sm:text-sm text-muted-foreground">View comprehensive analytics and insights about your tasks</p>
+        <div className="min-h-screen p-4 md:p-6 lg:p-8 selection:text-white selection:bg-gray-900 dark:selection:bg-white dark:selection:text-gray-900">
+            <div className="mx-auto max-w-7xl">
+                <header className="mb-8 md:mb-10">
+                    <div className="flex items-center gap-3">
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => navigate('/tasks')}
+                            aria-label="Back to tasks"
+                            className="-ml-2 shrink-0 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+                        >
+                            <ArrowLeft className="h-5 w-5" />
+                        </Button>
+                        <div className="flex items-center gap-3">
+                            <div className="rounded-xl bg-gray-900 p-3 text-white dark:bg-gray-100 dark:text-gray-900" aria-hidden="true">
+                                <BarChart3 className="h-7 w-7" />
+                            </div>
+                            <div>
+                                <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900 dark:text-gray-100">Analytics</h1>
+                                <p className="mt-1 text-gray-600 dark:text-gray-400">Monitor your task performance and productivity trends</p>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                </header>
 
-                {/* Task Chart Component */}
                 <TaskChart tasks={tasks} />
 
-                {/* Summary Statistics Cards */}
-                <Separator />
-                <GitHubStreak data={contributions} isLoading={isLoading} />
+                <div className="mt-8 md:mt-10">
+                    <GitHubStreak data={contributions} isLoading={isLoading} />
+                </div>
             </div>
         </div>
         </>
