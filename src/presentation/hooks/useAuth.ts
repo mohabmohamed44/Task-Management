@@ -48,9 +48,12 @@ export const useAuth = () => {
           }
         }
       })
-      .catch(() => {
-        TokenStorage.remove();
-        setUser(null);
+      .catch((err: any) => {
+        const status = err?.response?.status;
+        if (status === 401 || !TokenStorage.get()) {
+          TokenStorage.remove();
+          setUser(null);
+        }
       })
       .finally(() => {
         setLoading(false);
