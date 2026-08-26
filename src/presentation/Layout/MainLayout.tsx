@@ -5,12 +5,12 @@ import ScrollToTop from "../components/ScrollToTop";
 
 export default function MainLayout() {
   return (
-    <div className="min-h-screen w-full flex flex-col">
+    <div className="min-h-screen w-full min-w-0 flex flex-col overflow-x-hidden">
       {/* Top Navbar */}
       <Navbar />
 
       {/* Page content */}
-      <main className="flex-1 container mx-auto py-4">
+      <main className="flex-1 min-w-0 w-full container mx-auto py-4 overflow-x-hidden">
         <Outlet />
       </main>
 
@@ -18,7 +18,7 @@ export default function MainLayout() {
       <Footer />
       
       {/* Scroll to top button */}
-      <ScrollToTop/>
+      <ScrollToTop />
     </div>
   );
 }

@@ -9,10 +9,11 @@ import {
 } from "@/presentation/components/ui/dropdown-menu";
 import SearchInput from "@/presentation/components/SearchInput";
 import { Menu, X, User, LogOut, Settings } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "@/presentation/hooks/useAuth";
 import ThemeToggle from "./ThemeToggle";
 import logo from "@/assets/logo.png";
+
 export interface NavLink {
   href: string;
   label: string;
@@ -26,71 +27,88 @@ export interface NavbarProps {
 }
 
 export default function Navbar({
-  brand = <span className="bg-linear-to-b from-gray-600 to-gray-400 bg-clip-text text-transparent text-2xl font-extrabold">Prioritize</span>,
-  image = <img src={logo} alt="Prioritize logo" className="h-12 w-12 object-contain" />,
+  brand = (
+    <span className="bg-gradient-to-b from-gray-600 to-gray-400 bg-clip-text text-xl font-extrabold text-transparent sm:text-2xl">
+      Prioritize
+    </span>
+  ),
+  image = (
+    <img
+      src={logo}
+      alt="Prioritize logo"
+      className="h-9 w-9 shrink-0 object-contain sm:h-10 sm:w-10"
+    />
+  ),
   links = [
     { href: "/tasks", label: "Tasks" },
     { href: "/statistics", label: "Statistics" },
-    { href: "/goals", label: "Goals"},
-    { href: "/kanban", label: "Kanban"},
-    { href: "/milestones", label: "Milestones"},
+    { href: "/goals", label: "Goals" },
+    { href: "/kanban", label: "Kanban" },
+    { href: "/milestones", label: "Milestones" },
   ],
   className = "",
 }: NavbarProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  // Destructing some Props from useAuth hook
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
   const { isAuthenticated, logout, user: currentUser } = useAuth();
   const userImage = currentUser?.profile_image_url;
   const location = useLocation();
 
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  }
+    setIsMobileMenuOpen((isOpen) => !isOpen);
+  };
 
-  // Auto-close Function
+  useEffect(() => {
+    const closeMenuAfterNavigation = window.setTimeout(() => {
+      setIsMobileMenuOpen(false);
+    }, 0);
+
+    return () => window.clearTimeout(closeMenuAfterNavigation);
+  }, [location.pathname]);
+
   const closeMenu = () => {
-    setIsOpen(false);
-  }
-
-  // Auto-close mobile menu on route change
-  const [prevLocation, setPrevLocation] = useState(location.pathname);
-  if (location.pathname !== prevLocation) {
-    setPrevLocation(location.pathname);
-    setIsOpen(false);
-  }
+    setIsMobileMenuOpen(false);
+  };
 
   return (
     <header
-      className={`w-full bg-background/80 backdrop-blur sticky border-b shadow-sm top-0 z-40 ${className}`}
+      className={`sticky top-0 z-40 w-full border-b bg-background/80 shadow-sm backdrop-blur ${className}`}
     >
-      <nav aria-label="Main navigation" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Left */}
-          <div className="flex items-center gap-4">
-            <div className="-ml-2 mr-2 flex items-center md:hidden">
+      <nav aria-label="Main navigation" className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-16 items-center justify-between gap-2 sm:gap-4">
+          
+          {/* Left: Hamburger + Logo + Links */}
+          <div className="flex shrink-0 items-center gap-3 xl:gap-6">
+            {/* Mobile Menu Button */}
+            <div className="flex shrink-0 items-center xl:hidden">
               <Button
                 variant="ghost"
                 size="icon"
                 aria-label="Toggle navigation menu"
-                aria-expanded={isOpen}
+                aria-expanded={isMobileMenuOpen}
                 aria-controls="mobile-menu"
                 onClick={toggleMenu}
               >
-                {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {isMobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </Button>
             </div>
 
-            <Link to="/" className="flex items-center gap-2">
+            {/* Brand Logo & Name */}
+            <Link
+              to="/"
+              aria-label="Prioritize home"
+              className="flex shrink-0 items-center gap-2 whitespace-nowrap"
+            >
               {image}
               {brand}
             </Link>
 
-            <div className="hidden md:flex md:items-center md:gap-1 md:ml-6">
+            {/* Desktop Links */}
+            <div className="hidden shrink-0 items-center gap-1 xl:flex">
               {links.map((l) => (
                 <Link
                   key={l.href}
                   to={l.href}
-                  className="px-3 py-2 rounded-md text-md font-medium hover:bg-muted/60"
+                  className="whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium hover:bg-muted/60"
                   aria-current={location.pathname === l.href ? "page" : undefined}
                 >
                   {l.label}
@@ -99,64 +117,57 @@ export default function Navbar({
             </div>
           </div>
 
-
-          {/* Search - md and up */}
-          <div className="hidden md:flex flex-1 justify-center px-4 max-w-xl">
+          {/* Center: Search Input */}
+          <div className="hidden min-w-0 max-w-md flex-1 justify-center px-2 xl:flex">
             <SearchInput />
           </div>
-          {/* Right */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Theme Toggle */}
+
+          {/* Right: Theme Toggle & User Menu */}
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <ThemeToggle />
 
             {/* Desktop Auth */}
-            <div className="hidden sm:flex sm:items-center sm:gap-2">
+            <div className="hidden items-center gap-2 xl:flex">
               {!isAuthenticated ? (
                 <>
-                  <Button variant="ghost" size="sm" aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
+                  <Button variant="ghost" size="sm" asChild>
                     <Link to="/auth/login">Sign in</Link>
                   </Button>
-                  <Button size="sm" className="bg-primary text-primary-foreground" aria-label="Sign up" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-up-error" aria-pressed={!isAuthenticated} name="sign-up" id="sign-up">
+                  <Button size="sm" className="bg-primary text-primary-foreground" asChild>
                     <Link to="/auth/register">Sign up</Link>
                   </Button>
                 </>
               ) : (
                 <DropdownMenu>
-                  <DropdownMenuTrigger aria-label="User menu" onClick={() => setIsOpen(!isOpen)} aria-haspopup="true" aria-expanded={isOpen}>
+                  <DropdownMenuTrigger aria-label="User menu">
                     <Avatar>
-                      <AvatarImage src={userImage} alt={currentUser?.name ? `${currentUser.name}'s avatar` : "User avatar"} />
+                      <AvatarImage src={userImage} alt={currentUser?.name || "User avatar"} />
                       <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "M"}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center gap-2">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
+                        <User className="mr-2 h-4 w-4" /> Profile
                       </Link>
                     </DropdownMenuItem>
-
                     <DropdownMenuItem asChild>
                       <Link to="/settings" className="flex items-center gap-2">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                        <Settings className="mr-2 h-4 w-4" /> Settings
                       </Link>
                     </DropdownMenuItem>
-
                     <DropdownMenuItem onClick={logout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
+                      <LogOut className="mr-2 h-4 w-4" /> Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
             </div>
 
-            {/* Mobile Avatar */}
-            <div className="sm:hidden">
+            {/* Mobile Auth Avatar */}
+            <div className="xl:hidden">
               {!isAuthenticated ? (
-                <Button variant="ghost" size="icon" aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
+                <Button variant="ghost" size="icon" asChild>
                   <Link to="/auth/login">
                     <User className="h-5 w-5" />
                   </Link>
@@ -169,25 +180,19 @@ export default function Navbar({
                       <AvatarFallback>{currentUser?.name?.charAt(0).toUpperCase() || "M"}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
-
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem asChild>
                       <Link to="/profile" className="flex items-center gap-2">
-                        <User className="mr-2 h-4 w-4" />
-                        Profile
+                        <User className="mr-2 h-4 w-4" /> Profile
                       </Link>
                     </DropdownMenuItem>
-
                     <DropdownMenuItem asChild>
                       <Link to="/settings" className="flex items-center gap-2">
-                        <Settings className="mr-2 h-4 w-4" />
-                        Settings
+                        <Settings className="mr-2 h-4 w-4" /> Settings
                       </Link>
                     </DropdownMenuItem>
-
                     <DropdownMenuItem onClick={logout}>
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Log out
+                      <LogOut className="mr-2 h-4 w-4" /> Log out
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -196,18 +201,17 @@ export default function Navbar({
           </div>
         </div>
 
-        {/* Mobile Menu */}
-        {isOpen && (
-          <div id="mobile-menu" className="md:hidden mt-2 pb-4 border-t pt-4 space-y-2 animate-in slide-in-from-top-2 duration-200">
-            <div className="px-3 pb-2">
+        {/* Mobile Menu Dropdown */}
+        {isMobileMenuOpen && (
+          <div id="mobile-menu" className="animate-in slide-in-from-top-2 space-y-2 border-t pb-4 pt-4 duration-200 xl:hidden">
+            <div className="px-1 pb-2">
               <SearchInput />
             </div>
-
             {links.map((l) => (
               <Link
                 key={l.href}
                 to={l.href}
-                className="block px-3 py-2 rounded-md hover:bg-muted/60"
+                className="block rounded-md px-3 py-2 text-sm font-medium hover:bg-muted/60"
                 aria-current={location.pathname === l.href ? "page" : undefined}
                 onClick={closeMenu}
               >
@@ -215,12 +219,12 @@ export default function Navbar({
               </Link>
             ))}
             {!isAuthenticated && (
-              <div className="px-3 flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={closeMenu} aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
-                  <Link to="/auth/login" className="w-full">Sign in</Link>
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" className="flex-1" onClick={closeMenu} asChild>
+                  <Link to="/auth/login">Sign in</Link>
                 </Button>
-                <Button className="flex-1" onClick={closeMenu} aria-label="Sign up" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-up-error" aria-pressed={!isAuthenticated} name="sign-up" id="sign-up">
-                  <Link to="/auth/register" className="w-full">Sign up</Link>
+                <Button className="flex-1" onClick={closeMenu} asChild>
+                  <Link to="/auth/register">Sign up</Link>
                 </Button>
               </div>
             )}
