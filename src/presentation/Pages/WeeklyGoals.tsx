@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import {
   Target,
   ChevronLeft,
@@ -14,6 +14,7 @@ import {
   Edit,
   Trash2,
   CalendarX,
+  RefreshCcw,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader } from "@/presentation/components/ui/card";
 import { Progress } from "@/presentation/components/ui/progress";
@@ -33,9 +34,18 @@ import { cn } from "@/lib/utils";
 import MetaData from "../components/MetaData";
 import { SanitizedSearchInput } from "@/presentation/components/SanitizedSearchInput";
 import { useWeeklyGoals } from "@/app/hooks/useWeeklyGoals";
-import { AddGoalModal, GoalDetailsModal, EditGoalModal } from "./WeeklyGoals/components";
 import { type FilterStatus } from "./WeeklyGoals/utils/goalFilters";
 import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
+
+const AddGoalModal = lazy(() =>
+  import("./WeeklyGoals/components/AddGoalModal").then(({ AddGoalModal }) => ({ default: AddGoalModal }))
+);
+const GoalDetailsModal = lazy(() =>
+  import("./WeeklyGoals/components/GoalDetailsModal").then(({ GoalDetailsModal }) => ({ default: GoalDetailsModal }))
+);
+const EditGoalModal = lazy(() =>
+  import("./WeeklyGoals/components/EditGoalModal").then(({ EditGoalModal }) => ({ default: EditGoalModal }))
+);
 
 export default function WeeklyGoals() {
   // UI state
@@ -116,7 +126,16 @@ export default function WeeklyGoals() {
           </div>
           <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Error loading statistics</h3>
           <p className="text-gray-500 dark:text-gray-400">Unable to load task statistics. Please try again.</p>
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button variant="outline" onClick={() => refetch()}
+            name="retry"
+            id="retry"
+            aria-label="Retry"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="retry-error"
+            aria-pressed={false}
+          >
+            <RefreshCcw className="h-5 w-5" />
             Retry
           </Button>
         </div>
@@ -175,25 +194,31 @@ export default function WeeklyGoals() {
         </div>
       </div>
 
-      <GoalDetailsModal
-        open={isDetailsOpen}
-        onOpenChange={(open) => {
-          setIsDetailsOpen(open);
-          if (!open) setSelectedGoal(null);
-        }}
-        goal={selectedGoal}
-      />
+      <Suspense fallback={null}>
+        {isDetailsOpen && (
+          <GoalDetailsModal
+            open={isDetailsOpen}
+            onOpenChange={(open) => {
+              setIsDetailsOpen(open);
+              if (!open) setSelectedGoal(null);
+            }}
+            goal={selectedGoal}
+          />
+        )}
 
-      <EditGoalModal
-        open={isEditOpen}
-        onOpenChange={(open) => {
-          setIsEditOpen(open);
-          if (!open) setSelectedGoal(null);
-        }}
-        goal={selectedGoal}
-        onSubmit={(goalId, data) => updateGoal(goalId, data)}
-        isPending={isUpdating}
-      />
+        {isEditOpen && (
+          <EditGoalModal
+            open={isEditOpen}
+            onOpenChange={(open) => {
+              setIsEditOpen(open);
+              if (!open) setSelectedGoal(null);
+            }}
+            goal={selectedGoal}
+            onSubmit={(goalId, data) => updateGoal(goalId, data)}
+            isPending={isUpdating}
+          />
+        )}
+      </Suspense>
     </>
   );
 }
@@ -385,10 +410,16 @@ function WeekCalendar({
             onChange={onSearchChange}
             placeholder="Search goals..."
             className="w-full sm:w-56"
-            ariaLabel="Search goals"
+            aria-label="Search goals"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="search-goals-error"
+            aria-pressed={false}
           />
           <FilterSelect value={filterStatus} onChange={onFilterChange} />
-          <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
+          <Suspense fallback={<div className="h-9 w-28" aria-hidden="true" />}>
+            <AddGoalModal isOpen={isModalOpen} onOpenChange={onModalOpenChange} onAdd={onCreateGoal} isPending={isCreating} />
+          </Suspense>
         </div>
       </div>
 
@@ -580,6 +611,12 @@ function CalendarGoalItem({ goal, onToggle, onDelete, onView, onEdit }: Calendar
       <button
         type="button"
         onClick={() => onView(goal)}
+        aria-required="true"
+        aria-invalid={false}
+        aria-describedby="view-goal-error"
+        aria-pressed={false}
+        name="view-goal"
+        id="view-goal"
         className="min-w-0 flex-1 cursor-pointer text-left"
         aria-label={`View goal: ${goal.title}`}
       >
@@ -601,6 +638,12 @@ function CalendarGoalItem({ goal, onToggle, onDelete, onView, onEdit }: Calendar
           type="button"
           onClick={() => onEdit(goal)}
           aria-label="Edit goal"
+          aria-required="true"
+          aria-invalid={false}
+          aria-describedby="edit-goal-error"
+          aria-pressed={false}
+          name="edit-goal"
+          id="edit-goal"
           className="rounded p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900 dark:hover:bg-gray-700 dark:hover:text-white"
         >
           <Edit className="h-3 w-3" />

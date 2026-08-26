@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router";
-import NotFoundPage from "@/presentation/Pages/NotFoundPage";
+import { NotFoundPage } from "@/app/routes/LazyPages";
 import ProtectedRoute from "@/app/routes/protectedRoute";
 import PublicRoute from "@/app/routes/publicRoute";
 import { mainRoutes } from "@/app/routes/mainRouter";

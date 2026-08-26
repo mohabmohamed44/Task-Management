@@ -62,6 +62,13 @@ export default function SearchInput() {
                     variant="outline"
                     className="relative h-10 w-full justify-start rounded-[0.5rem] bg-muted/50 text-sm font-normal text-muted-foreground shadow-none pr-12"
                     onClick={() => setOpen(true)}
+                    aria-label="Search tasks"
+                    aria-required="true"
+                    aria-invalid={!!query}
+                    aria-describedby="search-tasks-error"
+                    aria-pressed={open ? "true" : "false"}
+                    name="search-tasks"
+                    id="search-tasks"
                 >
                     <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
                     <span>Search tasks...</span>
@@ -73,6 +80,13 @@ export default function SearchInput() {
                 <CommandDialog open={open} onOpenChange={setOpen}>
                     <CommandInput
                         placeholder="Search tasks..."
+                        aria-label="Search tasks"
+                        aria-required="true"
+                        aria-invalid={!!query}
+                        aria-describedby="search-tasks-error"
+                        aria-pressed={open ? "true" : "false"}
+                        name="search-tasks"
+                        id="search-tasks"
                         value={query}
                         onValueChange={(val) => {
                             const sanitized = sanitizeValues({ query: val });

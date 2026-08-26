@@ -127,10 +127,24 @@ export default function SubTaskList({ taskId }: { taskId: string }) {
             onChange={(e) => setNewSubTaskText(e.target.value)}
             className="flex-1"
             disabled={createSubTaskMutation.isPending}
+            aria-label="Add a new subtask"
+            aria-required="true"
+            aria-invalid={!!newSubTaskText}
+            aria-describedby="new-subtask-error"
+            aria-pressed={!!newSubTaskText}
+            name="new-subtask"
+            id="new-subtask"
           />
           <Button 
             type="submit" 
             size="sm"
+            aria-label="Add a new subtask"
+            aria-required="true"
+            aria-invalid={!!newSubTaskText}
+            aria-describedby="new-subtask-error"
+            aria-pressed={!!newSubTaskText}
+            name="new-subtask"
+            id="new-subtask"
             disabled={createSubTaskMutation.isPending || !newSubTaskText.trim()}
           >
             <Plus className="h-4 w-4" />
@@ -166,6 +180,13 @@ export default function SubTaskList({ taskId }: { taskId: string }) {
                 <Button
                   variant="ghost"
                   size="sm"
+                  aria-label="Delete subtask"
+                  aria-required="true"
+                  aria-invalid={!!subtask.id}
+                  aria-describedby="delete-subtask-error"
+                  aria-pressed={!!subtask.id}
+                  name="delete-subtask"
+                  id="delete-subtask"
                   onClick={() => handleDeleteSubTask(subtask.id.toString())}
                   disabled={deleteSubTaskMutation.isPending}
                   className="text-destructive hover:text-destructive"

@@ -196,6 +196,14 @@ export const SignUpPage: React.FC = () => {
                   <input
                     {...form.register("firstName")}
                     placeholder="John"
+                    aria-label="First name"
+                    aria-required="true"
+                    aria-invalid={!!form.formState.errors.firstName}
+                    inputMode="text"
+                    id="user-first-name"
+                    aria-describedby="user-first-name-error"
+                    spellCheck={false}
+                    autoComplete="given-name"
                     className="w-full border border-zinc-800 rounded p-3 bg-zinc-950 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
                   />
                   {form.formState.errors.firstName && (
@@ -209,6 +217,14 @@ export const SignUpPage: React.FC = () => {
                   <input
                     {...form.register("lastName")}
                     placeholder="Doe"
+                    aria-label="Last name"
+                    aria-required="true"
+                    aria-invalid={!!form.formState.errors.lastName}
+                    inputMode="text"
+                    id="user-last-name"
+                    aria-describedby="user-last-name-error"
+                    spellCheck={false}
+                    autoComplete="family-name"
                     className="w-full border border-zinc-800 rounded p-3 bg-zinc-950 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
                   />
                   {form.formState.errors.lastName && (
@@ -230,6 +246,12 @@ export const SignUpPage: React.FC = () => {
                   onPaste={(e) => e.preventDefault()}
                   onCut={(e) => e.preventDefault()}
                   autoComplete="email"
+                  inputMode="email"
+                  aria-label="Email address"
+                  aria-invalid={!!form.formState.errors.email}
+                  aria-required="true"
+                  id="user-email"
+                  aria-describedby="user-email-error"
                   spellCheck={false}
                   className="w-full border border-zinc-800 rounded p-3 bg-zinc-950 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
                 />
@@ -249,11 +271,18 @@ export const SignUpPage: React.FC = () => {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     autoComplete="new-password"
+                    aria-label="Password"
+                    aria-required="true"
+                    aria-invalid={!!form.formState.errors.password}
+                    id="user-password"
+                    aria-describedby="user-password-error"
                     className="w-full border border-zinc-800 rounded p-3 pr-12 bg-zinc-950 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
                   />
                   <button
                     type="button"
+                    aria-pressed={showPassword ? "true" : "false"}
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label="Toggle password visibility"
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white transition-colors cursor-pointer"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -275,6 +304,11 @@ export const SignUpPage: React.FC = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     placeholder="••••••••"
                     autoComplete="new-password"
+                    aria-label="Confirm password"
+                    aria-required="true"
+                    aria-invalid={!!form.formState.errors.confirmPassword}
+                    id="user-confirm-password"
+                    aria-describedby="user-confirm-password-error"
                     className="w-full border border-zinc-800 rounded p-3 pr-12 bg-zinc-950 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-400 focus:ring-1 focus:ring-zinc-400"
                   />
                   <button
@@ -295,6 +329,8 @@ export const SignUpPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
+                  aria-label="sign up"
+                  aria-required="true"
                   className="w-full bg-white text-black font-['Montserrat'] text-xs font-semibold py-4 rounded hover:bg-zinc-200 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isLoading ? (
@@ -312,6 +348,8 @@ export const SignUpPage: React.FC = () => {
                   type="button"
                   disabled={isLoading}
                   onClick={handleGoogleAuth}
+                  aria-label="Sign up with Google"
+                  aria-required="true"
                   className="w-full bg-transparent text-zinc-300 border border-zinc-800 font-['Montserrat'] text-xs font-bold uppercase py-4 rounded hover:bg-zinc-900 active:scale-[0.99] transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"
                 >
                   <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -334,6 +372,8 @@ export const SignUpPage: React.FC = () => {
                 type="button"
                 onClick={() => navigate("/auth/login")}
                 className="font-['Inter'] text-sm text-zinc-300 hover:text-white hover:underline font-semibold underline-offset-4 cursor-pointer transition-colors"
+                aria-label="Sign in"
+                aria-required="true"
               >
                 Sign In
               </button>
@@ -346,12 +386,15 @@ export const SignUpPage: React.FC = () => {
           className="w-full md:w-1/2 h-[45vh] md:h-screen relative bg-[#000000] overflow-hidden order-1 md:order-2"
           onMouseEnter={() => setIsHoveredCarousel(true)}
           onMouseLeave={() => setIsHoveredCarousel(false)}
+          aria-label="Carousel"
+          aria-required="true"
         >
           {/* Slide Images */}
           <div className="absolute inset-0 w-full h-full">
             <AnimatePresence mode="wait">
               <motion.img
                 key={currentSlide}
+                aria-label={slides[currentSlide].title}
                 src={slides[currentSlide].image}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.65 }}
@@ -360,6 +403,8 @@ export const SignUpPage: React.FC = () => {
                 className="absolute inset-0 w-full h-full object-cover mix-blend-luminosity filter contrast-125 pointer-events-none"
                 referrerPolicy="no-referrer"
                 alt={slides[currentSlide].title}
+                loading="lazy"
+                fetchPriority="high"
               />
             </AnimatePresence>
           </div>
@@ -396,6 +441,7 @@ export const SignUpPage: React.FC = () => {
                   exit={{ opacity: 0, y: -15 }}
                   transition={{ duration: 0.4 }}
                   className="flex flex-col gap-2"
+                  aria-label={slides[currentSlide].title}
                 >
                   <h2 className="font-['Montserrat'] text-2xl md:text-3xl lg:text-4xl font-bold text-white tracking-tight leading-tight max-w-md select-none">
                     {slides[currentSlide].title}

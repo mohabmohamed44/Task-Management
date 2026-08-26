@@ -113,10 +113,10 @@ export default function Navbar({
             <div className="hidden sm:flex sm:items-center sm:gap-2">
               {!isAuthenticated ? (
                 <>
-                  <Button variant="ghost" size="sm">
+                  <Button variant="ghost" size="sm" aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
                     <Link to="/auth/login">Sign in</Link>
                   </Button>
-                  <Button size="sm" className="bg-primary text-primary-foreground">
+                  <Button size="sm" className="bg-primary text-primary-foreground" aria-label="Sign up" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-up-error" aria-pressed={!isAuthenticated} name="sign-up" id="sign-up">
                     <Link to="/auth/register">Sign up</Link>
                   </Button>
                 </>
@@ -156,7 +156,7 @@ export default function Navbar({
             {/* Mobile Avatar */}
             <div className="sm:hidden">
               {!isAuthenticated ? (
-                <Button variant="ghost" size="icon">
+                <Button variant="ghost" size="icon" aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
                   <Link to="/auth/login">
                     <User className="h-5 w-5" />
                   </Link>
@@ -216,10 +216,10 @@ export default function Navbar({
             ))}
             {!isAuthenticated && (
               <div className="px-3 flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={closeMenu}>
+                <Button variant="outline" className="flex-1" onClick={closeMenu} aria-label="Sign in" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-in-error" aria-pressed={!isAuthenticated} name="sign-in" id="sign-in">
                   <Link to="/auth/login" className="w-full">Sign in</Link>
                 </Button>
-                <Button className="flex-1" onClick={closeMenu}>
+                <Button className="flex-1" onClick={closeMenu} aria-label="Sign up" aria-required="true" aria-invalid={!isAuthenticated} aria-describedby="sign-up-error" aria-pressed={!isAuthenticated} name="sign-up" id="sign-up">
                   <Link to="/auth/register" className="w-full">Sign up</Link>
                 </Button>
               </div>

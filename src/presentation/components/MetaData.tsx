@@ -1,7 +1,7 @@
 import type { SEOProps } from '@/domain/entities/SeoProps';
 import { Helmet } from 'react-helmet-async';
 
-const SITE_URL = 'https://prioritize.netlify.app';
+const SITE_URL = 'https://task-management-rho-smoky.vercel.app';
 const DEFAULT_IMAGE = '/og-image.png'; // Add a default OG image to your public folder
 
 export default function MetaData({

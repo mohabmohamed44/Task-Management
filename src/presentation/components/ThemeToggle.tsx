@@ -11,6 +11,10 @@ export default function ThemeToggle() {
             onClick={toggle}
             role="button"
             name="Theme Switcher"
+            aria-required="true"
+            id="theme-switcher"
+            aria-pressed={isDark}
+            aria-describedby="theme-switcher-error"
             aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
         >
             {isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

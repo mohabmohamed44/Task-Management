@@ -26,6 +26,13 @@ export default function Pagination({currentPage, totalPages, onPageChange}: Pagi
                 variant="outline"
                 onClick={handlePrevious}
                 disabled={currentPage === 1}
+                aria-label="Previous page"
+                aria-required="true"
+                aria-invalid={currentPage === 1}
+                aria-describedby="previous-page-error"
+                aria-pressed={currentPage === 1}
+                name="previous-page"
+                id="previous-page"
             >
                 <ChevronLeft className="h-4 w-4 mr-2"/>
                 Previous
@@ -34,7 +41,16 @@ export default function Pagination({currentPage, totalPages, onPageChange}: Pagi
                 Page {currentPage} of {totalPages}
             </span>
 
-            <Button variant="outline" onClick={handleNext} disabled={currentPage === totalPages}>
+            <Button variant="outline" onClick={handleNext} 
+                disabled={currentPage === totalPages} 
+                aria-label="Next page" 
+                aria-required="true" 
+                aria-invalid={currentPage === totalPages} 
+                aria-describedby="next-page-error" 
+                aria-pressed={currentPage === totalPages} 
+                name="next-page" 
+                id="next-page"
+                >
                 Next
                 <ChevronRight className="h-4 w-4 ml-2" />
             </Button>

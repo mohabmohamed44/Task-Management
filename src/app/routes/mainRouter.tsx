@@ -1,15 +1,17 @@
 import type { RouteObject } from "react-router";
 import MainLayout from "@/presentation/Layout/MainLayout";
-import HomePage from "@/presentation/Pages/HomePage";
-import TaskPage from "@/presentation/Pages/TaskPage";
-import ProfilePage from "@/presentation/Pages/ProfilePage";
-import EditProfilePage from "@/presentation/Pages/EditProfilePage";
-import StatisticsPage from "@/presentation/Pages/StatisticsPage";
-import CreateTask from "@/presentation/Pages/CreateTask";
-import TaskDetails from "@/presentation/Pages/TaskDetails";
-import Kanban from "@/presentation/Pages/Kanban";
-import WeeklyGoals from "@/presentation/Pages/WeeklyGoals";
-import MilestonePage from "@/presentation/Pages/MilestonePage";
+import {
+  CreateTask,
+  EditProfilePage,
+  HomePage,
+  Kanban,
+  MilestonePage,
+  ProfilePage,
+  StatisticsPage,
+  TaskDetails,
+  TaskPage,
+  WeeklyGoals,
+} from "@/app/routes/LazyPages";
 
 export const mainRoutes: RouteObject = {
   path: "/",

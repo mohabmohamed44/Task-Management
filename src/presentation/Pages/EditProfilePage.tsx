@@ -1,17 +1,45 @@
+import { lazy, Suspense, useEffect, useState } from "react";
 import { Link } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardFooter,
-} from "@/presentation/components/ui/card";
-import { Button } from "@/presentation/components/Button";
 import { useUpdateProfilePictureMutation } from "@/app/Queries/auth.query";
-import { useState, useEffect } from "react";
-import { CloudUpload } from "lucide-react";
-import MetaData from "../components/MetaData";
+
+const Card = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ Card }) => ({ default: Card })),
+);
+const CardContent = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardContent }) => ({ default: CardContent })),
+);
+const CardHeader = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardHeader }) => ({ default: CardHeader })),
+);
+const CardTitle = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardTitle }) => ({ default: CardTitle })),
+);
+const CardDescription = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardDescription }) => ({ default: CardDescription })),
+);
+const CardFooter = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardFooter }) => ({ default: CardFooter })),
+);
+const Button = lazy(() =>
+  import("@/presentation/components/Button").then(({ Button }) => ({ default: Button })),
+);
+const CloudUpload = lazy(() =>
+  import("lucide-react").then(({ CloudUpload }) => ({ default: CloudUpload })),
+);
+const MetaData = lazy(() => import("../components/MetaData"));
+
+function EditProfileFallback() {
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading edit profile page"
+    >
+      <p className="text-sm text-muted-foreground">Loading edit profile page...</p>
+    </div>
+  );
+}
 
 export default function EditProfilePage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -45,15 +73,16 @@ export default function EditProfilePage() {
   };
 
   return (
-    <>
-    <MetaData
-      title="Edit Profile Page"
-      description="change and edit your Profile Data"
-      type="website"
-      path="profile/edit"
-      noIndex={false}
-    />
-    <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
+    <Suspense fallback={<EditProfileFallback />}>
+      <>
+        <MetaData
+          title="Edit Profile Page"
+          description="change and edit your Profile Data"
+          type="website"
+          path="profile/edit"
+          noIndex={false}
+        />
+        <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="text-center space-y-2">
           <CardTitle className="text-2xl font-semibold">
@@ -101,15 +130,31 @@ export default function EditProfilePage() {
             className="w-full"
             onClick={handleUpload}
             disabled={!selectedFile || updateProfilePictureMutation.isPending}
+            aria-label="Upload picture"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="upload-picture-error"
+            aria-pressed={false}
+            name="upload-picture"
+            id="upload-picture"
           >
             {updateProfilePictureMutation.isPending ? "Uploading..." : "Upload Picture"}
           </Button>
-          <Button className="w-full" variant="outline" asChild>
+          <Button className="w-full" variant="outline" asChild
+            aria-label="Back to profile"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="back-to-profile-error"
+            aria-pressed={false}
+            name="back-to-profile"
+            id="back-to-profile"
+          >
             <Link to="/profile">Back to Profile</Link>
           </Button>
         </CardFooter>
       </Card>
-    </div>
-    </>
+        </div>
+      </>
+    </Suspense>
   );
 }

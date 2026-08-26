@@ -1,15 +1,52 @@
+import { lazy, Suspense } from "react";
 import { Link } from "react-router";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-} from "@/presentation/components/ui/card";
-import { Button } from "@/presentation/components/Button";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
-import { Avatar, AvatarFallback, AvatarImage } from "@/presentation/components/ui/avatar";
 import { useAuth } from "@/presentation/hooks/useAuth";
-import { Mail, Shield, User as UserIcon } from "lucide-react";
-import MetaData from "../components/MetaData";
+
+const Card = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ Card }) => ({ default: Card })),
+);
+const CardContent = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardContent }) => ({ default: CardContent })),
+);
+const CardFooter = lazy(() =>
+  import("@/presentation/components/ui/card").then(({ CardFooter }) => ({ default: CardFooter })),
+);
+const Avatar = lazy(() =>
+  import("@/presentation/components/ui/avatar").then(({ Avatar }) => ({ default: Avatar })),
+);
+const AvatarFallback = lazy(() =>
+  import("@/presentation/components/ui/avatar").then(({ AvatarFallback }) => ({ default: AvatarFallback })),
+);
+const AvatarImage = lazy(() =>
+  import("@/presentation/components/ui/avatar").then(({ AvatarImage }) => ({ default: AvatarImage })),
+);
+const Button = lazy(() =>
+  import("@/presentation/components/Button").then(({ Button }) => ({ default: Button })),
+);
+const Mail = lazy(() =>
+  import("lucide-react").then(({ Mail }) => ({ default: Mail })),
+);
+const Shield = lazy(() =>
+  import("lucide-react").then(({ Shield }) => ({ default: Shield })),
+);
+const UserIcon = lazy(() =>
+  import("lucide-react").then(({ User }) => ({ default: User })),
+);
+const MetaData = lazy(() => import("../components/MetaData"));
+
+function ProfilePageFallback() {
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading profile page"
+    >
+      <p className="text-sm text-muted-foreground">Loading profile page...</p>
+    </div>
+  );
+}
 
 export default function ProfilePage() {
   const {data: User, isLoading, isError, refetch } = useCurrentUserQuery();
@@ -17,9 +54,13 @@ export default function ProfilePage() {
 
   if(isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <h5 className="mr-3 text-xl">Loading Profile </h5>
-        <span className="animate-bounce text-lg font-semibold">...</span>
+      <div
+        className="flex min-h-screen items-center justify-center"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="mr-3 text-xl">Loading Profile</p>
+        <span className="animate-bounce text-lg font-semibold" aria-hidden="true">...</span>
       </div>
     )
   }
@@ -27,23 +68,34 @@ export default function ProfilePage() {
 
   if(isError || !User) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-md text-destructive">Failed to load Profile</p>
-        <Button variant="outline" onClick={() => refetch()}>Back to Home</Button>
-      </div>
+      <Suspense fallback={<ProfilePageFallback />}>
+        <div className="flex min-h-screen items-center justify-center">
+          <p className="text-md text-destructive">Failed to load Profile</p>
+          <Button variant="outline" onClick={() => refetch()} name="back-to-home"
+            id="back-to-home"
+            aria-label="Back to Home" aria-required="true"
+            aria-invalid={isError || !User}
+            aria-describedby="back-to-home-error"
+            aria-pressed={isError || !User}
+            >
+              <Link to="/" className="w-full">Back to Home</Link>
+          </Button>
+        </div>
+      </Suspense>
     )
   }
 
   return (
-    <>
-      <MetaData 
-        title="Profile"
-        description="Profile Page where you can see your Account Info."
-        path="/profile"
-        type="website"
-        noIndex={false}
-      />
-      <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
+    <Suspense fallback={<ProfilePageFallback />}>
+      <>
+        <MetaData
+          title="Profile"
+          description="Profile Page where you can see your Account Info."
+          path="/profile"
+          type="website"
+          noIndex={false}
+        />
+        <div className="flex min-h-screen items-center justify-center px-4 selection:bg-black selection:text-white">
         <Card className="w-full max-w-lg shadow-lg overflow-hidden">
           {/* Hero: Avatar left, Name + Role right */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-6 pb-4 border-b border-gray-200 dark:border-gray-800">
@@ -92,15 +144,29 @@ export default function ProfilePage() {
           </CardContent>
 
           <CardFooter className="flex gap-2 p-6 pt-2">
-            <Button className="w-full" asChild>
+            <Button className="w-full" asChild
+              aria-label="Edit Profile" aria-required="true" 
+              aria-invalid={false} 
+              aria-describedby="edit-profile-error"
+              aria-pressed={false}
+              name="edit-profile"
+              id="edit-profile"
+            >
               <Link to="/profile/edit">Edit Profile</Link>
             </Button>
-            <Button className="w-full" variant="outline" onClick={logout}>
+            <Button className="w-full" variant="outline" onClick={logout} name="log-out" 
+            id="log-out" 
+            aria-label="Log Out" aria-required="true" 
+            aria-invalid={false} 
+            aria-describedby="log-out-error" 
+            aria-pressed={false}
+            >
               Log Out
             </Button>
           </CardFooter>
         </Card>
-      </div>
-    </>
+        </div>
+      </>
+    </Suspense>
   );
 }

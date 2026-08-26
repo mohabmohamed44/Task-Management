@@ -1,18 +1,30 @@
-import { useState } from "react";
-import {
-  CheckCircle,
-  Target,
-  Zap,
-  ArrowRight,
-  Sparkles,
-  ListTodo,
-} from "lucide-react";
+import { lazy, Suspense, useState } from "react";
 import { motion, type Variants } from "framer-motion";
-import { Button } from "@/presentation/components/Button";
 import { Link } from "react-router";
 import { useCurrentUserQuery } from "@/app/Queries/auth.query";
-import MetaData from "../components/MetaData";
 import { useHomeAnalytics } from "@/app/hooks/useHomeAnalytics";
+
+const CheckCircle = lazy(() => import("lucide-react").then(({ CheckCircle }) => ({ default: CheckCircle })));
+const Target = lazy(() => import("lucide-react").then(({ Target }) => ({ default: Target })));
+const Zap = lazy(() => import("lucide-react").then(({ Zap }) => ({ default: Zap })));
+const ArrowRight = lazy(() => import("lucide-react").then(({ ArrowRight }) => ({ default: ArrowRight })));
+const Sparkles = lazy(() => import("lucide-react").then(({ Sparkles }) => ({ default: Sparkles })));
+const ListTodo = lazy(() => import("lucide-react").then(({ ListTodo }) => ({ default: ListTodo })));
+const Button = lazy(() => import("@/presentation/components/Button").then(({ Button }) => ({ default: Button })));
+const MetaData = lazy(() => import("../components/MetaData"));
+
+function HomePageFallback() {
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading home page"
+    >
+      <p className="text-sm text-muted-foreground">Loading home page...</p>
+    </div>
+  );
+}
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -165,7 +177,8 @@ export default function HomePage() {
 
   if (isLoggedIn && isNewUser && !hasCompletedOnboarding) {
     return (
-      <>
+      <Suspense fallback={<HomePageFallback />}>
+        <>
         <MetaData title="Welcome" description="Get started with Prioritize" path="/" type="website" />
         <BackgroundGradient />
         <div className="min-h-screen px-4 md:px-8 pt-12 md:pt-20">
@@ -228,6 +241,13 @@ export default function HomePage() {
                 onClick={handleNextStep}
                 disabled={currentStep === steps.length}
                 className="flex-1 h-12 text-sm font-semibold rounded-xl bg-gray-900 hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-gray-900 flex items-center justify-center gap-2"
+                aria-label="Next step"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="next-step-error"
+                aria-pressed={false}
+                name="next-step"
+                id="next-step"
               >
                 {currentStep === steps.length ? "Complete" : "Next Step"}
                 {currentStep < steps.length && <ArrowRight className="w-4 h-4" />}
@@ -236,18 +256,27 @@ export default function HomePage() {
                 onClick={currentStep === steps.length ? handleCompleteOnboarding : handleSkipOnboarding}
                 variant="outline"
                 className="flex-1 h-12 text-sm font-semibold rounded-xl border-2 border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-900"
+                aria-label="Skip onboarding"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="skip-onboarding-error"
+                aria-pressed={false}
+                name="skip-onboarding"
+                id="skip-onboarding"
               >
                 {currentStep === steps.length ? "Start Dashboard" : "Skip"}
               </Button>
             </motion.div>
           </motion.div>
         </div>
-      </>
+        </>
+      </Suspense>
     );
   }
 
   return (
-    <>
+    <Suspense fallback={<HomePageFallback />}>
+      <>
       <MetaData title="Command Center" description="Your centralized task and goal management node" path="/" type="website" />
       <BackgroundGradient />
 
@@ -337,6 +366,7 @@ export default function HomePage() {
 
         </motion.div>
       </div>
-    </>
+      </>
+    </Suspense>
   );
 }

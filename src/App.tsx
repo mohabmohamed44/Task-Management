@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { RouterProvider } from 'react-router'
 import { appRouter } from "./app/routes/router.tsx";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -19,6 +20,19 @@ const queryClient = new QueryClient({
   },
 });
 
+function RouteLoadingFallback() {
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading page"
+    >
+      <p className="text-sm text-muted-foreground">Loading page...</p>
+    </div>
+  );
+}
+
 function App({ hydratedState }: { hydratedState?: any}) {
   if (hydratedState) {
     hydrate(queryClient, hydratedState);
@@ -27,7 +41,9 @@ function App({ hydratedState }: { hydratedState?: any}) {
     <QueryClientProvider client={queryClient}> 
       <ModalProvider>
         <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-left' />
-        <RouterProvider router={appRouter} />
+        <Suspense fallback={<RouteLoadingFallback />}>
+          <RouterProvider router={appRouter} />
+        </Suspense>
         <Analytics />
         <Toaster 
           position='top-center'

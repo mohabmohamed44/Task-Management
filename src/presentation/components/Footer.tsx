@@ -64,6 +64,9 @@ export default function Footer() {
                   src={logo}
                   alt="Prioritize logo"
                   className="h-12 w-12 object-contain"
+				  loading="lazy"
+				  aria-label="Prioritize logo"
+				  fetchPriority="high"
                 />
 							</div>
 							<span className="font-semibold tracking-tight text-foreground text-lg">

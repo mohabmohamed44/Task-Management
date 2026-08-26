@@ -105,7 +105,7 @@ export function TaskUpdateForm({ task, onSubmit, onCancel, isLoading = false }: 
     <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Update Task</h2>
-        <Button variant="outline" onClick={onCancel} disabled={isLoading}>
+        <Button variant="outline" onClick={onCancel} disabled={isLoading} aria-label="Cancel" aria-required="true" aria-invalid={isLoading} aria-describedby="cancel-error" aria-pressed={isLoading} name="cancel" id="cancel">
           Cancel
         </Button>
       </div>
@@ -119,7 +119,7 @@ export function TaskUpdateForm({ task, onSubmit, onCancel, isLoading = false }: 
               <FormItem>
                 <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter task title" {...field} />
+                  <Input placeholder="Enter task title" {...field} aria-label="Title" aria-required="true" aria-invalid={!!field.value} aria-describedby="title-error" aria-pressed={!!field.value} name="title" id="title" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -137,6 +137,13 @@ export function TaskUpdateForm({ task, onSubmit, onCancel, isLoading = false }: 
                     placeholder="Enter task description" 
                     className="min-h-25"
                     {...field} 
+                    aria-label="Description" 
+                    aria-required="true" 
+                    aria-invalid={!!field.value} 
+                    aria-describedby="description-error" 
+                    aria-pressed={!!field.value} 
+                    name="description" 
+                    id="description"
                   />
                 </FormControl>
                 <FormMessage />
@@ -154,6 +161,12 @@ export function TaskUpdateForm({ task, onSubmit, onCancel, isLoading = false }: 
                   <Select 
                     value={field.value} 
                     onValueChange={field.onChange}
+                    aria-label="Priority"
+                    aria-required="true"
+                    aria-invalid={!!field.value}
+                    aria-describedby="priority-error"
+                    aria-pressed={!!field.value}
+                    name="priority"
                   >
                     <FormControl>
                       <SelectTrigger>
@@ -229,11 +242,25 @@ export function TaskUpdateForm({ task, onSubmit, onCancel, isLoading = false }: 
               variant="outline" 
               onClick={onCancel}
               disabled={isLoading}
+              aria-label="Cancel"
+              aria-required="true"
+              aria-invalid={isLoading}
+              aria-describedby="cancel-error"
+              aria-pressed={isLoading}
+              name="cancel"
+              id="cancel"
             >
               Cancel
             </Button>
             <Button 
-              type="submit" 
+              type="submit"
+              aria-label="Update task"
+              aria-required="true"
+              aria-invalid={isLoading}
+              aria-describedby="update-task-error"
+              aria-pressed={isLoading}
+              name="update-task"
+              id="update-task"
               disabled={isLoading}
             >
               {isLoading ? "Updating..." : "Update Task"}

@@ -22,7 +22,13 @@ export default function NotFoundPage() {
                 the Page you are looking for doesn't exist or has been moved
             </p> 
             <Link to="/">
-                <Button variant="link">Go To Home Page</Button>
+                <Button variant="link" name="go-to-home-page" 
+                id="go-to-home-page" 
+                aria-label="Go To Home Page" aria-required="true" 
+                aria-invalid={false} 
+                aria-describedby="go-to-home-page-error" 
+                aria-pressed={false}
+                >Go To Home Page</Button>
             </Link> 
         </div>
     </>

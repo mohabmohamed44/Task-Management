@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import { Calendar, ChevronLeft, ChevronRight, Milestone, AlertCircle } from "lucide-react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { Calendar, ChevronLeft, ChevronRight, Milestone, AlertCircle, RefreshCcw } from "lucide-react";
 import { Button } from "@/presentation/components/Button";
 import { format } from "date-fns";
 import MetaData from "../components/MetaData";
 import { useMilestones } from "@/app/hooks/useMilestones";
 import { useAuth } from "@/presentation/hooks/useAuth";
-import { MilestonesView } from "./Milestones/components/MilestonesView";
-import { MilestoneReportModal } from "./Milestones/components/MilestoneReportModal";
-import { UpdateStatsModal } from "./Milestones/components/UpdateStatsModal";
-import { CreateMilestoneModal } from "./Milestones/components/CreateMilestoneModal";
 import type { UIMilestone } from "./Milestones/types";
 import { formatDateDisplay } from "./WeeklyGoals/utils/dateHelpers";
+
+const MilestonesView = lazy(() => import("./Milestones/components/MilestonesView").then(({ MilestonesView }) => ({ default: MilestonesView })));
+const MilestoneReportModal = lazy(() => import("./Milestones/components/MilestoneReportModal").then(({ MilestoneReportModal }) => ({ default: MilestoneReportModal })));
+const UpdateStatsModal = lazy(() => import("./Milestones/components/UpdateStatsModal").then(({ UpdateStatsModal }) => ({ default: UpdateStatsModal })));
+const CreateMilestoneModal = lazy(() => import("./Milestones/components/CreateMilestoneModal").then(({ CreateMilestoneModal }) => ({ default: CreateMilestoneModal })));
 
 export default function MilestonePage() {
   const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
@@ -137,7 +138,16 @@ export default function MilestonePage() {
           </div>
           <h3 className="font-montserrat text-xl font-semibold text-gray-900 dark:text-gray-100">Error loading milestones</h3>
           <p className="font-inter text-gray-500 dark:text-gray-400">Unable to load milestone data. Please try again.</p>
-          <Button variant="outline" onClick={() => refetch()}>
+          <Button variant="outline" onClick={() => refetch()}
+            name="retry"
+            id="retry"
+            aria-label="Retry"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="retry-error"
+            aria-pressed={false}
+          >
+            <RefreshCcw className="h-5 w-5" />
             Retry
           </Button>
         </div>
@@ -170,40 +180,45 @@ export default function MilestonePage() {
           />
 
           {/* Milestones View (card design) */}
-          <MilestonesView
-            milestones={milestones}
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            onToggleDeliverable={handleToggleDeliverable}
-            onViewReport={setReportMilestone}
-            onUpdateStats={setUpdateTarget}
-            onCreateMilestoneClick={() => setIsCreateOpen(true)}
-          />
+          <Suspense fallback={<div className="min-h-96" role="status" aria-label="Loading milestones" />}>
+            <MilestonesView
+              milestones={milestones}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              onToggleDeliverable={handleToggleDeliverable}
+              onViewReport={setReportMilestone}
+              onUpdateStats={setUpdateTarget}
+              onCreateMilestoneClick={() => setIsCreateOpen(true)}
+            />
+          </Suspense>
         </div>
       </div>
 
-      <MilestoneReportModal
-        milestone={reportMilestone}
-        onClose={() => setReportMilestone(null)}
-      />
-
-      <UpdateStatsModal
-        open={!!updateTarget}
-        onOpenChange={(open) => {
-          if (!open) setUpdateTarget(null);
-        }}
-        milestone={updateTarget}
-        onSubmit={handleSaveMilestoneUpdate}
-        isPending={isUpdating}
-      />
-
-      <CreateMilestoneModal
-        open={isCreateOpen}
-        onOpenChange={setIsCreateOpen}
-        goals={goalOptions}
-        onSubmit={(goalId, title) => addMilestone(goalId, { title })}
-        isPending={isAdding}
-      />
+      <Suspense fallback={null}>
+        {reportMilestone && (
+          <MilestoneReportModal milestone={reportMilestone} onClose={() => setReportMilestone(null)} />
+        )}
+        {updateTarget && (
+          <UpdateStatsModal
+            open={!!updateTarget}
+            onOpenChange={(open) => {
+              if (!open) setUpdateTarget(null);
+            }}
+            milestone={updateTarget}
+            onSubmit={handleSaveMilestoneUpdate}
+            isPending={isUpdating}
+          />
+        )}
+        {isCreateOpen && (
+          <CreateMilestoneModal
+            open={isCreateOpen}
+            onOpenChange={setIsCreateOpen}
+            goals={goalOptions}
+            onSubmit={(goalId, title) => addMilestone(goalId, { title })}
+            isPending={isAdding}
+          />
+        )}
+      </Suspense>
     </>
   );
 }
@@ -272,11 +287,17 @@ function WeekNavigation({ onPrevious, onNext, onCurrent }: WeekNavigationProps) 
         variant="ghost"
         onClick={onCurrent}
         aria-label="Go to current week"
+        aria-required="true"
+        aria-invalid={false}
+        aria-describedby="go-to-current-week-error"
+        aria-pressed={false}
+        name="go-to-current-week"
+        id="go-to-current-week"
         className="font-montserrat px-3 text-sm font-medium text-gray-700 dark:text-gray-300"
       >
         This Week
       </Button>
-      <Button variant="ghost" size="icon" onClick={onNext} aria-label="Go to next week" className="h-9 w-9">
+      <Button variant="ghost" size="icon" onClick={onNext} aria-label="Go to next week" aria-required="true" aria-invalid={false} aria-describedby="go-to-next-week-error" aria-pressed={false} name="go-to-next-week" id="go-to-next-week" className="h-9 w-9">
         <ChevronRight className="h-4 w-4" />
       </Button>
     </div>

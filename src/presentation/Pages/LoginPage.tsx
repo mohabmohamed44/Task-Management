@@ -123,7 +123,7 @@ export default function LoginPage() {
             {authError && (
               <div className="mb-5 bg-[#ffdad6]/10 border border-[#ba1a1a]/50 text-red-200 text-xs font-semibold p-3 flex items-center justify-between">
                 <span>{authError}</span>
-                <button onClick={() => setAuthError(null)} className="p-1 hover:bg-white/10 cursor-pointer shrink-0">
+                <button onClick={() => setAuthError(null)} className="p-1 hover:bg-white/10 cursor-pointer shrink-0" aria-label="Close">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -148,12 +148,17 @@ export default function LoginPage() {
                 <input
                   {...form.register("email")}
                   type="email"
+                  id="user-email"
                   placeholder="you@example.com"
                   onCopy={(e) => e.preventDefault()}
                   onPaste={(e) => e.preventDefault()}
                   onCut={(e) => e.preventDefault()}
                   autoComplete="email"
                   spellCheck={false}
+                  inputMode="email"
+                  aria-label="Email address"
+                  aria-invalid={!!form.formState.errors.email}
+                  aria-required="true"
                   className="w-full border border-zinc-800 p-3 bg-zinc-950/80 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
                 />
                 {form.formState.errors.email && (
@@ -170,6 +175,9 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => toast.error("Password reset is not available in this demo.")}
+                    aria-label="Forgot password"
+                    aria-describedby="user-password-error"
+                    aria-required="true"
                     className="font-['Inter'] text-xs text-zinc-600 hover:text-zinc-300 transition-colors cursor-pointer"
                   >
                     Forgot password?
@@ -181,6 +189,7 @@ export default function LoginPage() {
                     type={showPassword ? "text" : "password"}
                     placeholder="••••••••"
                     autoComplete="current-password"
+                    aria-label="Password"
                     disabled={isBlocked}
                     className="w-full border border-zinc-800 p-3 pr-12 bg-zinc-950/80 font-['Inter'] text-sm text-zinc-100 placeholder:text-zinc-600 transition-colors focus:outline-none focus:border-zinc-600 focus:ring-1 focus:ring-zinc-600"
                   />
@@ -188,6 +197,7 @@ export default function LoginPage() {
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors cursor-pointer"
+                    aria-label="Toggle password visibility"
                   >
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
@@ -204,6 +214,7 @@ export default function LoginPage() {
                   type="checkbox"
                   id="rememberMe"
                   className="w-4 h-4 border-zinc-700 bg-zinc-950/80 accent-zinc-400 cursor-pointer"
+                  aria-label="Remember me"
                 />
                 <label htmlFor="rememberMe" className="font-['Inter'] text-xs font-medium text-zinc-500 cursor-pointer">
                   Keep me signed in for 30 days
@@ -214,6 +225,7 @@ export default function LoginPage() {
               <div className="flex flex-col gap-3 mt-2">
                 <button
                   type="submit"
+                  aria-label="Sign in"
                   disabled={isLoading}
                   className="w-full bg-white text-[#0c0c0c] font-['Inter'] text-sm font-semibold py-3.5 hover:bg-zinc-200 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -237,6 +249,7 @@ export default function LoginPage() {
                 {/* Google Auth */}
                 <button
                   type="button"
+                  aria-label="Sign in with Google"
                   disabled={isLoading}
                   onClick={handleGoogleAuth}
                   className="w-full bg-transparent text-zinc-400 border border-zinc-800 font-['Inter'] text-sm font-medium py-3 hover:bg-zinc-800/30 active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-50"

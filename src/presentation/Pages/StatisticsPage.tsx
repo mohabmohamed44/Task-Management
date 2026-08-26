@@ -1,13 +1,16 @@
+import { lazy, Suspense, useMemo } from "react";
 import { useTasksQuery } from "@/app/Queries/task.query";
-import { useMemo } from "react";
 import type { GetTaskQueryDTO } from "@/domain/entities/get-tasks-query.dto";
-import { AlertCircle, ArrowLeft, BarChart3 } from "lucide-react";
-import TaskChart from "@/presentation/components/TaskChart";
+import { AlertCircle, ArrowLeft, BarChart3, RefreshCcw } from "lucide-react";
 import { Button } from "@/presentation/components/ui/button";
 import { useNavigate } from "react-router";
 import MetaData from "../components/MetaData";
-import { GitHubStreak } from "../components/streak";
 import type { ContributionDay } from "@/domain/entities/stats";
+
+const TaskChart = lazy(() => import("@/presentation/components/TaskChart"));
+const GitHubStreak = lazy(() =>
+    import("../components/streak").then(({ GitHubStreak }) => ({ default: GitHubStreak }))
+);
 
 export default function StatisticsPage() {
     const navigate = useNavigate();
@@ -91,7 +94,18 @@ export default function StatisticsPage() {
                     </div>
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">Error loading analytics</h3>
                     <p className="text-gray-500 dark:text-gray-400">Unable to load task statistics. Please try again.</p>
-                    <Button variant="outline" onClick={() => refetch()}>
+                    <Button 
+                        variant="outline" 
+                        onClick={() => refetch()}
+                        name="retry"
+                        id="retry"
+                        aria-label="Retry"
+                        aria-required="true"
+                        aria-invalid={false}
+                        aria-describedby="retry-error"
+                        aria-pressed={false}
+                        >
+                        <RefreshCcw className="h-5 w-5" />
                         Retry
                     </Button>
                 </div>
@@ -117,6 +131,12 @@ export default function StatisticsPage() {
                             size="icon"
                             onClick={() => navigate('/tasks')}
                             aria-label="Back to tasks"
+                            aria-required="true"
+                            aria-invalid={false}
+                            aria-describedby="back-to-tasks-error"
+                            aria-pressed={false}
+                            name="back-to-tasks"
+                            id="back-to-tasks"
                             className="-ml-2 shrink-0 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                         >
                             <ArrowLeft className="h-5 w-5" />
@@ -133,11 +153,13 @@ export default function StatisticsPage() {
                     </div>
                 </header>
 
-                <TaskChart tasks={tasks} />
+                <Suspense fallback={<div className="min-h-96" role="status" aria-label="Loading analytics charts" />}>
+                    <TaskChart tasks={tasks} />
 
-                <div className="mt-8 md:mt-10">
-                    <GitHubStreak data={contributions} isLoading={isLoading} />
-                </div>
+                    <div className="mt-8 md:mt-10">
+                        <GitHubStreak data={contributions} isLoading={isLoading} />
+                    </div>
+                </Suspense>
             </div>
         </div>
         </>

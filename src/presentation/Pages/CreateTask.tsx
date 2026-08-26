@@ -156,7 +156,8 @@ export default function CreateTask() {
                 <FormItem>
                   <FormLabel>Title</FormLabel>
                   <FormControl>
-                    <Input placeholder="Task title" {...field} />
+                    <Input placeholder="Task title" {...field} 
+                    aria-label="Title" aria-required="true" aria-invalid={!!field.value} aria-describedby="title-error" aria-pressed={!!field.value} name="title" id="title" />
                   </FormControl>
                   <FormDescription>
                     The main title of your task.
@@ -177,7 +178,8 @@ export default function CreateTask() {
                       rows={4}
                       placeholder="Describe what needs to be done"
                       {...field}
-                    />
+                      aria-label="Description" aria-required="true" aria-invalid={!!field.value} aria-describedby="description-error" aria-pressed={!!field.value} name="description" id="description"
+                    /> 
                   </FormControl>
                   <FormDescription>
                     Provide enough detail for implementation.
@@ -199,12 +201,12 @@ export default function CreateTask() {
                         onValueChange={field.onChange}
                         value={field.value}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger aria-label="Priority" aria-required="true" aria-invalid={!!field.value} aria-describedby="priority-error" aria-pressed={!!field.value} name="priority" id="priority">
                           <SelectValue placeholder="Select priority" />
                         </SelectTrigger>
                         <SelectContent>
                           {Object.values(TaskPriority).map((priority) => (
-                            <SelectItem key={priority} value={priority}>
+                            <SelectItem key={priority} value={priority} aria-label={priority} aria-required="true" aria-invalid={!!field.value} aria-describedby="priority-error" aria-pressed={!!field.value} id="priority">
                               {priority.charAt(0).toUpperCase() +
                                 priority.slice(1)}
                             </SelectItem>
@@ -227,7 +229,7 @@ export default function CreateTask() {
                   <FormItem>
                     <FormLabel>Category</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g. development" {...field} />
+                      <Input placeholder="e.g. development" {...field} aria-label="Category" aria-required="true" aria-invalid={!!field.value} aria-describedby="category-error" aria-pressed={!!field.value} name="category" id="category" />
                     </FormControl>
                     <FormDescription>
                       Group similar tasks by category.
@@ -283,6 +285,13 @@ export default function CreateTask() {
                 className="w-full md:w-auto"
                 loading={isPending}
                 disabled={isPending}
+                aria-label="Create task" 
+                aria-required="true" 
+                aria-invalid={isPending} 
+                aria-describedby="create-task-error" 
+                aria-pressed={isPending} 
+                name="create-task" 
+                id="create-task"
               >
                 Create Task
               </Button>

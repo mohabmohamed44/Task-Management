@@ -91,6 +91,13 @@ export default function Kanban() {
                 disabled={createBoardMutation.isPending}
                 className="bg-black hover:bg-[#111827] text-white px-4 py-2.5 text-xs uppercase tracking-wider font-bold font-['Montserrat'] inline-flex items-center gap-2 disabled:opacity-50"
                 onClick={() => setAddBoardOpen(true)}
+                aria-label="Create board"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="create-board-error"
+                aria-pressed={false}
+                name="create-board"
+                id="create-board"
               >
                 {createBoardMutation.isPending ? (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded animate-spin" />
@@ -136,6 +143,13 @@ export default function Kanban() {
               <button
                 onClick={() => setAddBoardOpen(true)}
                 className="px-3 py-2 text-xs font-bold uppercase tracking-wider font-['Montserrat'] text-[#4B5563] dark:text-white border border-dashed border-[#E5E7EB] dark:border-white/10 hover:border-black hover:text-black dark:hover:border-white/20 dark:hover:text-white transition-colors whitespace-nowrap"
+                aria-label="New board"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="new-board-error"
+                aria-pressed={false}
+                name="new-board"
+                id="new-board"
               >
                 <Plus className="h-3 w-3 inline-block mr-1" />
                 New Board
@@ -271,6 +285,12 @@ function KanbanBoard({
                       <button
                         className="h-8 w-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-[#4B5563] dark:text-white hover:bg-[#F3F4F6] dark:hover:bg-[#111111]"
                         aria-label="Board options"
+                        aria-required="true"
+                        aria-invalid={false}
+                        aria-describedby="board-options-error"
+                        aria-pressed={false}
+                        name="board-options"
+                        id="board-options"
                       >
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
@@ -278,6 +298,11 @@ function KanbanBoard({
                     <DropdownMenuContent align="end" className="bg-white dark:bg-[#0A0A0A] border border-[#E5E7EB] dark:border-white/10 p-1 min-w-32">
                       <DropdownMenuItem
                         onClick={() => setEditBoardOpen(true)}
+                        aria-label="Edit board"
+                        aria-required="true"
+                        aria-invalid={false}
+                        aria-describedby="edit-board-error"
+                        aria-pressed={false}
                         className="cursor-pointer text-sm px-2 py-1.5 font-['Inter'] text-black dark:text-white hover:bg-[#F3F4F6] dark:hover:bg-[#111111]"
                       >
                         Edit Board

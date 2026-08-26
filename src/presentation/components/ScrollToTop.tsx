@@ -30,7 +30,8 @@ export default function ScrollToTop() {
             variant="outline" 
             size="icon" 
             role="button"
-            name="Scroll Button"
+            name="Scroll to top button"
+            id="scroll-to-top-button"
             className={`fixed bottom-10 right-10 z-50 rounded-full shadow-lg transition-all duration-300 bg-black hover:bg-gray-900  dark:bg-white
                 ${isVisible ? "opacity-100 scale-100" : "opacity-0 scale-95 pointer-events-none"}`}
             onClick={scrollToTop}

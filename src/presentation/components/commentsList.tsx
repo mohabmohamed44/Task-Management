@@ -158,6 +158,13 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                                 value={newCommentText}
                                 onChange={(e) => setNewCommentText(e.target.value)}
                                 className="min-h-[60px] sm:min-h-20 resize-none text-xs sm:text-sm"
+                                aria-label="Write a comment"
+                                aria-required="true"
+                                aria-invalid={!!newCommentText}
+                                aria-describedby="new-comment-error"
+                                aria-pressed={!!newCommentText}
+                                name="new-comment"
+                                id="new-comment"
                             />
                             <div className="flex justify-end">
                                 <Button 
@@ -165,6 +172,13 @@ export default function CommentsList({ taskId }: CommentsListProps) {
                                     onClick={handleCreateComment} 
                                     disabled={!newCommentText.trim() || createCommentMutation.isPending}
                                     className="text-xs sm:text-sm"
+                                    aria-label="Post comment"
+                                    aria-required="true"
+                                    aria-invalid={!!newCommentText}
+                                    aria-describedby="new-comment-error"
+                                    aria-pressed={!!newCommentText}
+                                    name="new-comment"
+                                    id="new-comment"
                                 >
                                     <Send className="h-4 w-4 mr-2" />
                                     Post Comment

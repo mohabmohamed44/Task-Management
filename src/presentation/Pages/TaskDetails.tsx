@@ -14,16 +14,33 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/presentation/components/ui/dropdown-menu";
-import {TailSpin} from "react-loader-spinner";
+import { TailSpin } from "react-loader-spinner";
 import { Suspense, lazy } from "react";
-import CommentsList from "../components/commentsList";
-import TaskHistory from "../components/TaskHistory";
-import { ExportModal } from "@/presentation/components/export/ExportModal";
 import { useExportHandlers } from "@/presentation/hooks/useExportHandlers";
-import { Attachments } from "@/presentation/components/attachments/Attachments";
 import MetaData from "../components/MetaData";
 
 const SubTaskList = lazy(() => import("@/presentation/components/SubTaskList"));
+const CommentsList = lazy(() => import("@/presentation/components/commentsList"));
+const TaskHistory = lazy(() => import("@/presentation/components/TaskHistory"));
+const Attachments = lazy(() =>
+  import("@/presentation/components/attachments/Attachments").then((module) => ({
+    default: module.Attachments,
+  })),
+);
+const ExportModal = lazy(() =>
+  import("@/presentation/components/export/ExportModal").then((module) => ({
+    default: module.ExportModal,
+  })),
+);
+
+function SectionFallback({ label }: { label: string }) {
+  return (
+    <div className="flex min-h-24 items-center justify-center gap-3 text-sm text-muted-foreground" role="status">
+      <TailSpin height={24} width={24} ariaLabel={`${label} loading`} />
+      <span>Loading {label.toLowerCase()}...</span>
+    </div>
+  );
+}
 
 export default function TaskDetails() {
   const { id } = useParams();
@@ -66,7 +83,16 @@ export default function TaskDetails() {
           </div>
           <h3 className="text-xl font-semibold text-foreground">Task not found</h3>
           <p className="text-muted-foreground">The task you are looking for does not exist or an error occurred.</p>
-          <Button onClick={goBackToTasks} variant="outline">
+          <Button onClick={goBackToTasks}
+            variant="outline"
+            name="back-to-tasks"
+            id="back-to-tasks"
+            aria-label="Back to Tasks"
+            aria-required="true"
+            aria-invalid={false}
+            aria-describedby="back-to-tasks-error"
+            aria-pressed={false}
+            >
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Tasks
           </Button>
@@ -139,7 +165,15 @@ export default function TaskDetails() {
                     {/* Actions Dropdown */}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="outline" size="sm" className="gap-1 shrink-0 flex-1 sm:flex-initial">
+                        <Button variant="outline" size="sm" className="gap-1 shrink-0 flex-1 sm:flex-initial"
+                          name="actions"
+                          id="actions"
+                          aria-label="Actions"
+                          aria-required="true"
+                          aria-invalid={false}
+                          aria-describedby="actions-error"
+                          aria-pressed={false}
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                           <span className="sm:inline">Actions</span>
                         </Button>
@@ -216,21 +250,21 @@ export default function TaskDetails() {
                 </div>
               )}
 
-              <Suspense fallback={<div>Loading SubTask Lists <span className="animate-bounce">...</span></div>}>
-                  <SubTaskList taskId={task.id.toString()} />
+              <Suspense fallback={<SectionFallback label="Subtasks" />}>
+                <SubTaskList taskId={task.id.toString()} />
               </Suspense>
-              
-              <Suspense 
-                fallback={<div className="flex items-center justify-center">
-                  <TailSpin />
-                </div>}
-              >
+
+              <Suspense fallback={<SectionFallback label="Comments" />}>
                 <CommentsList taskId={task.id.toString()} />
               </Suspense>
-              
-              <Attachments taskId={task.id.toString()} />
-              
-              <TaskHistory history={taskHistory || []} isLoading={isHistoryLoading} />
+
+              <Suspense fallback={<SectionFallback label="Attachments" />}>
+                <Attachments taskId={task.id.toString()} />
+              </Suspense>
+
+              <Suspense fallback={<SectionFallback label="Task history" />}>
+                <TaskHistory history={taskHistory || []} isLoading={isHistoryLoading} />
+              </Suspense>
             </CardContent>
 
             <Separator />
@@ -263,11 +297,15 @@ export default function TaskDetails() {
           </Card>
           
           {/* Export Modal */}
-          <ExportModal
-            isOpen={isExportModalOpen}
-            onClose={closeExportModal}
-            taskIds={task?.id ? [task.id] : undefined}
-          />
+          {isExportModalOpen && (
+            <Suspense fallback={null}>
+              <ExportModal
+                isOpen={isExportModalOpen}
+                onClose={closeExportModal}
+                taskIds={task?.id ? [task.id] : undefined}
+              />
+            </Suspense>
+          )}
         </div>
       </div>
     </>

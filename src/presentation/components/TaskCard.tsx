@@ -41,6 +41,12 @@ export function TaskCard({
         dark:bg-gray-950 dark:border-gray-800 dark:hover:border-gray-100
       `}
       style={{ cursor: isOverlay ? 'grabbing' : 'pointer' }}
+      aria-label="Task card"
+      aria-required="true"
+      aria-invalid={!!task.id}
+      aria-describedby="task-card-error"
+      aria-pressed={!!task.id}
+      id="task-card"
     >
       <div className="flex items-center justify-between gap-2">
         <span className="text-[10px] font-bold uppercase tracking-wider text-[#7e7576] dark:text-gray-500">

@@ -1,39 +1,50 @@
+import { lazy, Suspense, useMemo, useState, useCallback } from "react";
 import { useTasksQuery } from "@/app/Queries/task.query";
-import { useMemo, useState, useCallback } from "react";
 import type { GetTaskQueryDTO, SortOrder } from "@/domain/entities/get-tasks-query.dto";
-import { Card, CardContent } from "@/presentation/components/ui/card";
-import { Badge } from "@/presentation/components/ui/badge";
 import { getPriorityIconName, getPriorityColor } from "@/domain/utils/task-ui";
 import { Link } from "react-router";
-import Pagination from "@/presentation/components/pagination";
-import { Button } from "@/presentation/components/ui/button";
-import { Input } from "@/presentation/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/presentation/components/ui/select";
-import { Skeleton } from "@/presentation/components/ui/skeleton";
-import {
-  AlertCircle,
-  Calendar,
-  CircleArrowRight,
-  Clock,
-  ListTodo,
-  Plus,
-  Search,
-  CheckCircle2,
-  Circle,
-  Sparkles,
-} from "lucide-react";
 import { formatDate } from "@/domain/utils/date";
-import MetaData from "../components/MetaData";
 import { cn } from "@/lib/utils";
 import { useDebounce } from "../hooks/useDebounce";
 import type { TaskPriority } from "@/domain/enums/task-priority.enum";
 import type { Task } from "@/domain/entities/task.entity";
+
+const Card = lazy(() => import("@/presentation/components/ui/card").then(({ Card }) => ({ default: Card })));
+const CardContent = lazy(() => import("@/presentation/components/ui/card").then(({ CardContent }) => ({ default: CardContent })));
+const Badge = lazy(() => import("@/presentation/components/ui/badge").then(({ Badge }) => ({ default: Badge })));
+const Pagination = lazy(() => import("@/presentation/components/pagination"));
+const Button = lazy(() => import("@/presentation/components/ui/button").then(({ Button }) => ({ default: Button })));
+const Input = lazy(() => import("@/presentation/components/ui/input").then(({ Input }) => ({ default: Input })));
+const Select = lazy(() => import("@/presentation/components/ui/select").then(({ Select }) => ({ default: Select })));
+const SelectContent = lazy(() => import("@/presentation/components/ui/select").then(({ SelectContent }) => ({ default: SelectContent })));
+const SelectItem = lazy(() => import("@/presentation/components/ui/select").then(({ SelectItem }) => ({ default: SelectItem })));
+const SelectTrigger = lazy(() => import("@/presentation/components/ui/select").then(({ SelectTrigger }) => ({ default: SelectTrigger })));
+const SelectValue = lazy(() => import("@/presentation/components/ui/select").then(({ SelectValue }) => ({ default: SelectValue })));
+const Skeleton = lazy(() => import("@/presentation/components/ui/skeleton").then(({ Skeleton }) => ({ default: Skeleton })));
+const AlertCircle = lazy(() => import("lucide-react").then(({ AlertCircle }) => ({ default: AlertCircle })));
+const Calendar = lazy(() => import("lucide-react").then(({ Calendar }) => ({ default: Calendar })));
+const CircleArrowRight = lazy(() => import("lucide-react").then(({ CircleArrowRight }) => ({ default: CircleArrowRight })));
+const Clock = lazy(() => import("lucide-react").then(({ Clock }) => ({ default: Clock })));
+const ListTodo = lazy(() => import("lucide-react").then(({ ListTodo }) => ({ default: ListTodo })));
+const Plus = lazy(() => import("lucide-react").then(({ Plus }) => ({ default: Plus })));
+const Search = lazy(() => import("lucide-react").then(({ Search }) => ({ default: Search })));
+const CheckCircle2 = lazy(() => import("lucide-react").then(({ CheckCircle2 }) => ({ default: CheckCircle2 })));
+const Circle = lazy(() => import("lucide-react").then(({ Circle }) => ({ default: Circle })));
+const Sparkles = lazy(() => import("lucide-react").then(({ Sparkles }) => ({ default: Sparkles })));
+const MetaData = lazy(() => import("../components/MetaData"));
+
+function TaskPageFallback() {
+  return (
+    <div
+      className="flex min-h-screen items-center justify-center px-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Loading tasks page"
+    >
+      <p className="text-sm text-muted-foreground">Loading tasks page...</p>
+    </div>
+  );
+}
 
 const PRIORITY_OPTIONS: { value: TaskPriority | "all" | string; label: string }[] = [
   { value: "all", label: "All Priorities" },
@@ -109,7 +120,7 @@ function TaskCardSkeleton() {
   );
 }
 
-const TaskPage = () => {
+const TaskPageContent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchInput, setSearchInput] = useState("");
   const [priorityFilter, setPriorityFilter] = useState<TaskPriority | "all">("all");
@@ -134,10 +145,10 @@ const TaskPage = () => {
 
   const { data, isLoading, error, refetch } = useTasksQuery(query);
 
-  const tasks = data?.tasks || [];
   const meta = data?.meta;
 
   const filteredTasks = useMemo(() => {
+    const tasks = data?.tasks || [];
     const [rawSort, order] = sortValue.split("-") as [string, SortOrder];
 
     let result = tasks;
@@ -166,7 +177,7 @@ const TaskPage = () => {
     }
 
     return result;
-  }, [tasks, debouncedSearch, sortValue]);
+  }, [data?.tasks, debouncedSearch, sortValue]);
 
 
   const handlePageChange = useCallback((page: number) => {
@@ -211,7 +222,15 @@ const TaskPage = () => {
                 {error instanceof Error ? error.message : "Something went wrong"}
               </p>
             </div>
-            <Button onClick={() => refetch()} variant="default" size="lg">
+            <Button onClick={() => refetch()} variant="default" size="lg"
+              name="try-again"
+              id="try-again"
+              aria-label="Try Again"
+              aria-required="true"
+              aria-invalid={false}
+              aria-describedby="try-again-error"
+              aria-pressed={false}
+            >
               Try Again
             </Button>
           </div>
@@ -262,6 +281,13 @@ const TaskPage = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search tasks..."
+                aria-label="Search tasks"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="search-tasks-error"
+                aria-pressed={false}
+                name="search-tasks"
+                id="search-tasks"
                 value={searchInput}
                 onChange={(e) => {
                   setSearchInput(e.target.value);
@@ -478,6 +504,11 @@ const TaskPage = () => {
                 currentPage={meta.page}
                 totalPages={meta.totalPages}
                 onPageChange={handlePageChange}
+                aria-label="Pagination"
+                aria-required="true"
+                aria-invalid={false}
+                aria-describedby="pagination-error"
+                aria-pressed={false}
               />
             </div>
           )}
@@ -487,4 +518,10 @@ const TaskPage = () => {
   );
 };
 
-export default TaskPage;
+export default function TaskPage() {
+  return (
+    <Suspense fallback={<TaskPageFallback />}>
+      <TaskPageContent />
+    </Suspense>
+  );
+}
